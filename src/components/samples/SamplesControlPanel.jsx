@@ -35,15 +35,16 @@ function SamplesControlPanel({setCount, count}) {
     },[])
 
     // reflect all the currently available options in select widgets
+    // TODO: replace w/ selectOptions equivilent
     const [repositories, setRepositories] = useState([{facility_code: 'ALL', facility: 'All Repositories'}])
     const [platforms, setPlatforms] = useState([{name: 'All Platforms'}])
-    // const [lakes, setLakes] = useState([{name: 'All Platforms'}])
-    const [devices, setDevices] = useState([])
-    const [cruises, setCruises] = useState([])
+    
     const [selectOptions, setSelectOptions] = useState(new Map([
-        ['platforms', ['All Platforms']],
-        ['repositories', ['All Repositories']],
-        ['lakes', [{name: 'All Lakes'}]]
+        ['platforms', [{name: 'All Platforms'}]],
+        ['repositories', [{facility_code: 'ALL', facility: 'All Repositories'}]],
+        ['lakes', [{name: 'All Lakes'}]],
+        ['devices', [{name: 'All Devices'}]],
+        ['cruises', [{name: 'All Cruises'}]]
     ]))
 
     // reflect the currently selected option in the select widgets.  These are
@@ -76,9 +77,8 @@ function SamplesControlPanel({setCount, count}) {
             setSelectedSamplesCount(totalSamplesCount)
             return    
         }
-        let queryURL = apiBaseUrl + '/samples?count_only=true'
-        const queryString = buildUrlQueryString()
-        if (queryString) { queryURL += '&' + queryString }
+        const queryParams = new Map([...filters, ['count_only', true]])
+        const queryURL = buildQueryUrl(`${apiBaseUrl}/samples`, queryParams)
         console.debug(queryURL)
         const response = await fetch(queryURL)
         const json = await response.json()
@@ -88,10 +88,11 @@ function SamplesControlPanel({setCount, count}) {
 
     // repositories
     useEffect(() => {
-        console.log('getting list of repositories...');
-        let queryURL = apiBaseUrl + '/repositories?name_only=true'
-        const queryString = buildUrlQueryString()
-        if (queryString) { queryURL += '&' + queryString }
+        console.log('getting list of repositories...')
+        const queryParams = new Map([...filters, ['name_only', true]])
+        // exclude redundent parameter
+        queryParams.delete('repository')
+        const queryURL = buildQueryUrl(`${apiBaseUrl}/repositories`, queryParams)
         console.debug(queryURL)
 
         try {
@@ -109,9 +110,10 @@ function SamplesControlPanel({setCount, count}) {
     // platforms
     useEffect(() => {
         console.log('getting list of platforms...');
-        let queryURL = `${apiBaseUrl}/platforms`
-        const queryString = buildUrlQueryString()
-        if (queryString) { queryURL += `?${queryString}` }
+        const queryParams = new Map(filters)
+        // exclude redundent parameter
+        queryParams.delete('platform')
+        const queryURL = buildQueryUrl(`${apiBaseUrl}/platforms`, queryParams)
         console.debug(queryURL)
 
         try {
@@ -128,9 +130,11 @@ function SamplesControlPanel({setCount, count}) {
     // lakes
     useEffect(() => {
         console.log('getting list of lakes...');
-        let queryURL = `${apiBaseUrl}/lakes`
-        const queryString = buildUrlQueryString()
-        if (queryString) { queryURL += `?${queryString}` }
+        
+        const queryParams = new Map(filters)
+        // exclude redundent parameter
+        queryParams.delete('lake')
+        const queryURL = buildQueryUrl(`${apiBaseUrl}/lakes`, queryParams)
         console.debug(queryURL)
 
         try {
@@ -191,13 +195,15 @@ function SamplesControlPanel({setCount, count}) {
     }, [platforms, lakes, devices, repositories])
 */
 
-    function buildUrlQueryString() {
-        if (! filters) { return '' }
+    function buildQueryUrl(baseUrl, filters) {
+        // short circuit if no filters
+        if (! filters) { return baseUrl }
+
         let queryStrings = []
         filters.forEach((value, key) => {
             queryStrings.push(`${key}=${value}`)
         })
-        return queryStrings.join('&')
+        return `${baseUrl}?${queryStrings.join('&')}`
     }
 
     // used to style 
