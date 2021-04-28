@@ -1,0 +1,4 @@
+.GridPanel {
+    grid-area: grid;
+    background-color: yellow;
+}

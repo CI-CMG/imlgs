@@ -2,22 +2,30 @@ import React, { useEffect, useRef, useState } from 'react'
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
-  Link,
-  useRouteMatch,
-  useParams
+  Route
 } from "react-router-dom"
 import About from "./components/About"
-import Samples from "./components/Samples"
-import Repositories from "./components/Repositories"
+import SamplesPage from "./components/samples/SamplesPage"
+import RepositoriesPage from "./components/RepositoriesPage"
 import Cruises from "./components/Cruises"
-import Home from './components/Home'
+import HomePage from './components/HomePage'
 import ArcGISMap from "@arcgis/core/Map"
 import MapView from "@arcgis/core/views/MapView"
 import esriConfig from '@arcgis/core/config.js'
+import Sandbox from "./components/Sandbox"
+import {
+  useQuery,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from 'react-query'
 import './App.css'
 
 function App() {
+  console.log('inside App...')
+  const [count, setCount] = useState(0)
+  const queryClient = new QueryClient()
+
   /*
   // required if not in ./public/assets
   // esriConfig.assetsPath = './esri_assets'; 
@@ -49,26 +57,32 @@ function App() {
   )
 }
 */
+  console.log('inside App...')
   return (
+    <QueryClientProvider client={queryClient}>   
     <Router>
         <Switch>
           <Route path="/about">
-            <About />
+            <About/>
           </Route>
           <Route path="/samples">
-            <Samples />
+            <SamplesPage setCount={setCount} count={count} />
           </Route>
           <Route path="/cruises">
             <Cruises />
           </Route>
           <Route path="/repositories">
-            <Repositories />
+            <RepositoriesPage />
+          </Route>
+          <Route path="/sandbox">
+            <Sandbox></Sandbox>
           </Route>
           <Route path="/">
-            <Home />
+            <HomePage />
           </Route>
         </Switch>
     </Router>
+    </QueryClientProvider>
   )
 }
 

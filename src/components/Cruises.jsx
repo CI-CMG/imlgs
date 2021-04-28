@@ -6,23 +6,23 @@ import {
   useRouteMatch
 } from "react-router-dom";
 import Cruise from "./Cruise"
-import HeaderPanel from "./HeaderPanel"
-import FooterPanel from "./FooterPanel"
-
+import HeaderPanel from "./LegacyHeaderPanel"
+import FooterPanel from "./LegacyFooterPanel"
 
 function Cruises() {
     let match = useRouteMatch();
+    const pageName = 'Cruises'
     return (
         <Switch>
             <Route path={`${match.path}/:cruiseId`}>
                 <Cruise />
             </Route>
             <Route path={match.path}>
-                <div>
-                    <HeaderPanel></HeaderPanel>
+                <>
+                    <HeaderPanel activePage={pageName}></HeaderPanel>
                     <h2>Cruises</h2>
                     <FooterPanel></FooterPanel>
-                </div>
+                </>
             </Route>
         </Switch>
     )

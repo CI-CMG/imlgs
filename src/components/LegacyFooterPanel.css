@@ -1,0 +1,6 @@
+.FooterPanel {
+    grid-area: footer;
+    background-color: blue;
+}
+
+.footltbg {font-size: 11px; font-family: helvetica, arial, sans-serif; color: #000066;}

@@ -1,0 +1,5 @@
+.SamplesControlPanel {
+    /* width: 30%; */
+    grid-area: sidebar;
+    /* background-color: red; */
+}

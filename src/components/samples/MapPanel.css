@@ -1,0 +1,4 @@
+.MapPanel {
+    grid-area: map;
+    background-color: green;
+}

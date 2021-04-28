@@ -14,6 +14,7 @@ import "./Repositories.css"
 
 function Repositories() {
     let match = useRouteMatch()
+    const pageName = 'Repositories'
     let { repositoryId } = useParams()
     const [repositoryList, setRepositoryList] = useState([])
 
@@ -45,8 +46,8 @@ function Repositories() {
                 <Repository />
             </Route>
             <Route path={match.path}>
-                <div>
-                    <HeaderPanel></HeaderPanel>
+                <>
+                    <HeaderPanel pageName={pageName}></HeaderPanel>
                     <div className="repositoriesListDiv">
                     <h2>Repositories</h2>
                     <ul>
@@ -61,7 +62,7 @@ function Repositories() {
                     </ul>
                     </div>
                     <FooterPanel></FooterPanel>
-                </div>
+                </>
             </Route>
         </Switch>
     )

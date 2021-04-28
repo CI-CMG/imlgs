@@ -1,15 +1,16 @@
 import React from "react";
-import FooterPanel from "./FooterPanel";
-import HeaderPanel from "./HeaderPanel";
+import FooterPanel from "./LegacyFooterPanel";
+import HeaderPanel from "./LegacyHeaderPanel";
 
 
-function About() {
+function About({updatePageName}) {
+    const pageName = 'About'
     return(
-        <div>
-            <HeaderPanel></HeaderPanel>
-            <h2>About</h2>
-            <FooterPanel></FooterPanel>
-        </div>
+        <>
+        <HeaderPanel pageName={pageName}></HeaderPanel>
+        TODO: describe the application. include credits, reference info, etc.
+        <FooterPanel></FooterPanel>
+        </>
     )
 }
 

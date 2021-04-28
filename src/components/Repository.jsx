@@ -46,12 +46,12 @@ function Repository() {
 
 
     return (
-        <div>
+        <>
             <HeaderPanel></HeaderPanel>
             <h2>Repository Contact Information</h2>
             {repositoryData? <div className="contactInfoDiv" dangerouslySetInnerHTML={{__html:sanitizeHTML(repositoryData.facility_comment)}}/>: 'no data available'}            
             <FooterPanel></FooterPanel>
-        </div>
+        </>
     )
 }
 
