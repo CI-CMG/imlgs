@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import {
     Switch,
     Route,
@@ -11,14 +11,15 @@ import HeaderPanel from "./HeaderPanel"
 import FooterPanel from "./FooterPanel"
 import MapPanel from "./MapPanel"
 import SamplesFilterPanel from "./SamplesFilterPanel"
-import GridPanel from "./samples/GridPanel"
+import GridPanel from "./GridPanel"
 // import 'bootstrap/dist/css/bootstrap.min.css'
 import "./Samples.css"
 
 function Samples({setCount, count}) {
+    console.log('inside Samples...')
     let match = useRouteMatch();
     const pageName = 'Samples'
-
+   
     return (
         <Switch>
             <Route path={`${match.path}/:sampleId`}>
@@ -29,7 +30,10 @@ function Samples({setCount, count}) {
                 {/* TODO: list of geosamples and filtering controls. Also includes map and table of results */}
 
                     <HeaderPanel pageName={pageName} count={count}></HeaderPanel>
-                    <MapPanel></MapPanel>
+                    <MapPanel
+                        setSelectedExtent={setSelectedExtent}
+                        repository={repository}
+                    />
                     <SamplesFilterPanel setCount={setCount} count={count}></SamplesFilterPanel>
                     <GridPanel></GridPanel>
                     <FooterPanel></FooterPanel>

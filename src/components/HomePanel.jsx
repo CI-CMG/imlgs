@@ -21,6 +21,9 @@ function HomePanel() {
                 <li>
                     <Link to="/repositories">Repositories</Link>
                 </li>
+                <li>
+                    <a href="http://localhost/geosamples-api/swagger-ui.html">Developer's documention (API)</a>
+                </li>
             </ul>
         </div>
     )

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import {
     Switch,
     Route,
@@ -18,6 +18,7 @@ import "./SamplesPage.css"
 function SamplesPage({setCount, count}) {
     let match = useRouteMatch();
     const pageName = 'Samples'
+    const [geoextent, setGeoextent] = useState()
 
     return (
         <Switch>
@@ -29,8 +30,10 @@ function SamplesPage({setCount, count}) {
                 {/* TODO: list of geosamples and filtering controls. Also includes map and table of results */}
 
                     <HeaderPanel pageName={pageName} count={count}></HeaderPanel>
-                    <MapPanel></MapPanel>
-                    <SamplesFilterPanel setCount={setCount} count={count}></SamplesFilterPanel>
+                    <MapPanel
+                        setSelectedExtent={setGeoextent}
+                    />
+                    <SamplesFilterPanel geoextent={geoextent} setCount={setCount} count={count}></SamplesFilterPanel>
                     <GridPanel></GridPanel>
                     <FooterPanel></FooterPanel>
                 </div>            
