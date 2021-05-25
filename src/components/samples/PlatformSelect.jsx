@@ -11,15 +11,14 @@ function PlatformSelect({
     setActivePlatform,
     activePlatform}) {
 
-    console.log('inside PlatformSelect...')
-    console.log('selected platform: ', activePlatform)
+    // console.log('inside PlatformSelect...')
     const baseClass = 'PlatformSelect'
     // const [platforms, setPlatforms] = useState([{value: 'All Platforms'}])
     const [platforms, setPlatforms] = useState()
 
 
     useEffect(() => {
-        console.log('getting list of platforms...');
+        // console.log('getting list of platforms...');
 
         const queryParams = []
         if (activeRepository) { queryParams.push({name:'repository', value:activeRepository.value})}

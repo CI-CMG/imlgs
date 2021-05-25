@@ -11,13 +11,13 @@ function RepositorySelect({
     setActiveRepository,
     activeRepository}) {
 
-    console.log('inside RepositorySelect...')
+    // console.log('inside RepositorySelect...')
     const baseClass = 'RepositorySelect'
     const [repositories, setRepositories] = useState()
 
 
     useEffect(() => {
-        console.log('getting list of repositories...');
+        // console.log('getting list of repositories...');
 
         const queryParams = [{name:'name_only', value:true}]
         if (activePlatform) { queryParams.push({name:'platform', value:activePlatform.value})}

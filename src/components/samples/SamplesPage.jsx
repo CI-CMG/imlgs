@@ -19,6 +19,8 @@ function SamplesPage({setCount, count}) {
     let match = useRouteMatch();
     const pageName = 'Samples'
     const [geoextent, setGeoextent] = useState()
+    const [zoomToSelected, setZoomToSelected] = useState(true)
+    const [layerDefinitionExpression, setLayerDefinitionExpression] = useState()
 
     return (
         <Switch>
@@ -32,8 +34,10 @@ function SamplesPage({setCount, count}) {
                     <HeaderPanel pageName={pageName} count={count}></HeaderPanel>
                     <MapPanel
                         setSelectedExtent={setGeoextent}
+                        layerDefinitionExpression={layerDefinitionExpression}
+                        zoomToSelected={zoomToSelected}
                     />
-                    <SamplesFilterPanel geoextent={geoextent} setCount={setCount} count={count}></SamplesFilterPanel>
+                    <SamplesFilterPanel zoomToSelected={zoomToSelected} setZoomToSelected={setZoomToSelected} setLayerDefinitionExpression={setLayerDefinitionExpression} geoextent={geoextent} setCount={setCount} count={count}></SamplesFilterPanel>
                     <GridPanel></GridPanel>
                     <FooterPanel></FooterPanel>
                 </div>            

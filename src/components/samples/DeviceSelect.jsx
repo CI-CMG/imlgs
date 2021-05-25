@@ -11,13 +11,13 @@ function DeviceSelect({
     setActiveDevice,
     activeDevice}) {
 
-    console.log('inside DeviceSelect...')
+    // console.log('inside DeviceSelect...')
     const baseClass = 'DeviceSelect'
     const [devices, setDevices] = useState()
 
 
     useEffect(() => {
-        console.log('getting list of devices...');
+        // console.log('getting list of devices...');
 
         const queryParams = []
         if (activeRepository) { queryParams.push({name:'repository', value:activeRepository.value})}

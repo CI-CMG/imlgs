@@ -11,14 +11,14 @@ function LakeSelect({
     setActiveLake,
     activeLake}) {
 
-    console.log('inside LakeSelect...')
+    // console.log('inside LakeSelect...')
     const baseClass = 'LakeSelect'
     // const [lakes, setLakes] = useState([{value: 'All Lakes'}])
     const [lakes, setLakes] = useState()
 
 
     useEffect(() => {
-        console.log('getting list of lakes...');
+        // console.log('getting list of lakes...');
 
         const queryParams = []
         if (activeRepository) { queryParams.push({name:'repository', value:activeRepository.value})}

@@ -12,13 +12,13 @@ function CruiseSelect({
     setActiveCruise,
     activeCruise}) {
 
-    console.log('inside CruiseSelect...')
+    // console.log('inside CruiseSelect...')
     const baseClass = 'CruiseSelect'
     const [cruises, setCruises] = useState()
 
 
     useEffect(() => {
-        console.log('getting list of cruises...');
+        // console.log('getting list of cruises...');
 
         const queryParams = [{name: 'name_only', value: true}]
         if (activeRepository) { queryParams.push({name:'repository', value:activeRepository.value})}

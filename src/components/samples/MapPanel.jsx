@@ -7,33 +7,22 @@ import Extent from "@arcgis/core/geometry/Extent";
 import {webMercatorToGeographic} from "@arcgis/core/geometry/support/webMercatorUtils";
 import "./MapPanel.css";
 
-function MapPanel({repository, setSelectedExtent}) {
-    console.log('inside MapPanel with ', setSelectedExtent)
+function MapPanel({layerDefinitionExpression, setSelectedExtent, zoomToSelected}) {
+    console.log('inside MapPanel...')
     const mapDiv = useRef(null);
-  const drawExtentTool = useRef(null);
-  const clearExtentTool = useRef(null);
-  const extentToolbar = useRef(null);
-  const samplesLayer = useRef(null);
+    const drawExtentTool = useRef(null);
+    const clearExtentTool = useRef(null);
+    const extentToolbar = useRef(null);
+    const samplesLayer = useRef(null);
+    const mapView = useRef();
+    // keep a local copy of the selected geoextent in addition to the one in 
+    // the parent component
+    const geoextent = useRef()
 
-  if (repository) {
-    updateLayerDefs(repository);
-  }
-
-  function updateLayerDefs(facility) {
-    const sublayer = samplesLayer.current.findSublayerById(0)
-    if (facility === 'ALL') {
-      sublayer.definitionExpression = undefined;
-    } else {
-      sublayer.definitionExpression = `FACILITY_CODE = '${facility}'`;
-    }
-    // console.log(`FACILITY_CODE = '${facility}'`);
-    console.log('updating facility to ', facility);
+    console.log(zoomToSelected)
     
-  }
-
-
   useEffect(() => {
-    console.log("inside useEffect");
+    console.log("inside useEffect to set up map");
 
     // wait until DOM node has been constructed
     if (mapDiv.current) {
@@ -63,10 +52,12 @@ function MapPanel({repository, setSelectedExtent}) {
       view.when(function(){
         console.log('MapView is ready...');
         view.ui.add('extentToolbar', "top-left");
+        mapView.current = view
       });
       view.watch("extent", function(newValue){
         const extent = webMercatorToGeographic(newValue)
         const coords = [extent.xmin, extent.ymin, extent.xmax, extent.ymax].map(x => parseFloat(x.toFixed(4)));
+        // console.log('new extent: ', extent.xmin, extent.ymin, extent.xmax, extent.ymax)
         //TODO use the new extent. assign to selectedExtent if one not set?
       });
 
@@ -97,6 +88,7 @@ function MapPanel({repository, setSelectedExtent}) {
           _dragHandler = undefined;
         }
         setSelectedExtent(undefined)
+        geoextent.current = undefined
       }
 
 
@@ -134,6 +126,7 @@ function MapPanel({repository, setSelectedExtent}) {
                 const extent = webMercatorToGeographic(extentGraphic.geometry)
                 const coords = [extent.xmin, extent.ymin, extent.xmax, extent.ymax].map(x => parseFloat(x.toFixed(4)));
                 setSelectedExtent(coords);
+                geoextent.current = coords;
 
                 // mapDiv.current.dispatchEvent(
                 //   new CustomEvent("testme", { bubbles: true, detail: "mydata" })
@@ -150,8 +143,63 @@ function MapPanel({repository, setSelectedExtent}) {
 
     } else {
       console.log("mapDiv not yet available");
-    }  
+    }
   },[setSelectedExtent]); // end useEffect hook
+
+
+  // useEffect blocks fire in order defined and this needs to be after map setup
+  useEffect(() => {
+    console.log('update layerDefinition...')
+    // console.log('LayerDefinitionExpression: ', layerDefinitionExpression)
+    // "All Samples"
+    const sublayer = samplesLayer.current.findSublayerById(0)
+    if (sublayer) { sublayer.definitionExpression = layerDefinitionExpression }
+
+    // don't change the MapView extent
+    if (! zoomToSelected) {
+      return
+    }
+
+    if (layerDefinitionExpression) {
+      zoomTo(layerDefinitionExpression)
+    } else if (mapView.current) {
+      mapView.current.center = [-90, 27]
+      mapView.current.zoom = 5
+    }
+  }), [layerDefinitionExpression]
+
+
+  function zoomTo(layerDefinitionExpression) {
+    console.log('inside zoomTo...', zoomToSelected)
+    console.log(layerDefinitionExpression)
+    if (! mapView.current) {
+      console.warn('cannot zoomTo before MapView is ready')
+      return
+    }
+    const queryURL = 'https://gis.ngdc.noaa.gov/arcgis/rest/services/web_mercator/sample_index_dynamic/MapServer/0/query';
+    const urlSearchParams = new URLSearchParams()
+    urlSearchParams.append("where", layerDefinitionExpression);
+    urlSearchParams.append("returnExtentOnly", true);
+    // urlSearchParams.append("outSR", 4326)
+    urlSearchParams.append("f", "json");
+    const myRequest = new Request(queryURL, { 
+        method: "POST", 
+        body: urlSearchParams
+    })
+
+    try {
+        fetch(myRequest)
+            .then(response => response.json())
+            .then((data) => {
+              console.log('extent: ', data.extent)
+              // mapView.current.goTo(data.extent)
+              mapView.current.extent = data.extent
+            });
+    } catch (error) {
+        console.error(error);
+    } 
+  }
+
 
     return(
         <div className="MapPanel" ref={mapDiv}>

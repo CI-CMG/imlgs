@@ -12,8 +12,8 @@ import CruiseSelect from './CruiseSelect'
 import "./SamplesControlPanel.css"
 
 
-function SamplesControlPanel({setCount, count, geoextent}) {
-    console.log('inside SamplesControlPanel...')
+function SamplesControlPanel({setCount, count, geoextent, setLayerDefinitionExpression, zoomToSelected, setZoomToSelected}) {
+    // console.log('inside SamplesControlPanel...')
     const baseClass = 'SamplesControlPanel'
     const apiBaseUrl = 'http://localhost:8080/geosamples-api'
     const [totalSamplesCount, setTotalSamplesCount] = useState(0)
@@ -35,20 +35,57 @@ function SamplesControlPanel({setCount, count, geoextent}) {
     const [activeDevice, setActiveDevice] = useState()
     const [activeCruise, setActiveCruise] = useState()
 
+
+    function filterMap() {
+        let defs = []
+        // WARNING: tight coupling with ArcGIS mapservice layer:
+        // https://gis.ngdc.noaa.gov/arcgis/rest/services/Sample_Index/MapServer/0
+        if (activeRepository) defs.push(`FACILITY_CODE = '${activeRepository.value}'`)
+        if (activePlatform) defs.push(`PLATFORM = '${activePlatform.value}'`)
+        if (activeLake) defs.push(`LAKE = '${activeLake.value}'`)
+        if (activeDevice) defs.push(`DEVICE = '${activeDevice.value}'`)
+        if (activeCruise) defs.push(`CRUISE = '${activeCruise.value}'`)
+        if (defs) {
+            setLayerDefinitionExpression(defs.join(' and '))
+        } else {
+            setLayerDefinitionExpression(undefined)
+        }
+    }
+    
+
+    function logFilters() {
+        console.log('Filters applied: ')
+        if (activeDevice) { console.log('Device: ', activeDevice.value) }
+        if (activeRepository) { console.log('Repository: ', activeRepository.value) }
+        if (activePlatform) { console.log('Platform: ', activePlatform.value) }
+        if (activeLake) { console.log('Lake: ', activeLake.value) }
+        if (activeCruise) { console.log('Cruise: ', activeCruise.value) }
+        if (geoextent) { console.log('Geoextent: ' + geoextent.join(',')) }
+    }
+    
+
     useEffect(async () => {
         console.log('filters have changed, get new count...')
-        const filters = [activeDevice, activeLake, activePlatform, activeRepository, activeCruise, geoextent]
-        console.log('Device: ',activeDevice)
-        console.log('Lake: ', activeLake)
-        console.log('Platform: ', activePlatform)
-        console.log('Repository: ', activeRepository)
-        console.log('Cruise: ', activeCruise)
+
+        // triggers map update even if to remove layer definition
+        filterMap()
+    
+        const filters =  [activeDevice, activeLake, activePlatform, activeRepository, activeCruise, geoextent]
+        const noFiltersSet = filters.every(val => !val)
+    
+        if (noFiltersSet) {
+            console.log('no filters set')
+        } else {
+            logFilters()
+        }
+
         // short circuit if all filters are falsey 
-        if (filters.every(val => val) && totalSamplesCount) {
-            console.log('no filters set, selectedCount = totalCount')
+        if (noFiltersSet && totalSamplesCount) {
+            // console.log('no filters set, selectedCount = totalCount')
             setSelectedSamplesCount(totalSamplesCount)
             return    
         }
+
         const queryParams = [{name: 'count_only', value: true}]
         if (activeDevice) { queryParams.push({name:'device', value:activeDevice.value})}
         if (activeRepository) { queryParams.push({name:'repository', value:activeRepository.value})}
@@ -56,14 +93,16 @@ function SamplesControlPanel({setCount, count, geoextent}) {
         if (activeLake) { queryParams.push({name:'lake', value:activeLake.value})}
         if (activeCruise) { queryParams.push({name:'cruise', value:activeCruise.value})}
         if (geoextent) { queryParams.push({name: 'bbox', value: geoextent.join(',')})}
-
         const queryURL = buildQueryUrl(`${apiBaseUrl}/samples`, queryParams)
-        console.debug(queryURL)
+        // console.debug(queryURL)
+
         const response = await fetch(queryURL)
         const json = await response.json()
-        console.debug('setting selected sample count to ', json.count)
+        // console.debug('setting selected sample count to ', json.count)
         setSelectedSamplesCount(json.count)
+
     },[activeDevice, activeLake, activePlatform, activeRepository, activeCruise, geoextent])
+
 
     // used to style Select components
     const customStyles = {
@@ -87,7 +126,7 @@ function SamplesControlPanel({setCount, count, geoextent}) {
 
 
     function resetFilters() {
-        console.log('inside resetFilters...')
+        // console.log('inside resetFilters...')
         setActiveRepository(null)
         setActivePlatform(null)
         setActiveLake(null)
@@ -95,7 +134,12 @@ function SamplesControlPanel({setCount, count, geoextent}) {
         setActiveCruise(null)
     }
 
-    return(
+    function checkboxHandler(evt) {
+        console.log('inside checkboxHandler with ', evt.target.checked)
+        setZoomToSelected(evt.target.checked)
+    }
+
+    return (
     <div className="SamplesControlPanel">
         <div style={{height: '45px'}}>
             <span className={`${baseClass}--selectedRecords`}>{selectedSamplesCount} of {totalSamplesCount} samples</span>
@@ -199,8 +243,16 @@ function SamplesControlPanel({setCount, count, geoextent}) {
                 </Col>
                 </Form.Row>
             </Form.Group>
+            <Form.Group controlId="zoomToSelected">
+                <Form.Check
+                    type="checkbox" 
+                    label="Zoom to selected features"
+                    onChange={checkboxHandler}
+                    checked={zoomToSelected}
+                 />
+            </Form.Group>
         </Form>
-       <span>{geoextent?geoextent.join(', '): ''}</span>
+       {/* <span>{geoextent?geoextent.join(', '): ''}</span> */}
     </div>
     )
 }
