@@ -25,19 +25,19 @@ function RepositorySelect({
         if (activeLake) { queryParams.push({name:'lake', value:activeLake.value})}
 
         const queryURL = buildQueryUrl(`${apiBaseUrl}/repositories`, queryParams)
-        console.log(queryURL);
+        // console.log(queryURL);
 
-        try {
-            fetch(queryURL)
-                .then(response => response.json())
-                .then((data) => {
-                    console.log(`${data.length} repositories retrieved`)
-                    let repositories = data.map((item) => {return({value: item.facility_code, label:item.facility})})
-                    setRepositories(repositories)
-                })
-        } catch (error) {
-            console.error(error);
-        } 
+        // Promise returned from fetch won’t reject on HTTP 404 or 500. 
+        fetch(queryURL)
+            .then((response) => {
+                if (response.status !== 200 ) { throw "failed to retrieve list of repositories"}
+                return response.json()
+            })
+            .then((data) => {
+                console.debug(`${data.length} repositories retrieved`)
+                let repositories = data.map((item) => {return({value: item.facility_code, label:item.facility})})
+                setRepositories(repositories)
+            }).catch(err => console.error('Error in API request: ', err))    
     }, [activePlatform, activeDevice, activeLake])
 
 

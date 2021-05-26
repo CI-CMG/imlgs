@@ -22,6 +22,10 @@ function SamplesControlPanel({setCount, count, geoextent, setLayerDefinitionExpr
     // runs once on component load
     useEffect(async () => {
             const response = await fetch(`${apiBaseUrl}/samples?count_only=true`)
+            if (response.status !== 200) {
+                console.error("Error in API request: failed to retrieve samples count")
+                return
+            }
             const json = await response.json()
             console.debug('setting total sample count to ', json.count)
             setTotalSamplesCount(json.count)
@@ -97,6 +101,10 @@ function SamplesControlPanel({setCount, count, geoextent, setLayerDefinitionExpr
         // console.debug(queryURL)
 
         const response = await fetch(queryURL)
+        if (response.status !== 200) {
+            console.error("Error in API request: failed to retrieve samples count")
+            return
+        }
         const json = await response.json()
         // console.debug('setting selected sample count to ', json.count)
         setSelectedSamplesCount(json.count)

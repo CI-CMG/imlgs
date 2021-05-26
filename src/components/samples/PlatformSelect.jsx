@@ -27,19 +27,18 @@ function PlatformSelect({
 
         const queryURL = buildQueryUrl(`${apiBaseUrl}/platforms`, queryParams)
 
-        try {
-            fetch(queryURL)
-                .then(response => response.json())
-                .then((data) => {
-                    console.log(`${data.length} platforms retrieved`)
-                    // data.unshift('All Platforms')
-                    //TODO: standardize API for returned list
-                    let platforms = data.map((item) => {return({value: item.name})})
-                    setPlatforms(platforms)
-                })
-        } catch (error) {
-            console.error(error);
-        } 
+        // Promise returned from fetch won’t reject on HTTP 404 or 500. 
+        fetch(queryURL)
+            .then((response) => {
+                if (response.status !== 200 ) { throw "failed to retrieve list of platforms"}
+                return response.json()
+            })
+            .then((data) => {
+                console.debug(`${data.length} platforms retrieved`)
+                //TODO: standardize API for returned list
+                let platforms = data.map((item) => {return({value: item.name})})
+                setPlatforms(platforms)
+            }).catch(err => console.error('Error in API request: ', err))
     }, [activeRepository, activeDevice, activeLake])
 
 

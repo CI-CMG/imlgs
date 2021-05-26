@@ -26,18 +26,18 @@ function DeviceSelect({
 
         const queryURL = buildQueryUrl(`${apiBaseUrl}/devices`, queryParams)
 
-        try {
-            fetch(queryURL)
-                .then(response => response.json())
-                .then((data) => {
-                    console.log(`${data.length} devices retrieved`)
-                    // API returns simple list of names, but Select needs key/value Map
-                    let devices = data.map((item) => {return({value: item})})
-                    setDevices(devices)
-                })
-        } catch (error) {
-            console.error(error);
-        } 
+        // Promise returned from fetch won’t reject on HTTP 404 or 500.         
+        fetch(queryURL)
+            .then((response) => {
+                if (response.status !== 200 ) { throw "failed to retrieve list of devices"}
+                return response.json()
+            })
+            .then((data) => {
+                console.debug(`${data.length} devices retrieved`)
+                // API returns simple list of names, but Select needs key/value Map
+                let devices = data.map((item) => {return({value: item})})
+                setDevices(devices)
+            }).catch(err => console.error('Error in API request: ', err))
     }, [activeRepository, activePlatform, activeLake])
 
 

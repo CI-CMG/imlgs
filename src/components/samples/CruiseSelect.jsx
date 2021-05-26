@@ -16,10 +16,7 @@ function CruiseSelect({
     const baseClass = 'CruiseSelect'
     const [cruises, setCruises] = useState()
 
-
     useEffect(() => {
-        // console.log('getting list of cruises...');
-
         const queryParams = [{name: 'name_only', value: true}]
         if (activeRepository) { queryParams.push({name:'repository', value:activeRepository.value})}
         if (activeDevice) { queryParams.push({name:'device', value:activeDevice.value})}
@@ -28,17 +25,17 @@ function CruiseSelect({
 
         const queryURL = buildQueryUrl(`${apiBaseUrl}/cruises`, queryParams)
 
-        try {
-            fetch(queryURL)
-                .then(response => response.json())
-                .then((data) => {
-                    console.log(`${data.length} cruises retrieved`)
-                    let cruises = data.map((item) => {return({value: item})})
-                    setCruises(cruises)
-                })
-        } catch (error) {
-            console.error(error);
-        } 
+        fetch(queryURL)
+            .then((response) => {
+                if (response.status !== 200 ) { throw "failed to retrieve list of cruises"}
+                return response.json()
+            })
+            .then((data) => {
+                console.debug(`${data.length} cruises retrieved`)
+                let cruises = data.map((item) => {return({value: item})})
+                setCruises(cruises)
+            }).catch(err => console.error('Error in API request: ', err))
+        
     }, [activeRepository, activeDevice, activeLake, activePlatform])
 
 

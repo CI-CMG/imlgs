@@ -27,17 +27,17 @@ function LakeSelect({
 
         const queryURL = buildQueryUrl(`${apiBaseUrl}/lakes`, queryParams)
 
-        try {
-            fetch(queryURL)
-                .then(response => response.json())
-                .then((data) => {
-                    console.log(`${data.length} lakes retrieved`)
-                    let lakes = data.map((item) => {return({value: item})})
-                    setLakes(lakes)
-                })
-        } catch (error) {
-            console.error(error);
-        } 
+        fetch(queryURL)
+            .then((response) => {
+                if (response.status !== 200 ) { throw "failed to retrieve list of lakes"}
+                return response.json()
+            })           
+            .then((data) => {
+                console.debug(`${data.length} lakes retrieved`)
+                let lakes = data.map((item) => {return({value: item})})
+                setLakes(lakes)
+            }).catch(err => console.error('Error in API request: ', err))
+
     }, [activeRepository, activeDevice, activePlatform])
 
 
