@@ -45,8 +45,9 @@ function MapPanel({layerDefinitionExpression, setSelectedExtent, zoomToSelected}
       const view = new MapView({
         map: map,
         container: mapDiv.current,
-        zoom: 5,
-        center: [-90, 27]
+        zoom: 4,
+        //center: [-90, 27]
+        center: [-98.5833, 39.8333]
       });
 
       view.when(function(){
