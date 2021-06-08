@@ -1,5 +1,6 @@
-import React, { useRef, useEffect, useState } from "react";
-import Select from 'react-select';
+import React, { useRef, useEffect, useState } from "react"
+import Select from 'react-select'
+import {buildQueryUrl} from '../../ApiUtils'
 import "./CruiseSelect.css"
 
 function CruiseSelect({
@@ -23,7 +24,7 @@ function CruiseSelect({
         if (activeLake) { queryParams.push({name:'lake', value:activeLake.value})}
         if (activePlatform) { queryParams.push({name:'platform', value:activePlatform.value})}
 
-        const queryURL = buildQueryUrl(`${apiBaseUrl}/cruises`, queryParams)
+        const queryURL = buildQueryUrl('cruises', queryParams)
 
         fetch(queryURL)
             .then((response) => {
@@ -38,18 +39,6 @@ function CruiseSelect({
         
     }, [activeRepository, activeDevice, activeLake, activePlatform])
 
-
-    //TODO move to utility module
-    function buildQueryUrl(baseUrl, filters = []) {
-        // short circuit if no filters
-        if (! filters) { return baseUrl }
-
-        let queryStrings = []
-        filters.forEach((item) => {
-            queryStrings.push(`${item.name}=${item.value}`)
-        })
-        return `${baseUrl}?${queryStrings.join('&')}`
-    }
 
     return(
         <Select

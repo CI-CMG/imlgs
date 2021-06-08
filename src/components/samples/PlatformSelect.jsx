@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import Select from 'react-select';
+import {buildQueryUrl} from '../../ApiUtils'
 import "./PlatformSelect.css"
 
 function PlatformSelect({
@@ -8,6 +9,7 @@ function PlatformSelect({
     activeRepository,
     activeDevice,
     activeLake,
+    activeCruise,
     setActivePlatform,
     activePlatform}) {
 
@@ -16,16 +18,15 @@ function PlatformSelect({
     // const [platforms, setPlatforms] = useState([{value: 'All Platforms'}])
     const [platforms, setPlatforms] = useState()
 
-
     useEffect(() => {
         // console.log('getting list of platforms...');
-
         const queryParams = []
         if (activeRepository) { queryParams.push({name:'repository', value:activeRepository.value})}
         if (activeDevice) { queryParams.push({name:'device', value:activeDevice.value})}
         if (activeLake) { queryParams.push({name:'lake', value:activeLake.value})}
+        if (activeCruise) { queryParams.push({name:'cruise', value:activeCruise.value})}
 
-        const queryURL = buildQueryUrl(`${apiBaseUrl}/platforms`, queryParams)
+        const queryURL = buildQueryUrl('platforms', queryParams)        
 
         // Promise returned from fetch won’t reject on HTTP 404 or 500. 
         fetch(queryURL)
@@ -35,24 +36,11 @@ function PlatformSelect({
             })
             .then((data) => {
                 console.debug(`${data.length} platforms retrieved`)
-                //TODO: standardize API for returned list
-                let platforms = data.map((item) => {return({value: item.name})})
+                let platforms = data.map((item) => {return({value: item})})
                 setPlatforms(platforms)
             }).catch(err => console.error('Error in API request: ', err))
-    }, [activeRepository, activeDevice, activeLake])
+    }, [activeRepository, activeDevice, activeLake, activeCruise])
 
-
-    //TODO move to utility module
-    function buildQueryUrl(baseUrl, filters = []) {
-        // short circuit if no filters
-        if (! filters) { return baseUrl }
-
-        let queryStrings = []
-        filters.forEach((item) => {
-            queryStrings.push(`${item.name}=${item.value}`)
-        })
-        return `${baseUrl}?${queryStrings.join('&')}`
-    }
 
     return(
         <Select

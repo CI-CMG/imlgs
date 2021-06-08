@@ -1,5 +1,6 @@
-import React, { useRef, useEffect, useState } from "react";
-import Select from 'react-select';
+import React, { useRef, useEffect, useState } from "react"
+import Select from 'react-select'
+import {buildQueryUrl} from '../../ApiUtils'
 import "./DeviceSelect.css"
 
 function DeviceSelect({
@@ -8,13 +9,12 @@ function DeviceSelect({
     activeRepository,
     activePlatform,
     activeLake,
+    activeCruise,
     setActiveDevice,
     activeDevice}) {
-
     // console.log('inside DeviceSelect...')
     const baseClass = 'DeviceSelect'
     const [devices, setDevices] = useState()
-
 
     useEffect(() => {
         // console.log('getting list of devices...');
@@ -23,8 +23,9 @@ function DeviceSelect({
         if (activeRepository) { queryParams.push({name:'repository', value:activeRepository.value})}
         if (activePlatform) { queryParams.push({name:'platform', value:activePlatform.value})}
         if (activeLake) { queryParams.push({name:'lake', value:activeLake.value})}
+        if (activeCruise) { queryParams.push({name:'cruise', value:activeCruise.value})}
 
-        const queryURL = buildQueryUrl(`${apiBaseUrl}/devices`, queryParams)
+        const queryURL = buildQueryUrl('devices', queryParams)
 
         // Promise returned from fetch won’t reject on HTTP 404 or 500.         
         fetch(queryURL)
@@ -38,20 +39,8 @@ function DeviceSelect({
                 let devices = data.map((item) => {return({value: item})})
                 setDevices(devices)
             }).catch(err => console.error('Error in API request: ', err))
-    }, [activeRepository, activePlatform, activeLake])
+    }, [activeRepository, activePlatform, activeLake, activeCruise])
 
-
-    //TODO move to utility module
-    function buildQueryUrl(baseUrl, filters = []) {
-        // short circuit if no filters
-        if (! filters) { return baseUrl }
-
-        let queryStrings = []
-        filters.forEach((item) => {
-            queryStrings.push(`${item.name}=${item.value}`)
-        })
-        return `${baseUrl}?${queryStrings.join('&')}`
-    }
 
     return(
         <Select

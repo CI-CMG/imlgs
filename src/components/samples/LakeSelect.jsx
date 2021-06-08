@@ -1,5 +1,6 @@
-import React, { useRef, useEffect, useState } from "react";
-import Select from 'react-select';
+import React, { useRef, useEffect, useState } from "react"
+import Select from 'react-select'
+import {buildQueryUrl} from '../../ApiUtils'
 import "./LakeSelect.css"
 
 function LakeSelect({
@@ -8,6 +9,7 @@ function LakeSelect({
     activeRepository,
     activeDevice,
     activePlatform,
+    activeCruise,
     setActiveLake,
     activeLake}) {
 
@@ -24,8 +26,9 @@ function LakeSelect({
         if (activeRepository) { queryParams.push({name:'repository', value:activeRepository.value})}
         if (activeDevice) { queryParams.push({name:'device', value:activeDevice.value})}
         if (activePlatform) { queryParams.push({name:'platform', value:activePlatform.value})}
+        if (activeCruise) { queryParams.push({name:'cruise', value:activeCruise.value})}
 
-        const queryURL = buildQueryUrl(`${apiBaseUrl}/lakes`, queryParams)
+        const queryURL = buildQueryUrl('lakes', queryParams)
 
         fetch(queryURL)
             .then((response) => {
@@ -38,20 +41,8 @@ function LakeSelect({
                 setLakes(lakes)
             }).catch(err => console.error('Error in API request: ', err))
 
-    }, [activeRepository, activeDevice, activePlatform])
+    }, [activeRepository, activeDevice, activePlatform, activeCruise])
 
-
-    //TODO move to utility module
-    function buildQueryUrl(baseUrl, filters = []) {
-        // short circuit if no filters
-        if (! filters) { return baseUrl }
-
-        let queryStrings = []
-        filters.forEach((item) => {
-            queryStrings.push(`${item.name}=${item.value}`)
-        })
-        return `${baseUrl}?${queryStrings.join('&')}`
-    }
 
     return(
         <Select
