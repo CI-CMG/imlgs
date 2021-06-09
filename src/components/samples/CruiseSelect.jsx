@@ -4,7 +4,6 @@ import {buildQueryUrl} from '../../ApiUtils'
 import "./CruiseSelect.css"
 
 function CruiseSelect({
-    apiBaseUrl, 
     selectStyles,
     activeRepository,
     activeDevice,

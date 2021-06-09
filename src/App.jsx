@@ -4,10 +4,10 @@ import {
   Switch,
   Route
 } from "react-router-dom"
-import About from "./components/About"
+import AboutPage from "./components/AboutPage"
 import SamplesPage from "./components/samples/SamplesPage"
-import RepositoriesPage from "./components/RepositoriesPage"
-import Cruises from "./components/Cruises"
+import RepositoriesPage from "./components/repositories/RepositoriesPage"
+import CruisesPage from "./components/cruises/CruisesPage"
 import HomePage from './components/HomePage'
 import ArcGISMap from "@arcgis/core/Map"
 import MapView from "@arcgis/core/views/MapView"
@@ -20,6 +20,7 @@ import {
   QueryClientProvider,
 } from 'react-query'
 import './App.css'
+import ShowTablePage from './components/ShowTablePage'
 
 function App() {
   console.log('inside App...')
@@ -63,16 +64,19 @@ function App() {
     <Router>
         <Switch>
           <Route path="/about">
-            <About/>
+            <AboutPage/>
           </Route>
           <Route path="/samples">
             <SamplesPage setCount={setCount} count={count} />
           </Route>
           <Route path="/cruises">
-            <Cruises />
+            <CruisesPage />
           </Route>
           <Route path="/repositories">
             <RepositoriesPage />
+          </Route>
+          <Route path="/samples_table">
+            <ShowTablePage></ShowTablePage>
           </Route>
           <Route path="/sandbox">
             <Sandbox></Sandbox>

@@ -18,8 +18,8 @@ function MapPanel({layerDefinitionExpression, setSelectedExtent, zoomToSelected}
     // keep a local copy of the selected geoextent in addition to the one in 
     // the parent component
     const geoextent = useRef()
-
-    console.log(zoomToSelected)
+    const defaultCenter = [-98.5833, 39.8333]
+    const defaultZoom = 4
     
   useEffect(() => {
     console.log("inside useEffect to set up map");
@@ -42,12 +42,14 @@ function MapPanel({layerDefinitionExpression, setSelectedExtent, zoomToSelected}
       const map = new ArcGISMap({
         basemap: "oceans"
       });
+      
+
       const view = new MapView({
         map: map,
         container: mapDiv.current,
-        zoom: 4,
+        zoom: defaultZoom,
         //center: [-90, 27]
-        center: [-98.5833, 39.8333]
+        center: defaultCenter
       });
 
       view.when(function(){
@@ -164,8 +166,8 @@ function MapPanel({layerDefinitionExpression, setSelectedExtent, zoomToSelected}
     if (layerDefinitionExpression) {
       zoomTo(layerDefinitionExpression)
     } else if (mapView.current) {
-      mapView.current.center = [-90, 27]
-      mapView.current.zoom = 5
+      mapView.current.center = defaultCenter
+      mapView.current.zoom = defaultZoom
     }
   }), [layerDefinitionExpression]
 

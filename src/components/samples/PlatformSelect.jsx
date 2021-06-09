@@ -4,7 +4,6 @@ import {buildQueryUrl} from '../../ApiUtils'
 import "./PlatformSelect.css"
 
 function PlatformSelect({
-    apiBaseUrl, 
     selectStyles,
     activeRepository,
     activeDevice,

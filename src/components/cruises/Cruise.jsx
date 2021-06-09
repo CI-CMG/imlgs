@@ -1,7 +1,7 @@
 import React from "react"
 import { useParams } from "react-router-dom"
-import HeaderPanel from "./LegacyHeaderPanel"
-import FooterPanel from "./LegacyFooterPanel"
+import HeaderPanel from "../LegacyHeaderPanel"
+import FooterPanel from "../LegacyFooterPanel"
 
 
 function Cruise() {

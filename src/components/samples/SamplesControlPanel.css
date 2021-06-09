@@ -6,9 +6,17 @@
     float: right;
     margin-top: 5px;
     margin-right: 15px;
+    /* margin-left: 20px; */
 }
 
 .SamplesControlPanel--selectedRecords {
     margin-top: 50%;
     margin-left: 15px;
+}
+
+.SamplesControlPanel--HomeBtn {
+    float: right;
+    /* margin-top: 5px;
+    margin-right: 15px;
+    height: auto; */
 }

@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react"
 import { Link } from "react-router-dom"
+import {apiBaseUrl} from '../../ApiUtils'
 import "./RepositoriesPanel.css"
 
 function RepositoriesPanel() {
@@ -13,7 +14,7 @@ function RepositoriesPanel() {
 
     // TODO use current filters
     async function fetchRepositories() {
-        const url = 'http://localhost:8080/geosamples-api/repositories'
+        const url = `${apiBaseUrl}/repositories`
         const response = await fetch(url, {
             method: 'GET',
             headers: {'Content-Type': 'application/json'}

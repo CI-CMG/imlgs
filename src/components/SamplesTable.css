@@ -1,0 +1,12 @@
+.SamplesTable {
+    grid-area: main;
+    width:90%;
+    margin: 0 auto;
+
+}
+
+.SamplesTable--datatable, table, th, td {
+    border: 1px black solid;
+    padding-left: 5px;
+    padding-right: 5px;
+}

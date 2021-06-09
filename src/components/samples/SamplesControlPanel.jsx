@@ -1,9 +1,18 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useMemo } from "react"
+import {
+    useParams,
+    useLocation,
+    useHistory,
+    useRouteMatch,
+    Link
+} from "react-router-dom"
+import {buildQueryUrl, apiBaseUrl} from '../../ApiUtils'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Select from 'react-select'
+import Nav from 'react-bootstrap/Nav'
 import DeviceSelect from './DeviceSelect'
 import PlatformSelect from './PlatformSelect'
 import LakeSelect from './LakeSelect'
@@ -12,12 +21,18 @@ import CruiseSelect from './CruiseSelect'
 import "./SamplesControlPanel.css"
 
 
-function SamplesControlPanel({setCount, count, geoextent, setLayerDefinitionExpression, zoomToSelected, setZoomToSelected}) {
-    // console.log('inside SamplesControlPanel...')
+function SamplesControlPanel({
+    geoextent, 
+    setLayerDefinitionExpression, 
+    zoomToSelected, 
+    setZoomToSelected}) {
+    
+    console.log('inside SamplesControlPanel...')
     const baseClass = 'SamplesControlPanel'
-    const apiBaseUrl = 'http://localhost:8080/geosamples-api'
     const [totalSamplesCount, setTotalSamplesCount] = useState(0)
     const [selectedSamplesCount, setSelectedSamplesCount] = useState(0)
+    const history = useHistory()
+    const [tableUrl, setTableUrl] = useState('/samples_table')
 
     // runs once on component load
     useEffect(async () => {
@@ -38,7 +53,6 @@ function SamplesControlPanel({setCount, count, geoextent, setLayerDefinitionExpr
     const [activeLake, setActiveLake] = useState()
     const [activeDevice, setActiveDevice] = useState()
     const [activeCruise, setActiveCruise] = useState()
-
 
     function filterMap() {
         let defs = []
@@ -68,8 +82,24 @@ function SamplesControlPanel({setCount, count, geoextent, setLayerDefinitionExpr
     }
     
 
+    function updateTableUrl() {
+        let searchParams=[]
+        if (activeDevice) { searchParams.push(`device=${activeDevice.value}`) }
+        if (activeRepository) { searchParams.push(`repository=${activeRepository.value}`) }
+        if (activePlatform) { searchParams.push(`platform=${activePlatform.value}`) }
+        if (activeLake) { searchParams.push(`lake=${activeLake.value}`) }
+        if (activeCruise) { searchParams.push(`cruise=${activeCruise.value}`) }
+        if (geoextent) { searchParams.push(`bbox=${geoextent.join(',')}`) }
+        if (searchParams.length) {
+            setTableUrl(`/samples_table?${searchParams.join('&')}`)
+        } else {
+            setTableUrl('/samples_table')
+        }
+    }
+
     useEffect(async () => {
         console.log('filters have changed, get new count...')
+        updateTableUrl()
 
         // triggers map update even if to remove layer definition
         filterMap()
@@ -97,7 +127,7 @@ function SamplesControlPanel({setCount, count, geoextent, setLayerDefinitionExpr
         if (activeLake) { queryParams.push({name:'lake', value:activeLake.value})}
         if (activeCruise) { queryParams.push({name:'cruise', value:activeCruise.value})}
         if (geoextent) { queryParams.push({name: 'bbox', value: geoextent.join(',')})}
-        const queryURL = buildQueryUrl(`${apiBaseUrl}/samples`, queryParams)
+        const queryURL = buildQueryUrl('samples', queryParams)
         // console.debug(queryURL)
 
         const response = await fetch(queryURL)
@@ -118,19 +148,6 @@ function SamplesControlPanel({setCount, count, geoextent, setLayerDefinitionExpr
         option: styles => ({ ...styles, fontSize: 'small'}),
         container: styles => ({ ...styles, width: 290})
     }
-    
-
-    //TODO move to utility module
-    function buildQueryUrl(baseUrl, filters = []) {
-        // short circuit if no filters
-        if (! filters) { return baseUrl }
-
-        let queryStrings = []
-        filters.forEach((item) => {
-            queryStrings.push(`${item.name}=${item.value}`)
-        })
-        return `${baseUrl}?${queryStrings.join('&')}`
-    }
 
 
     function resetFilters() {
@@ -143,15 +160,40 @@ function SamplesControlPanel({setCount, count, geoextent, setLayerDefinitionExpr
     }
 
     function checkboxHandler(evt) {
-        console.log('inside checkboxHandler with ', evt.target.checked)
+        // console.log('inside checkboxHandler with ', evt.target.checked)
         setZoomToSelected(evt.target.checked)
+    }
+
+    function openTable(evt) {
+        console.debug(tableUrl)
+        history.push(tableUrl)
     }
 
     return (
     <div className="SamplesControlPanel">
+    {/* <Nav variant="pills" defaultActiveKey="/home">
+                <Nav.Item>
+                    <Nav.Link href="/" eventKey="Home">Home</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                    <Nav.Link href="/samples" active={true}>Samples</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                    <Nav.Link href="/cruises" >Cruises</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                    <Nav.Link href="/repositories" eventKey="Repositories">Repositories</Nav.Link>
+                </Nav.Item>
+            </Nav>  */}
         <div style={{height: '45px'}}>
             <span className={`${baseClass}--selectedRecords`}>{selectedSamplesCount} of {totalSamplesCount} samples</span>
             <Button className={`${baseClass}--resetBtn`} variant="primary" size="sm" onClick={resetFilters}>Reset</Button>
+            {/* <a className={`${baseClass}--HomeBtn`} href="#" class="text-decoration-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-house-fill" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6zm5-.793V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
+  <path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z"/>
+                </svg>
+            </a> */}
             <hr style={{borderWidth: '3px'}}/>
         </div>
 
@@ -163,13 +205,13 @@ function SamplesControlPanel({setCount, count, geoextent, setLayerDefinitionExpr
                 </Col>
                 <Col>
                     <RepositorySelect
-                        apiBaseUrl={apiBaseUrl}
                         selectStyles={customStyles}
                         setActiveRepository={setActiveRepository}
                         activeRepository={activeRepository}
                         activePlatform={activePlatform}
                         activeDevice={activeDevice}
                         activeLake={activeLake}
+                        activeCruise={activeCruise}
                     />
                 </Col>
                 </Form.Row>
@@ -182,13 +224,13 @@ function SamplesControlPanel({setCount, count, geoextent, setLayerDefinitionExpr
                 </Col>
                 <Col>
                     <PlatformSelect
-                        apiBaseUrl={apiBaseUrl}
                         selectStyles={customStyles}
                         setActivePlatform={setActivePlatform}
                         activePlatform={activePlatform}
                         activeRepository={activeRepository}
                         activeDevice={activeDevice}
                         activeLake={activeLake}
+                        activeCruise={activeCruise}
                     />
                 </Col>
                 </Form.Row>
@@ -201,13 +243,13 @@ function SamplesControlPanel({setCount, count, geoextent, setLayerDefinitionExpr
                 </Col>
                 <Col>
                     <LakeSelect
-                        apiBaseUrl={apiBaseUrl}
                         selectStyles={customStyles}
                         setActiveLake={setActiveLake}
                         activeLake={activeLake}
                         activeRepository={activeRepository}
                         activePlatform={activePlatform}
                         activeDevice={activeDevice}
+                        activeCruise={activeCruise}
                     />
                 </Col>
                 </Form.Row>
@@ -220,13 +262,13 @@ function SamplesControlPanel({setCount, count, geoextent, setLayerDefinitionExpr
                 </Col>
                 <Col>
                 <DeviceSelect
-                    apiBaseUrl={apiBaseUrl}
                     selectStyles={customStyles}
                     setActiveDevice={setActiveDevice}
                     activeDevice={activeDevice}
                     activeRepository={activeRepository}
                     activePlatform={activePlatform}
                     activeLake={activeLake}
+                    activeCruise={activeCruise}
                 />
                 </Col>
                 </Form.Row>
@@ -239,7 +281,6 @@ function SamplesControlPanel({setCount, count, geoextent, setLayerDefinitionExpr
                 </Col>
                 <Col>
                 <CruiseSelect
-                    apiBaseUrl={apiBaseUrl}
                     selectStyles={customStyles}
                     setActiveCruise={setActiveCruise}
                     activeCruise={activeCruise}
@@ -257,12 +298,13 @@ function SamplesControlPanel({setCount, count, geoextent, setLayerDefinitionExpr
                     label="Zoom to selected features"
                     onChange={checkboxHandler}
                     checked={zoomToSelected}
+                    style={{marginLeft: '15px'}}
                  />
             </Form.Group>
         </Form>
-       {/* <span>{geoextent?geoextent.join(', '): ''}</span> */}
+        {/* <Button className={`${baseClass}--openTableBtn`} variant="primary" size="sm" onClick={(e) => router.push({tableUrl})}>Table View</Button> */}
+       <Button className={`${baseClass}--openTableBtn`} style={{marginLeft: '15px'}} variant="primary" size="sm" onClick={openTable}>Table View</Button>
     </div>
     )
 }
-
 export default SamplesControlPanel

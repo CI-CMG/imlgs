@@ -1,11 +1,12 @@
-import React from "react"
+import React, { useRef, useEffect, useState } from "react";
 import "./GridPanel.css"
 
 
 function GridPanel() {
+    
     return(
         <div className="GridPanel">
-            GridPanel
+        <h2>DataGrid goes here</h2>
         </div>
     )
 }

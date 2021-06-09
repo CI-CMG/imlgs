@@ -4,7 +4,10 @@ import "./HomePanel.css"
 
 
 function HomePanel() {
-
+    // automated docs
+    // const swaggerUrl = 'http://localhost/geosamples-api/swagger-ui.html'
+    // customized docs
+    const swaggerUrl = 'http://localhost/geosamples-api/swagger-ui/index.html?configUrl=/geosamples-api/swagger-config.json'
     return(
         <div className="HomePanel">
             <h2>Landing Page</h2>
@@ -22,7 +25,7 @@ function HomePanel() {
                     <Link to="/repositories">Repositories</Link>
                 </li>
                 <li>
-                    <a href="http://localhost/geosamples-api/swagger-ui.html">Developer's documention (API)</a>
+                    <a href={swaggerUrl}>Developer's documention (API)</a>
                 </li>
             </ul>
         </div>

@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react"
 import { useParams } from "react-router-dom"
+import {apiBaseUrl} from '../../ApiUtils'
 import DOMPurify from 'dompurify'
-import FooterPanel from "./FooterPanel"
-import HeaderPanel from "./HeaderPanel"
-import "./Repository.css"
+import FooterPanel from "../FooterPanel"
+import HeaderPanel from "../HeaderPanel"
+import "./RepositoryDetail.css"
 
 function Repository() {
     let { repositoryId } = useParams()
@@ -17,12 +18,11 @@ function Repository() {
     
 
     async function fetchRepositoryById(repositoryId) {
-        const url = `http://localhost:8080/geosamples-api/repositories/${repositoryId}`
+        const url = `${apiBaseUrl}/repositories/${repositoryId}`
         const response = await fetch(url, {
             method: 'GET',
             headers: {'Content-Type': 'application/json'}
         });
-        // TODO discriminate between server error (500) and invalid ID (404)
         if (response.status === 404 ) {
             console.warn("Invalid repository id: "+repositoryId)
         } else if (response.status === 500) {
@@ -46,12 +46,10 @@ function Repository() {
 
 
     return (
-        <>
-            <HeaderPanel></HeaderPanel>
+        <div className={"RepositoryDetail"}>
             <h2>Repository Contact Information</h2>
             {repositoryData? <div className="contactInfoDiv" dangerouslySetInnerHTML={{__html:sanitizeHTML(repositoryData.facility_comment)}}/>: 'no data available'}            
-            <FooterPanel></FooterPanel>
-        </>
+        </div>
     )
 }
 

@@ -4,7 +4,6 @@ import {buildQueryUrl} from '../../ApiUtils'
 import "./RepositorySelect.css"
 
 function RepositorySelect({
-    apiBaseUrl, 
     selectStyles,
     activePlatform,
     activeDevice,
@@ -48,7 +47,7 @@ function RepositorySelect({
             className="basic-single"
             name="repository"
             options={repositories}
-            // defaultValue={repositories[0]}
+            // defaultValue={{label:'testme', value:'AOML'}}
             onChange={setActiveRepository}
             value={activeRepository}
         />

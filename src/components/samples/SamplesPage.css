@@ -1,12 +1,36 @@
-.Samples {
+/* .Samples {
     display: grid;
   grid-template-columns: 400px auto;
-  grid-template-rows: 60px auto 200px 50px;
+  grid-template-rows: 60px auto 300px 50px;
   grid-template-areas:
     "header header"
     "sidebar map"
     "grid grid"
     "footer footer";
+  width: 100vw;
+  height: 100vh;
+} */
+
+.Samples {
+  display: grid;
+  grid-template-columns: 400px auto;
+  grid-template-rows: 60px auto 50px;
+  grid-template-areas:
+  "header header"
+  "sidebar map"
+  "footer footer";
+  width: 100vw;
+  height: 100vh;
+}
+
+.SamplesDetail {
+  display: grid;
+  /* grid-template-columns: auto; */
+  grid-template-rows: 60px  auto 50px;
+  grid-template-areas:
+  "header"
+  "main"
+  "footer";
   width: 100vw;
   height: 100vh;
 }

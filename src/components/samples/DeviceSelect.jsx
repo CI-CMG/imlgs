@@ -4,7 +4,6 @@ import {buildQueryUrl} from '../../ApiUtils'
 import "./DeviceSelect.css"
 
 function DeviceSelect({
-    apiBaseUrl, 
     selectStyles,
     activeRepository,
     activePlatform,

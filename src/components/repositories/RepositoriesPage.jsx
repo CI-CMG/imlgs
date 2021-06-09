@@ -6,11 +6,11 @@ import {
     useParams,
     useRouteMatch
 } from "react-router-dom"
-import HeaderPanel from "./HeaderPanel"
-import Repository from './Repository'
-import FooterPanel from './FooterPanel'
+import HeaderPanel from "../HeaderPanel"
+import RepositoryDetail from './RepositoryDetail'
+import FooterPanel from '../FooterPanel'
 import RepositoriesPanel from "./RepositoriesPanel"
-import "./Repositories.css"
+import "./RepositoriesPage.css"
 
 
 function RepositoriesPage() {
@@ -21,14 +21,18 @@ function RepositoriesPage() {
     return (
         <Switch>
             <Route path={`${match.path}/:repositoryId`}>
-                <Repository />
+                <div className="RepositoriesPage">
+                    <HeaderPanel></HeaderPanel>
+                    <RepositoryDetail></RepositoryDetail>
+                    <FooterPanel></FooterPanel>
+                </div>
             </Route>
             <Route path={match.path}>
-                <>
+                <div className="RepositoriesPage">
                     <HeaderPanel pageName={pageName}></HeaderPanel>
                     <RepositoriesPanel></RepositoriesPanel>
                     <FooterPanel></FooterPanel>
-                </>
+                </div>
             </Route>
         </Switch>
     )

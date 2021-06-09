@@ -4,7 +4,6 @@ import {buildQueryUrl} from '../../ApiUtils'
 import "./LakeSelect.css"
 
 function LakeSelect({
-    apiBaseUrl, 
     selectStyles,
     activeRepository,
     activeDevice,

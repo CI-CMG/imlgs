@@ -15,9 +15,9 @@ function HeaderPanel() {
             <div className={`${baseClass}--titleDiv`}>
                 <span className={`${baseClass}--title`}>Index to Marine and Lacustrine Geological Samples (IMLGS)</span>
             </div>
-            <a href="https://www.nsf.gov/div/index.jsp?div=OCE" title="external link to the National Science Foundation Ocean Sciences Division" target="_top">
+            <span href="https://www.nsf.gov/div/index.jsp?div=OCE" title="external link to the National Science Foundation Ocean Sciences Division" target="_top">
                 <img className={`${baseClass}--nsfLogo`} src="/assets/NSFLogo.png" alt="US National Science Foundation Division of Ocean Sciences"/>
-            </a>
+            </span>
 
             {/* <Nav style={{margin:"5px", marginLeft:"75px"}} variant="pills" defaultActiveKey="/home">
                 <Nav.Item>

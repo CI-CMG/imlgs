@@ -1,3 +1,6 @@
+.RepositoryDetail {
+    grid-area: main;
+}
 .contactInfoDiv {
     width: 50%;
     margin: 0 auto;

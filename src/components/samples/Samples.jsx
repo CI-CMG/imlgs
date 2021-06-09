@@ -12,6 +12,7 @@ import FooterPanel from "./FooterPanel"
 import MapPanel from "./MapPanel"
 import SamplesFilterPanel from "./SamplesFilterPanel"
 import GridPanel from "./GridPanel"
+import MaterialUIDataGrid from "./MaterialUIDataGrid"
 // import 'bootstrap/dist/css/bootstrap.min.css'
 import "./Samples.css"
 
@@ -35,7 +36,7 @@ function Samples({setCount, count}) {
                         repository={repository}
                     />
                     <SamplesFilterPanel setCount={setCount} count={count}></SamplesFilterPanel>
-                    <GridPanel></GridPanel>
+                    <MaterialUIDataGrid></MaterialUIDataGrid>
                     <FooterPanel></FooterPanel>
                 </div>            
             </Route>
