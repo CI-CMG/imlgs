@@ -62,7 +62,7 @@ function App() {
   console.log('inside App...')
   return (
     <QueryClientProvider client={queryClient}>   
-    <Router>
+    <Router basename="/~jcc/imlgs">
         <Switch>
           <Route path="/about">
             <AboutPage/>

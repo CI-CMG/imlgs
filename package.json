@@ -1,6 +1,7 @@
 {
   "name": "imlgs",
   "version": "0.0.0",
+  "homepage": "http://localhost/~jcc/imlgs",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
