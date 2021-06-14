@@ -10,7 +10,10 @@ function DeviceSelect({
     activeLake,
     activeCruise,
     setActiveDevice,
-    activeDevice}) {
+    activeDevice,
+    minDepth,
+    maxDepth,
+    startDate}) {
     // console.log('inside DeviceSelect...')
     const baseClass = 'DeviceSelect'
     const [devices, setDevices] = useState()
@@ -23,7 +26,9 @@ function DeviceSelect({
         if (activePlatform) { queryParams.push({name:'platform', value:activePlatform.value})}
         if (activeLake) { queryParams.push({name:'lake', value:activeLake.value})}
         if (activeCruise) { queryParams.push({name:'cruise', value:activeCruise.value})}
-
+        if (minDepth) { queryParams.push({name:'minDepth', value:minDepth})}
+        if (maxDepth) { queryParams.push({name:'maxDepth', value:maxDepth})}
+        if (startDate) { queryParams.push({name:'startDate', value:startDate})}
         const queryURL = buildQueryUrl('devices', queryParams)
 
         // Promise returned from fetch won’t reject on HTTP 404 or 500.         
@@ -38,7 +43,7 @@ function DeviceSelect({
                 let devices = data.map((item) => {return({value: item})})
                 setDevices(devices)
             }).catch(err => console.error('Error in API request: ', err))
-    }, [activeRepository, activePlatform, activeLake, activeCruise])
+    }, [activeRepository, activePlatform, activeLake, activeCruise, minDepth, maxDepth, startDate])
 
 
     return(

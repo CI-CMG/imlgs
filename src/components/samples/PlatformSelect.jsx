@@ -10,7 +10,10 @@ function PlatformSelect({
     activeLake,
     activeCruise,
     setActivePlatform,
-    activePlatform}) {
+    activePlatform,
+    minDepth,
+    maxDepth,
+    startDate}) {
 
     // console.log('inside PlatformSelect...')
     const baseClass = 'PlatformSelect'
@@ -24,6 +27,9 @@ function PlatformSelect({
         if (activeDevice) { queryParams.push({name:'device', value:activeDevice.value})}
         if (activeLake) { queryParams.push({name:'lake', value:activeLake.value})}
         if (activeCruise) { queryParams.push({name:'cruise', value:activeCruise.value})}
+        if (minDepth) { queryParams.push({name:'minDepth', value:minDepth})}
+        if (maxDepth) { queryParams.push({name:'maxDepth', value:maxDepth})}
+        if (startDate) { queryParams.push({name:'startDate', value:startDate})}
 
         const queryURL = buildQueryUrl('platforms', queryParams)        
 
@@ -38,7 +44,7 @@ function PlatformSelect({
                 let platforms = data.map((item) => {return({value: item})})
                 setPlatforms(platforms)
             }).catch(err => console.error('Error in API request: ', err))
-    }, [activeRepository, activeDevice, activeLake, activeCruise])
+    }, [activeRepository, activeDevice, activeLake, activeCruise, , minDepth, maxDepth, startDate])
 
 
     return(

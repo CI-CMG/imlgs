@@ -6,15 +6,22 @@ import Button from 'react-bootstrap/Button'
 import "./SamplesTable.css"
 
 
-function SamplesTable({data}) {
+function SamplesTable({data, nextPage, previousPage, offset, pageSize}) {
     console.log('inside SamplesTable...')
-    console.log(data)
+    // console.log(data)
     const baseClass = 'SamplesTable'
     const history = useHistory()
+
+
     function openSamplesPage() {
-        // TODO call w/ original query parameters
+        // TODO call w/ original query parameters?
         history.push('/samples')
     }
+
+    function exportCSV() {
+        console.log('inside exportCSV...')
+    }
+
 
     return(
         <div className="SamplesTable">
@@ -23,8 +30,12 @@ function SamplesTable({data}) {
                     <Nav.Link size="sm" href="/samples">New Search</Nav.Link>
                 </Nav.Item>
             </Nav> */}
-            <div>
-                <Button className={`${baseClass}--newSearchBtn`} style={{marginLeft: '15px', margin:'5px'}} variant="primary" size="sm" onClick={openSamplesPage}>New Search</Button>
+            <div style={{paddingTop:'5px', paddingBottom:'5px'}}>
+                <Button className={`${baseClass}--newSearchBtn`} style={{marginLeft: '15px', marginRight:'15px'}} variant="primary" size="sm" onClick={openSamplesPage}>New Search</Button>
+                <Button className={`${baseClass}--exportBtn`} style={{marginLeft: '15px', marginRight:'50px'}} variant="primary" size="sm" onClick={exportCSV}>Export Data</Button>
+                <Button className={`${baseClass}--prevPageBtn`} style={{marginRight:'5px'}} variant="primary" size="sm" onClick={previousPage}>&lt;</Button>
+                <Button className={`${baseClass}--nextPageBtn`} style={{}} variant="primary" size="sm" onClick={nextPage}>&gt;</Button>
+                <span style={{marginLeft: '15px'}}>samples {offset} to {offset+pageSize}</span>
             </div>
 
             {(!data) ? <h4>no data</h4>: ''}

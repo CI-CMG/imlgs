@@ -11,10 +11,9 @@ function Repository() {
     const [repositoryData, setRepositoryData] = useState()
     // const parser = new DOMParser()
 
-
     useEffect(() => {
         fetchRepositoryById(repositoryId);
-    }, [repositoryId]); // end useEffect
+    }, [repositoryId]);
     
 
     async function fetchRepositoryById(repositoryId) {
@@ -32,7 +31,7 @@ function Repository() {
             console.warn("Error fetching data from: " + url)
             return
         }
-        const json = await response.json();
+        const json = await response.json()
         // console.debug(json)
         setRepositoryData(json)
     }

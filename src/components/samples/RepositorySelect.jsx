@@ -10,7 +10,10 @@ function RepositorySelect({
     activeLake,
     activeCruise,
     setActiveRepository,
-    activeRepository}) {
+    activeRepository,
+    minDepth,
+    maxDepth,
+    startDate}) {
 
     // console.log('inside RepositorySelect...')
     const baseClass = 'RepositorySelect'
@@ -23,9 +26,12 @@ function RepositorySelect({
         if (activeDevice) { queryParams.push({name:'device', value:activeDevice.value})}
         if (activeLake) { queryParams.push({name:'lake', value:activeLake.value})}
         if (activeCruise) { queryParams.push({name:'cruise', value:activeCruise.value})}
-
+        if (minDepth) { queryParams.push({name:'minDepth', value:minDepth})}
+        if (maxDepth) { queryParams.push({name:'maxDepth', value:maxDepth})}
+        if (startDate) { queryParams.push({name:'startDate', value:startDate})}
+        
         const queryURL = buildQueryUrl('repositories', queryParams)
-        // console.log(queryURL);
+        console.log(queryURL);
 
         // Promise returned from fetch won’t reject on HTTP 404 or 500. 
         fetch(queryURL)
@@ -38,7 +44,7 @@ function RepositorySelect({
                 let repositories = data.map((item) => {return({value: item.facility_code, label:item.facility})})
                 setRepositories(repositories)
             }).catch(err => console.error('Error in API request: ', err))    
-    }, [activePlatform, activeDevice, activeLake, activeCruise])
+    }, [activePlatform, activeDevice, activeLake, activeCruise, minDepth, maxDepth, startDate])
 
 
     return(

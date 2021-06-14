@@ -1,5 +1,5 @@
 
-const apiBaseUrl = 'http://localhost:8080/geosamples-api'
+const apiBaseUrl = 'http://localhost/geosamples-api'
 
 
 function buildQueryUrl(resourcePath, filters = []) {

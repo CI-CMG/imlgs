@@ -10,7 +10,10 @@ function CruiseSelect({
     activeLake,
     activePlatform,
     setActiveCruise,
-    activeCruise}) {
+    activeCruise,
+    minDepth,
+    maxDepth,
+    startDate}) {
 
     // console.log('inside CruiseSelect...')
     const baseClass = 'CruiseSelect'
@@ -22,7 +25,9 @@ function CruiseSelect({
         if (activeDevice) { queryParams.push({name:'device', value:activeDevice.value})}
         if (activeLake) { queryParams.push({name:'lake', value:activeLake.value})}
         if (activePlatform) { queryParams.push({name:'platform', value:activePlatform.value})}
-
+        if (minDepth) { queryParams.push({name:'minDepth', value:minDepth})}
+        if (maxDepth) { queryParams.push({name:'maxDepth', value:maxDepth})}
+        if (startDate) { queryParams.push({name:'startDate', value:startDate})}
         const queryURL = buildQueryUrl('cruises', queryParams)
 
         fetch(queryURL)
@@ -36,7 +41,7 @@ function CruiseSelect({
                 setCruises(cruises)
             }).catch(err => console.error('Error in API request: ', err))
         
-    }, [activeRepository, activeDevice, activeLake, activePlatform])
+    }, [activeRepository, activeDevice, activeLake, activePlatform, minDepth, maxDepth, startDate])
 
 
     return(

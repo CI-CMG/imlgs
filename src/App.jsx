@@ -58,6 +58,7 @@ function App() {
   )
 }
 */
+  /* basename="/~jcc/imlgs" */
   console.log('inside App...')
   return (
     <QueryClientProvider client={queryClient}>   

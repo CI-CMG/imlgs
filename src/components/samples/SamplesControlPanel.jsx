@@ -53,6 +53,10 @@ function SamplesControlPanel({
     const [activeLake, setActiveLake] = useState()
     const [activeDevice, setActiveDevice] = useState()
     const [activeCruise, setActiveCruise] = useState()
+    const [startDate, setStartDate] = useState()
+    const [minDepth, setMinDepth] = useState()
+    const [maxDepth, setMaxDepth] = useState()
+
 
     function filterMap() {
         let defs = []
@@ -63,6 +67,11 @@ function SamplesControlPanel({
         if (activeLake) defs.push(`LAKE = '${activeLake.value}'`)
         if (activeDevice) defs.push(`DEVICE = '${activeDevice.value}'`)
         if (activeCruise) defs.push(`CRUISE = '${activeCruise.value}'`)
+        if (startDate) defs.push(`BEGIN_DATE like '${startDate}%'`)
+        // minDepth may be 0 and therefore falsey. maxDepth should not be 0
+        if (minDepth != null) defs.push(`WATER_DEPTH >= ${minDepth}`)  
+        if (maxDepth) defs.push(`WATER_DEPTH <= ${maxDepth}`)
+        
         if (defs) {
             setLayerDefinitionExpression(defs.join(' and '))
         } else {
@@ -79,6 +88,9 @@ function SamplesControlPanel({
         if (activeLake) { console.log('Lake: ', activeLake.value) }
         if (activeCruise) { console.log('Cruise: ', activeCruise.value) }
         if (geoextent) { console.log('Geoextent: ' + geoextent.join(',')) }
+        if (startDate) { console.log('StartDate: ' + startDate)}
+        if (minDepth != null) console.log('MinDepth: ' + minDepth)
+        if (maxDepth) console.log('MaxDepth: ' + maxDepth)
     }
     
 
@@ -90,6 +102,10 @@ function SamplesControlPanel({
         if (activeLake) { searchParams.push(`lake=${activeLake.value}`) }
         if (activeCruise) { searchParams.push(`cruise=${activeCruise.value}`) }
         if (geoextent) { searchParams.push(`bbox=${geoextent.join(',')}`) }
+        if (startDate) { searchParams.push(`start_date=${startDate}`) }
+        if (minDepth != null) { searchParams.push(`min_depth=${minDepth}`) }
+        if (maxDepth) { searchParams.push(`max_depth=${maxDepth}`) }
+
         if (searchParams.length) {
             setTableUrl(`/samples_table?${searchParams.join('&')}`)
         } else {
@@ -104,7 +120,7 @@ function SamplesControlPanel({
         // triggers map update even if to remove layer definition
         filterMap()
     
-        const filters =  [activeDevice, activeLake, activePlatform, activeRepository, activeCruise, geoextent]
+        const filters =  [activeDevice, activeLake, activePlatform, activeRepository, activeCruise, geoextent, startDate, minDepth, maxDepth]
         const noFiltersSet = filters.every(val => !val)
     
         if (noFiltersSet) {
@@ -127,8 +143,11 @@ function SamplesControlPanel({
         if (activeLake) { queryParams.push({name:'lake', value:activeLake.value})}
         if (activeCruise) { queryParams.push({name:'cruise', value:activeCruise.value})}
         if (geoextent) { queryParams.push({name: 'bbox', value: geoextent.join(',')})}
+        if (startDate) { queryParams.push({name: 'start_date', value:startDate})}
+        if (minDepth) { queryParams.push({name: 'min_depth', value: minDepth})}
+        if (maxDepth) { queryParams.push({name: 'max_depth', value: maxDepth})}
         const queryURL = buildQueryUrl('samples', queryParams)
-        // console.debug(queryURL)
+        console.debug(queryURL)
 
         const response = await fetch(queryURL)
         if (response.status !== 200) {
@@ -139,7 +158,7 @@ function SamplesControlPanel({
         // console.debug('setting selected sample count to ', json.count)
         setSelectedSamplesCount(json.count)
 
-    },[activeDevice, activeLake, activePlatform, activeRepository, activeCruise, geoextent])
+    },[activeDevice, activeLake, activePlatform, activeRepository, activeCruise, geoextent, startDate, minDepth, maxDepth])
 
 
     // used to style Select components
@@ -157,12 +176,52 @@ function SamplesControlPanel({
         setActiveLake(null)
         setActiveDevice(null)
         setActiveCruise(null)
-    }
+        setStartDate(null)
+        document.getElementById('startDate').value = null
+        document.getElementById('minDepthInput').value = null
+        document.getElementById('maxDepthInput').value = null
+        setMinDepth()
+        setMaxDepth()    }
 
     function checkboxHandler(evt) {
         // console.log('inside checkboxHandler with ', evt.target.checked)
         setZoomToSelected(evt.target.checked)
     }
+
+    function startDateHandler(evt) {
+        console.log('inside startDateHandler with ', evt.target.value)
+        if (evt.target.value.length < 4 || evt.target.value.length > 8) {
+            return
+        }
+        setStartDate(evt.target.value)
+    }
+
+
+    function waterDepthHandler(evt) {
+        console.log('inside waterDepthHandler with ',evt.target.name, evt.target.value)
+        const depth = parseInt(evt.target.value)
+        if (isNaN(depth)) { return }
+    
+        if (evt.target.name == 'minDepth') {
+            if (maxDepth && depth >= maxDepth ) {
+                console.error('minDepth must be less than maxDepth')
+                document.getElementById('minDepthInput').value = null
+                setMinDepth()
+                return
+            }
+            setMinDepth(depth)
+        }
+        if (evt.target.name == 'maxDepth') {
+            if (minDepth && depth <= minDepth ) {
+                console.error('maxDepth must be greater than maxDepth')
+                document.getElementById('maxDepthInput').value = null
+                setMaxDepth()
+                return
+            }
+            setMaxDepth(depth)
+        }
+    }
+
 
     function openTable(evt) {
         console.debug(tableUrl)
@@ -212,6 +271,9 @@ function SamplesControlPanel({
                         activeDevice={activeDevice}
                         activeLake={activeLake}
                         activeCruise={activeCruise}
+                        minDepth={minDepth}
+                        maxDepth={maxDepth}
+                        startDate={startDate}
                     />
                 </Col>
                 </Form.Row>
@@ -231,6 +293,9 @@ function SamplesControlPanel({
                         activeDevice={activeDevice}
                         activeLake={activeLake}
                         activeCruise={activeCruise}
+                        minDepth={minDepth}
+                        maxDepth={maxDepth}
+                        startDate={startDate}
                     />
                 </Col>
                 </Form.Row>
@@ -250,6 +315,9 @@ function SamplesControlPanel({
                         activePlatform={activePlatform}
                         activeDevice={activeDevice}
                         activeCruise={activeCruise}
+                        minDepth={minDepth}
+                        maxDepth={maxDepth}
+                        startDate={startDate}
                     />
                 </Col>
                 </Form.Row>
@@ -269,6 +337,9 @@ function SamplesControlPanel({
                     activePlatform={activePlatform}
                     activeLake={activeLake}
                     activeCruise={activeCruise}
+                    minDepth={minDepth}
+                    maxDepth={maxDepth}
+                    startDate={startDate}
                 />
                 </Col>
                 </Form.Row>
@@ -288,10 +359,39 @@ function SamplesControlPanel({
                     activePlatform={activePlatform}
                     activeLake={activeLake}
                     activeDevice={activeDevice}
+                    minDepth={minDepth}
+                    maxDepth={maxDepth}
+                    startDate={startDate}
                 />
                 </Col>
                 </Form.Row>
             </Form.Group>
+            <Form.Group controlId="startDate">
+                <Form.Row style={{margin:"10px"}}>
+                    <Form.Label>Date</Form.Label>
+                    <Form.Control
+                        style={{width:"100px", marginLeft: "10px", fontSize: "small"}} 
+                        type="text" placeholder="YYYMMDD"
+                        onBlur={startDateHandler}
+                        />
+                </Form.Row>
+            </Form.Group>
+            <Form.Group>
+                <Form.Row style={{margin:"10px"}}>
+                    <Form.Label>Water Depth(m)</Form.Label>
+                    <Form.Control id="minDepthInput" name="minDepth"
+                        style={{width:"80px", marginLeft: "10px", fontSize: "small"}} 
+                        type="number" placeholder="min" min="0"
+                        onBlur={waterDepthHandler} />
+                    <span style={{padding:"10px"}}> to </span>
+                    <Form.Control id="maxDepthInput" name="maxDepth"
+                        style={{width:"80px", fontSize: "small"}} 
+                        type="number" placeholder="max" min="0"
+                        onBlur={waterDepthHandler}/>
+
+                </Form.Row>
+            </Form.Group>
+
             <Form.Group controlId="zoomToSelected">
                 <Form.Check
                     type="checkbox" 

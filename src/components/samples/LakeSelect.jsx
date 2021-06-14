@@ -10,7 +10,10 @@ function LakeSelect({
     activePlatform,
     activeCruise,
     setActiveLake,
-    activeLake}) {
+    activeLake,
+    minDepth,
+    maxDepth,
+    startDate}) {
 
     // console.log('inside LakeSelect...')
     const baseClass = 'LakeSelect'
@@ -26,7 +29,9 @@ function LakeSelect({
         if (activeDevice) { queryParams.push({name:'device', value:activeDevice.value})}
         if (activePlatform) { queryParams.push({name:'platform', value:activePlatform.value})}
         if (activeCruise) { queryParams.push({name:'cruise', value:activeCruise.value})}
-
+        if (minDepth) { queryParams.push({name:'minDepth', value:minDepth})}
+        if (maxDepth) { queryParams.push({name:'maxDepth', value:maxDepth})}
+        if (startDate) { queryParams.push({name:'startDate', value:startDate})}
         const queryURL = buildQueryUrl('lakes', queryParams)
 
         fetch(queryURL)
@@ -40,7 +45,7 @@ function LakeSelect({
                 setLakes(lakes)
             }).catch(err => console.error('Error in API request: ', err))
 
-    }, [activeRepository, activeDevice, activePlatform, activeCruise])
+    }, [activeRepository, activeDevice, activePlatform, activeCruise, , minDepth, maxDepth, startDate])
 
 
     return(

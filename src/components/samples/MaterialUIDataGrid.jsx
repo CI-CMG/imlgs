@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { DataGrid, GridRowsProp, GridColDef } from '@material-ui/data-grid';
+import { DataGrid } from '@material-ui/data-grid';
 import "./MaterialUIDataGrid.css"
 
 
