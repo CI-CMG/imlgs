@@ -1,25 +1,32 @@
-import React from "react"
+import React, { useRef, useEffect, useState } from "react"
 import { Link, useHistory } from "react-router-dom"
-import Nav from 'react-bootstrap/Nav'
+import {apiBaseUrl} from '../ApiUtils'
+// import Nav from 'react-bootstrap/Nav'
 import Button from 'react-bootstrap/Button'
-
 import "./SamplesTable.css"
 
 
-function SamplesTable({data, nextPage, previousPage, offset, pageSize}) {
+function SamplesTable({data, nextPage, previousPage, offset, pageSize, searchParams}) {
     console.log('inside SamplesTable...')
     // console.log(data)
+    searchParams.forEach((value, key) => console.log(`${key} => ${value}`))
+  console.log((data.length < pageSize), data.length, pageSize)
     const baseClass = 'SamplesTable'
     const history = useHistory()
 
 
     function openSamplesPage() {
-        // TODO call w/ original query parameters?
+        // TODO new query - call w/ original query parameters?
         history.push('/samples')
     }
 
+
     function exportCSV() {
         console.log('inside exportCSV...')
+        searchParams.set('format', 'csv')
+        const queryURL = `${apiBaseUrl}/samples?${searchParams.toString()}`
+        console.log(queryURL)
+        window.open(queryURL)
     }
 
 
@@ -33,14 +40,17 @@ function SamplesTable({data, nextPage, previousPage, offset, pageSize}) {
             <div style={{paddingTop:'5px', paddingBottom:'5px'}}>
                 <Button className={`${baseClass}--newSearchBtn`} style={{marginLeft: '15px', marginRight:'15px'}} variant="primary" size="sm" onClick={openSamplesPage}>New Search</Button>
                 <Button className={`${baseClass}--exportBtn`} style={{marginLeft: '15px', marginRight:'50px'}} variant="primary" size="sm" onClick={exportCSV}>Export Data</Button>
-                <Button className={`${baseClass}--prevPageBtn`} style={{marginRight:'5px'}} variant="primary" size="sm" onClick={previousPage}>&lt;</Button>
-                <Button className={`${baseClass}--nextPageBtn`} style={{}} variant="primary" size="sm" onClick={nextPage}>&gt;</Button>
-                <span style={{marginLeft: '15px'}}>samples {offset} to {offset+pageSize}</span>
+                <Button className={`${baseClass}--prevPageBtn`} style={{marginRight:'5px'}} 
+                    variant="primary" size="sm" onClick={previousPage} 
+                    disabled={(offset)? false : true}>&lt;</Button>
+                <Button className={`${baseClass}--nextPageBtn`} style={{}} 
+                    variant="primary" size="sm" onClick={nextPage} 
+                    disabled={(data.length < pageSize)? true: false}>&gt;</Button>
+                <span style={{marginLeft: '15px'}}>samples {offset} to {(data.length<pageSize)? offset+data.length: offset+pageSize}</span>
             </div>
 
             {(!data) ? <h4>no data</h4>: ''}
-            {data && data.length > 1000 ? <h4>too much data to display. Please refine your selection</h4>: ''}
-            {data && data.length <= 1000 ? 
+            {data ? 
                 <table className={`${baseClass}--datatable`}>
                 <thead>
                 <tr>

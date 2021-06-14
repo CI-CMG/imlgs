@@ -49,7 +49,7 @@ function ShowTablePage() {
   return (
     <div className="ShowTablePage">
       <HeaderPanel></HeaderPanel>
-      <SamplesTable data={samplesData} nextPage={incrementPage} previousPage={decrementPage} offset={offset} pageSize={pageSize}></SamplesTable>
+      <SamplesTable searchParams={searchParams} data={samplesData} nextPage={incrementPage} previousPage={decrementPage} offset={offset} pageSize={pageSize}></SamplesTable>
       <FooterPanel></FooterPanel>
     </div>
   );
