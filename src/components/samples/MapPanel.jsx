@@ -4,6 +4,8 @@ import MapView from "@arcgis/core/views/MapView";
 import MapImageLayer from "@arcgis/core/layers/MapImageLayer";
 import Graphic from "@arcgis/core/Graphic";
 import Extent from "@arcgis/core/geometry/Extent";
+import IdentifyTask from "@arcgis/core/tasks/IdentifyTask"
+import IdentifyParameters from "@arcgis/core/tasks/support/IdentifyParameters"
 import {webMercatorToGeographic} from "@arcgis/core/geometry/support/webMercatorUtils";
 import "./MapPanel.css";
 
@@ -15,6 +17,8 @@ function MapPanel({layerDefinitionExpression, setSelectedExtent, zoomToSelected}
     const extentToolbar = useRef(null);
     const samplesLayer = useRef(null);
     const mapView = useRef();
+    const identifyTask = useRef()
+    
     // keep a local copy of the selected geoextent in addition to the one in 
     // the parent component
     const geoextent = useRef()
@@ -23,6 +27,12 @@ function MapPanel({layerDefinitionExpression, setSelectedExtent, zoomToSelected}
     
   useEffect(() => {
     console.log("inside useEffect to set up map");
+    const identifyParams = new IdentifyParameters()
+    identifyParams.tolerance = 3
+    identifyParams.layerIds = 0
+    identifyParams.layerOption = "top";
+    const identifyTask = new IdentifyTask("https://gis.ngdc.noaa.gov/arcgis/rest/services/web_mercator/sample_index_dynamic/MapServer")
+
 
     // wait until DOM node has been constructed
     if (mapDiv.current) {
@@ -53,10 +63,49 @@ function MapPanel({layerDefinitionExpression, setSelectedExtent, zoomToSelected}
       });
 
       view.when(function(){
-        console.log('MapView is ready...');
+        // console.log('MapView is ready...');
         view.ui.add('extentToolbar', "top-left");
         mapView.current = view
+
+        view.on('click', executeIdentifyTask)
+        identifyParams.width = view.width;
+        identifyParams.height = view.height;
       });
+
+      function executeIdentifyTask(event) {
+        // Set the geometry to the location of the view click
+        identifyParams.geometry = event.mapPoint;
+        identifyParams.mapExtent = view.extent;
+        // document.getElementById("viewDiv").style.cursor = "wait"
+        identifyTask.execute(identifyParams).then(function(response){
+          const results = response.results
+          console.log(results[0].feature.attributes)
+          return results.map(function(result) {
+            const feature = result.feature;
+            feature.popupTemplate = {
+              // autocasts as new PopupTemplate()
+              title: "Sample {IMLGS}",
+              content:
+                "<b>Repository:</b> {Repository}" +
+                "<br><b>Location:</b> {Longitude}, {Latitude}" +
+                "<br><b>Year:</b> {Year}" +
+                "<br><b>Water Depth:</b> {Water Depth (m)}m"
+            };
+            return feature
+          })
+        }).then(showPopup)
+        
+        function showPopup(response) {
+          if(response.length > 0) {
+            view.popup.open({
+              features: response,
+              location: event.mapPoint
+            });
+          } 
+        }
+      }
+
+
       view.watch("extent", function(newValue){
         const extent = webMercatorToGeographic(newValue)
         const coords = [extent.xmin, extent.ymin, extent.xmax, extent.ymax].map(x => parseFloat(x.toFixed(4)));
