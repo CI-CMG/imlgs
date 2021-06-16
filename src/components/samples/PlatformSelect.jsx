@@ -13,7 +13,8 @@ function PlatformSelect({
     activePlatform,
     minDepth,
     maxDepth,
-    startDate}) {
+    startDate,
+    geoextent}) {
 
     // console.log('inside PlatformSelect...')
     const baseClass = 'PlatformSelect'
@@ -30,6 +31,7 @@ function PlatformSelect({
         if (minDepth) { queryParams.push({name:'minDepth', value:minDepth})}
         if (maxDepth) { queryParams.push({name:'maxDepth', value:maxDepth})}
         if (startDate) { queryParams.push({name:'startDate', value:startDate})}
+        if (geoextent) { queryParams.push({name: 'bbox', value: geoextent.join(',')})}
 
         const queryURL = buildQueryUrl('platforms', queryParams)        
 
@@ -44,7 +46,7 @@ function PlatformSelect({
                 let platforms = data.map((item) => {return({value: item})})
                 setPlatforms(platforms)
             }).catch(err => console.error('Error in API request: ', err))
-    }, [activeRepository, activeDevice, activeLake, activeCruise, , minDepth, maxDepth, startDate])
+    }, [activeRepository, activeDevice, activeLake, activeCruise, , minDepth, maxDepth, startDate, geoextent])
 
 
     return(

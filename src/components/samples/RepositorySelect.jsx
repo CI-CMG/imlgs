@@ -13,7 +13,8 @@ function RepositorySelect({
     activeRepository,
     minDepth,
     maxDepth,
-    startDate}) {
+    startDate,
+    geoextent}) {
 
     // console.log('inside RepositorySelect...')
     const baseClass = 'RepositorySelect'
@@ -29,6 +30,7 @@ function RepositorySelect({
         if (minDepth) { queryParams.push({name:'minDepth', value:minDepth})}
         if (maxDepth) { queryParams.push({name:'maxDepth', value:maxDepth})}
         if (startDate) { queryParams.push({name:'startDate', value:startDate})}
+        if (geoextent) { queryParams.push({name: 'bbox', value: geoextent.join(',')})}
         
         const queryURL = buildQueryUrl('repositories', queryParams)
         console.log(queryURL);
@@ -44,7 +46,7 @@ function RepositorySelect({
                 let repositories = data.map((item) => {return({value: item.facility_code, label:item.facility})})
                 setRepositories(repositories)
             }).catch(err => console.error('Error in API request: ', err))    
-    }, [activePlatform, activeDevice, activeLake, activeCruise, minDepth, maxDepth, startDate])
+    }, [activePlatform, activeDevice, activeLake, activeCruise, minDepth, maxDepth, startDate, geoextent])
 
 
     return(

@@ -189,16 +189,17 @@ function SamplesControlPanel({
     }
 
     function startDateHandler(evt) {
-        console.log('inside startDateHandler with ', evt.target.value)
+        // console.log('inside startDateHandler with ', evt.target.value)
         if (evt.target.value.length < 4 || evt.target.value.length > 8) {
             return
         }
+        console.log('updating startDate...')
         setStartDate(evt.target.value)
     }
 
 
     function waterDepthHandler(evt) {
-        console.log('inside waterDepthHandler with ',evt.target.name, evt.target.value)
+        // console.log('inside waterDepthHandler with ',evt.target.name, evt.target.value)
         const depth = parseInt(evt.target.value)
         if (isNaN(depth)) { return }
     
@@ -274,6 +275,7 @@ function SamplesControlPanel({
                         minDepth={minDepth}
                         maxDepth={maxDepth}
                         startDate={startDate}
+                        geoextent={geoextent}
                     />
                 </Col>
                 </Form.Row>
@@ -296,6 +298,7 @@ function SamplesControlPanel({
                         minDepth={minDepth}
                         maxDepth={maxDepth}
                         startDate={startDate}
+                        geoextent={geoextent}
                     />
                 </Col>
                 </Form.Row>
@@ -318,6 +321,7 @@ function SamplesControlPanel({
                         minDepth={minDepth}
                         maxDepth={maxDepth}
                         startDate={startDate}
+                        geoextent={geoextent}
                     />
                 </Col>
                 </Form.Row>
@@ -340,6 +344,7 @@ function SamplesControlPanel({
                     minDepth={minDepth}
                     maxDepth={maxDepth}
                     startDate={startDate}
+                    geoextent={geoextent}
                 />
                 </Col>
                 </Form.Row>
@@ -362,6 +367,7 @@ function SamplesControlPanel({
                     minDepth={minDepth}
                     maxDepth={maxDepth}
                     startDate={startDate}
+                    geoextent={geoextent}
                 />
                 </Col>
                 </Form.Row>
@@ -372,7 +378,7 @@ function SamplesControlPanel({
                     <Form.Control
                         style={{width:"100px", marginLeft: "10px", fontSize: "small"}} 
                         type="text" placeholder="YYYYMMDD"
-                        onBlur={startDateHandler}
+                        onBlur={startDateHandler} onChange={startDateHandler}
                         />
                 </Form.Row>
             </Form.Group>
@@ -382,13 +388,12 @@ function SamplesControlPanel({
                     <Form.Control id="minDepthInput" name="minDepth"
                         style={{width:"80px", marginLeft: "10px", fontSize: "small"}} 
                         type="number" placeholder="min" min="0"
-                        onBlur={waterDepthHandler} />
+                        onBlur={waterDepthHandler}/>
                     <span style={{padding:"10px"}}> to </span>
                     <Form.Control id="maxDepthInput" name="maxDepth"
                         style={{width:"80px", fontSize: "small"}} 
                         type="number" placeholder="max" min="0"
                         onBlur={waterDepthHandler}/>
-
                 </Form.Row>
             </Form.Group>
 

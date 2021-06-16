@@ -13,7 +13,8 @@ function CruiseSelect({
     activeCruise,
     minDepth,
     maxDepth,
-    startDate}) {
+    startDate,
+    geoextent}) {
 
     // console.log('inside CruiseSelect...')
     const baseClass = 'CruiseSelect'
@@ -28,6 +29,7 @@ function CruiseSelect({
         if (minDepth) { queryParams.push({name:'minDepth', value:minDepth})}
         if (maxDepth) { queryParams.push({name:'maxDepth', value:maxDepth})}
         if (startDate) { queryParams.push({name:'startDate', value:startDate})}
+        if (geoextent) { queryParams.push({name: 'bbox', value: geoextent.join(',')})}
         const queryURL = buildQueryUrl('cruises', queryParams)
 
         fetch(queryURL)
@@ -41,7 +43,7 @@ function CruiseSelect({
                 setCruises(cruises)
             }).catch(err => console.error('Error in API request: ', err))
         
-    }, [activeRepository, activeDevice, activeLake, activePlatform, minDepth, maxDepth, startDate])
+    }, [activeRepository, activeDevice, activeLake, activePlatform, minDepth, maxDepth, startDate, geoextent])
 
 
     return(
