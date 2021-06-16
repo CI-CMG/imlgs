@@ -371,7 +371,7 @@ function SamplesControlPanel({
                     <Form.Label>Date</Form.Label>
                     <Form.Control
                         style={{width:"100px", marginLeft: "10px", fontSize: "small"}} 
-                        type="text" placeholder="YYYMMDD"
+                        type="text" placeholder="YYYYMMDD"
                         onBlur={startDateHandler}
                         />
                 </Form.Row>
