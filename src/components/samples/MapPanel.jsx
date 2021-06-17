@@ -73,13 +73,14 @@ function MapPanel({layerDefinitionExpression, setSelectedExtent, zoomToSelected}
       });
 
       function executeIdentifyTask(event) {
+        mapDiv.current.style.cursor = "wait"
+
         // Set the geometry to the location of the view click
         identifyParams.geometry = event.mapPoint;
         identifyParams.mapExtent = view.extent;
         // document.getElementById("viewDiv").style.cursor = "wait"
         identifyTask.execute(identifyParams).then(function(response){
           const results = response.results
-          console.log(results[0].feature.attributes)
           return results.map(function(result) {
             const feature = result.feature;
             feature.popupTemplate = {
@@ -101,7 +102,8 @@ function MapPanel({layerDefinitionExpression, setSelectedExtent, zoomToSelected}
               features: response,
               location: event.mapPoint
             });
-          } 
+          }
+          mapDiv.current.style.cursor = "auto";
         }
       }
 
