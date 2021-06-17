@@ -207,18 +207,22 @@ function SamplesControlPanel({
             if (maxDepth && depth >= maxDepth ) {
                 console.error('minDepth must be less than maxDepth')
                 document.getElementById('minDepthInput').value = null
+                // document.getElementById('minDepthInput').style.color = "red"
                 setMinDepth()
                 return
             }
+            document.getElementById('minDepthInput').style.color = "black"
             setMinDepth(depth)
         }
         if (evt.target.name == 'maxDepth') {
             if (minDepth && depth <= minDepth ) {
                 console.error('maxDepth must be greater than maxDepth')
                 document.getElementById('maxDepthInput').value = null
+                // document.getElementById('maxDepthInput').style.color = "red"
                 setMaxDepth()
                 return
             }
+            document.getElementById('maxDepthInput').style.color = "black"
             setMaxDepth(depth)
         }
     }
