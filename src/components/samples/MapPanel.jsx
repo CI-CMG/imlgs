@@ -90,7 +90,8 @@ function MapPanel({layerDefinitionExpression, setSelectedExtent, zoomToSelected}
                 "<b>Repository:</b> {Repository}" +
                 "<br><b>Location:</b> {Longitude}, {Latitude}" +
                 "<br><b>Year:</b> {Year}" +
-                "<br><b>Water Depth:</b> {Water Depth (m)}m"
+                "<br><b>Water Depth:</b> {Water Depth (m)}m" +
+                '<br><a href="https://maps.ngdc.noaa.gov/viewers/imlgs/samples/{IMLGS}">more detail</a>'
             };
             return feature
           })
