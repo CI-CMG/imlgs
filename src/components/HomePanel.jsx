@@ -7,7 +7,8 @@ function HomePanel() {
     // automated docs
     // const swaggerUrl = 'http://localhost/geosamples-api/swagger-ui.html'
     // customized docs
-    const swaggerUrl = 'http://localhost/geosamples-api/swagger-ui/index.html?configUrl=/geosamples-api/swagger-config.json'
+    // const swaggerUrl = 'http://localhost/geosamples-api/swagger-ui/index.html?configUrl=/geosamples-api/swagger-config.json'
+    const swaggerUrl = 'https://www.ngdc.noaa.gov/geosamples-api/swagger-ui/index.html?configUrl=/geosamples-api/swagger-config.json'
     return(
         <div className="HomePanel">
             <div style={{width:"80%", background:"lightblue",textAlign: "center", margin: "auto", marginTop: "20px"}}>
