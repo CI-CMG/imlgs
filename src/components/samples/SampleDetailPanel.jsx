@@ -1,3 +1,4 @@
+import { LinkSharp } from "@material-ui/icons"
 import React, {useEffect, useState} from "react"
 import { useParams } from "react-router-dom"
 import {apiBaseUrl} from '../../ApiUtils'
@@ -69,22 +70,46 @@ function SampleDetailPanel() {
           if (interval.rock_min) { rows.push(`Mineralogy: ${interval.rock_min}`)}
           // TODO add other information elements
 
+
         return (
             <table key={interval.interval}>
             <thead></thead>
             <tbody>
-            { rows.map(row => <tr><td>{row}</td></tr>) }
+            { rows.map((row,idx) => <tr key={idx}><td>{row}</td></tr>) }
             </tbody>
             </table>
         )
       }
       
 
+      function formatLinks(links) {
+        console.log('inside formatLinks with ', links)
+        return (
+          <div>
+          <ul>
+            { links.map((row,idx) => <li key={idx}><a href={row.link}>{row.level} {row.type} at {row.source}</a></li>) }
+          </ul>
+          </div>
+        )
+      }
+
+      function formatCruiseLinks(links, cruise) {
+        console.log('inside formatCruiseLinks with ', links)
+        return (
+          <div>
+          <ul>
+            { links.map((row,idx) => <li key={idx}><a href={row.link}>{cruise} {row.type} at {row.source}</a></li>) }
+          </ul>
+          </div>
+        )
+      }
+
     return (
         <div className="SampleDetailPanel">
             <h2>Geosample Detail</h2>
             {recordNotFound? <h4>No record with IMLGS Id {imlgsId}</h4>: ''}
-            {!recordNotFound && sample? 
+            {!recordNotFound && sample?
+                <div>
                 <table>
                 <caption></caption>
                 <thead></thead>
@@ -103,6 +128,10 @@ function SampleDetailPanel() {
                     <tr><td>Province:</td><td>{sample.province}</td></tr>
                 </tbody>
                 </table>
+                <br/>
+                {formatLinks(sample.links)}
+                {formatCruiseLinks(sample.cruise_links, sample.cruise)}
+                </div>
             : ''}
             {intervals.length? intervals.map((interval) => formatInterval(interval)) : ''}
                 {/* <ol>
