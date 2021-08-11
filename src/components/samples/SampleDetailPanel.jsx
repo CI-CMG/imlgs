@@ -87,7 +87,7 @@ function SampleDetailPanel() {
         return (
           <div>
           <ul>
-            { links.map((row,idx) => <li key={idx}><a href={row.link}>{row.level} {row.type} at {row.source}</a></li>) }
+            { links.map((row,idx) => <li key={idx}><a href={row.link}>{row.linklevel} {row.type} at {row.source}</a></li>) }
           </ul>
           </div>
         )
