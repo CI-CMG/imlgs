@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button'
 import "./SamplesTable.css"
 
 
-function SamplesTable({data, nextPage, previousPage, offset, pageSize, searchParams}) {
+function SamplesTable({totalCount, data, nextPage, previousPage, offset, pageSize, searchParams}) {
     console.log('inside SamplesTable...')
     // console.log(data)
     searchParams.forEach((value, key) => console.log(`${key} => ${value}`))
@@ -46,7 +46,7 @@ function SamplesTable({data, nextPage, previousPage, offset, pageSize, searchPar
                 <Button className={`${baseClass}--nextPageBtn`} style={{}} 
                     variant="primary" size="sm" onClick={nextPage} 
                     disabled={(data.length < pageSize)? true: false}>&gt;</Button>
-                <span style={{marginLeft: '15px'}}>samples {offset} to {(data.length<pageSize)? offset+data.length: offset+pageSize}</span>
+                <span style={{marginLeft: '15px'}}>samples {offset} to {(data.length<pageSize)? offset+data.length: offset+pageSize} (out of {totalCount})</span>
             </div>
 
             {(!data) ? <h4>no data</h4>: ''}

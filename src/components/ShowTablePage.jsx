@@ -11,6 +11,7 @@ function ShowTablePage() {
   const [samplesData, setSamplesData] = useState([])
   const [offset, setOffset] = useState(0)
   const [pageSize, setPageSize] = useState(500)
+  const [totalCount, setTotalCount] = useState()
 
   const url = new URL(location.href);
   const searchParams = new URLSearchParams(url.search)
@@ -20,11 +21,27 @@ function ShowTablePage() {
   // searchParams.forEach((value, key) => console.log(`${key} => ${value}`))
 
   useEffect(async () => {
-    console.debug("loading data...");
+    // console.debug("getting count...");
+    const queryURL = `${apiBaseUrl}/samples?count_only=true&${searchParams.toString()}`
+    // console.debug(queryURL)
+
+    const response = await fetch(queryURL)
+    if (response.status !== 200) {
+        console.error("Error in API request: failed to retrieve data")
+        return
+    }
+    const json = await response.json()
+    // console.debug(json)
+    setTotalCount(json.count)
+  }, [searchParams])
+
+
+  useEffect(async () => {
+    // console.debug("loading data...");
     searchParams.set('page_size', pageSize)
     searchParams.set('offset', offset)
     const queryURL = `${apiBaseUrl}/samples?${searchParams.toString()}`
-    console.debug(queryURL)
+    // console.debug(queryURL)
 
     const response = await fetch(queryURL)
     if (response.status !== 200) {
@@ -49,7 +66,7 @@ function ShowTablePage() {
   return (
     <div className="ShowTablePage">
       <HeaderPanel></HeaderPanel>
-      <SamplesTable searchParams={searchParams} data={samplesData} nextPage={incrementPage} previousPage={decrementPage} offset={offset} pageSize={pageSize}></SamplesTable>
+      <SamplesTable totalCount={totalCount} searchParams={searchParams} data={samplesData} nextPage={incrementPage} previousPage={decrementPage} offset={offset} pageSize={pageSize}></SamplesTable>
       <FooterPanel></FooterPanel>
     </div>
   );
