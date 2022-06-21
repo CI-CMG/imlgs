@@ -47,7 +47,9 @@ function Repository() {
     return (
         <div className={"RepositoryDetail"}>
             <h2>Repository Contact Information</h2>
-            {repositoryData? <div className="contactInfoDiv" dangerouslySetInnerHTML={{__html:sanitizeHTML(repositoryData.facility_comment)}}/>: 'no data available'}            
+            {repositoryData?
+                <div className="contactInfoDiv" dangerouslySetInnerHTML={{__html:sanitizeHTML(repositoryData.facility_comment)}}/>:
+                'no data available'}
         </div>
     )
 }

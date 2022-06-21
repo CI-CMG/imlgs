@@ -66,8 +66,6 @@ function SampleDetailPanel() {
           if (interval.text1) { rows.push(`Primary Texture: ${interval.text1}`)}
           if (interval.lith2) { rows.push(`Secondary Composition: ${interval.lith2}`)}
           if (interval.text2) { rows.push(`Secondary Texture: ${interval.text2}`)}
-          if (interval.rock_min) { rows.push(`Mineralogy: ${interval.rock_min}`)}
-          if (interval.rock_min) { rows.push(`Mineralogy: ${interval.rock_min}`)}
           // TODO add other information elements
 
 
