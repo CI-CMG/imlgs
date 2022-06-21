@@ -11,6 +11,7 @@ import "./MapPanel.css";
 
 function MapPanel({layerDefinitionExpression, setSelectedExtent, zoomToSelected}) {
     console.log('inside MapPanel...')
+    console.log('layerDefinitionExpression: ', layerDefinitionExpression)
     const mapDiv = useRef(null);
     const drawExtentTool = useRef(null);
     const clearExtentTool = useRef(null);
@@ -31,6 +32,7 @@ function MapPanel({layerDefinitionExpression, setSelectedExtent, zoomToSelected}
     identifyParams.tolerance = 3
     identifyParams.layerIds = 0
     identifyParams.layerOption = "top";
+
     const identifyTask = new IdentifyTask("https://gis.ngdc.noaa.gov/arcgis/rest/services/web_mercator/sample_index_dynamic/MapServer")
 
 
@@ -66,6 +68,10 @@ function MapPanel({layerDefinitionExpression, setSelectedExtent, zoomToSelected}
         // console.log('MapView is ready...');
         view.ui.add('extentToolbar', "top-left");
         mapView.current = view
+        if (zoomToSelected && layerDefinitionExpression) {
+            console.log('zooming...')
+            zoomTo(layerDefinitionExpression)
+        }
 
         view.on('click', executeIdentifyTask)
         identifyParams.width = view.width;
@@ -78,6 +84,9 @@ function MapPanel({layerDefinitionExpression, setSelectedExtent, zoomToSelected}
         // Set the geometry to the location of the view click
         identifyParams.geometry = event.mapPoint;
         identifyParams.mapExtent = view.extent;
+        // identifyParams.layerOption = "visible";
+        identifyParams.layerDefinitions = [layerDefinitionExpression]
+        console.log(identifyParams.layerDefinitions)
         // document.getElementById("viewDiv").style.cursor = "wait"
         identifyTask.execute(identifyParams).then(function(response){
           const results = response.results
@@ -96,7 +105,7 @@ function MapPanel({layerDefinitionExpression, setSelectedExtent, zoomToSelected}
             return feature
           })
         }).then(showPopup)
-        
+
         function showPopup(response) {
           if(response.length > 0) {
             view.popup.open({
@@ -116,8 +125,12 @@ function MapPanel({layerDefinitionExpression, setSelectedExtent, zoomToSelected}
         //TODO use the new extent. assign to selectedExtent if one not set?
       });
 
+      console.log('initial layer definition expression: ', layerDefinitionExpression)
       const layer = new MapImageLayer({
-        url: "https://gis.ngdc.noaa.gov/arcgis/rest/services/web_mercator/sample_index_dynamic/MapServer"
+        url: "https://gis.ngdc.noaa.gov/arcgis/rest/services/web_mercator/sample_index_dynamic/MapServer",
+          sublayers: [
+              {id: 0, visible: true, definitionExpression: layerDefinitionExpression}
+          ]
       })
       samplesLayer.current = layer;
       map.add(layer)
@@ -205,10 +218,17 @@ function MapPanel({layerDefinitionExpression, setSelectedExtent, zoomToSelected}
   // useEffect blocks fire in order defined and this needs to be after map setup
   useEffect(() => {
     console.log('update layerDefinition...')
-    // console.log('LayerDefinitionExpression: ', layerDefinitionExpression)
+    console.log('LayerDefinitionExpression: ', layerDefinitionExpression)
+    if (! mapView.current) {
+        console.warn('MapView is not yet ready')
+    }
     // "All Samples"
     const sublayer = samplesLayer.current.findSublayerById(0)
-    if (sublayer) { sublayer.definitionExpression = layerDefinitionExpression }
+    if (sublayer) {
+        console.log('setting layerDefinition of sublayer to ', layerDefinitionExpression, typeof(layerDefinitionExpression))
+        console.log('changing definitionExpression from ', sublayer.definitionExpression, ' to ', layerDefinitionExpression, '...' )
+        sublayer.definitionExpression = layerDefinitionExpression
+    }
 
     // don't change the MapView extent
     if (! zoomToSelected) {

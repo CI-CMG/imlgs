@@ -23,7 +23,7 @@ function LakeSelect({
 
 
     useEffect(() => {
-        console.log('getting list of lakes...');
+        // console.log('getting list of lakes...');
 
         const queryParams = []
         if (activeRepository) { queryParams.push({name:'repository', value:activeRepository.value})}
@@ -34,10 +34,9 @@ function LakeSelect({
         if (maxDepth) { queryParams.push({name:'maxDepth', value:maxDepth})}
         if (startDate) { queryParams.push({name:'startDate', value:startDate})}
         if (geoextent) { queryParams.push({name: 'bbox', value: geoextent.join(',')})}
-        console.log(geoextent)
-        console.log(`sending ${queryParams.length} criteria...`)
+        // console.log(`sending ${queryParams.length} criteria...`)
         const queryURL = buildQueryUrl('lakes', queryParams)
-        console.log(queryURL)
+        // console.log(queryURL)
 
         fetch(queryURL)
             .then((response) => {
@@ -52,7 +51,10 @@ function LakeSelect({
 
     }, [activeRepository, activeDevice, activePlatform, activeCruise, , minDepth, maxDepth, startDate, geoextent])
 
-
+    function lakeSelectHandler(selection) {
+        console.log('lake: ', selection)
+        setActiveLake(selection)
+    }
     return(
         <Select
             styles={selectStyles}
@@ -60,7 +62,7 @@ function LakeSelect({
             name="lake"
             options={lakes}
             // defaultValue={lakes[0]}
-            onChange={setActiveLake}
+            onChange={lakeSelectHandler}
             value={activeLake}
             getOptionLabel={(option) => option.value}
             noOptionsMessage={() => "no lakes available"}

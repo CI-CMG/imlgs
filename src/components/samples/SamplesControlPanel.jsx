@@ -18,6 +18,7 @@ import PlatformSelect from './PlatformSelect'
 import LakeSelect from './LakeSelect'
 import RepositorySelect from './RepositorySelect'
 import CruiseSelect from './CruiseSelect'
+import {buildTableUrl, buildLayerDefinitionExpression, buildSampleCountUrl} from "../../FilterUtils";
 import "./SamplesControlPanel.css"
 
 
@@ -25,8 +26,8 @@ function SamplesControlPanel({
     geoextent, 
     setLayerDefinitionExpression, 
     zoomToSelected, 
-    setZoomToSelected}) {
-    
+    setZoomToSelected,
+    filterDefaults}) {
     console.log('inside SamplesControlPanel...')
     const baseClass = 'SamplesControlPanel'
     const [totalSamplesCount, setTotalSamplesCount] = useState(0)
@@ -48,36 +49,38 @@ function SamplesControlPanel({
 
     // reflect the currently selected option in the select widgets.  These are
     // what trigger updates of the select options above
-    const [activeRepository, setActiveRepository] = useState()
-    const [activePlatform, setActivePlatform] = useState()
-    const [activeLake, setActiveLake] = useState()
-    const [activeDevice, setActiveDevice] = useState()
-    const [activeCruise, setActiveCruise] = useState()
-    const [startDate, setStartDate] = useState()
-    const [minDepth, setMinDepth] = useState()
-    const [maxDepth, setMaxDepth] = useState()
+    const [activeRepository, setActiveRepository] = useState(filterDefaults.repository? filterDefaults.repository: undefined)
+    const [activePlatform, setActivePlatform] = useState(filterDefaults.platform? filterDefaults.platform: undefined)
+    const [activeLake, setActiveLake] = useState(filterDefaults.lake? filterDefaults.lake: undefined)
+    const [activeDevice, setActiveDevice] = useState(filterDefaults.device? filterDefaults.device: undefined)
+    const [activeCruise, setActiveCruise] = useState(filterDefaults.cruise? filterDefaults.cruise: undefined)
+    const [startDate, setStartDate] = useState(filterDefaults.startDate? filterDefaults.startDate: undefined)
+    const [minDepth, setMinDepth] = useState(filterDefaults.minDepth? filterDefaults.minDepth: undefined)
+    const [maxDepth, setMaxDepth] = useState(filterDefaults.maxDepth? filterDefaults.maxDepth: undefined)
+    console.log(filterDefaults)
 
-
-    function filterMap() {
-        let defs = []
-        // WARNING: tight coupling with ArcGIS mapservice layer:
-        // https://gis.ngdc.noaa.gov/arcgis/rest/services/Sample_Index/MapServer/0
-        if (activeRepository) defs.push(`FACILITY_CODE = '${activeRepository.value}'`)
-        if (activePlatform) defs.push(`PLATFORM = '${activePlatform.value}'`)
-        if (activeLake) defs.push(`LAKE = '${activeLake.value}'`)
-        if (activeDevice) defs.push(`DEVICE = '${activeDevice.value}'`)
-        if (activeCruise) defs.push(`CRUISE = '${activeCruise.value}'`)
-        if (startDate) defs.push(`BEGIN_DATE like '${startDate}%'`)
-        // minDepth may be 0 and therefore falsey. maxDepth should not be 0
-        if (minDepth != null) defs.push(`WATER_DEPTH >= ${minDepth}`)  
-        if (maxDepth) defs.push(`WATER_DEPTH <= ${maxDepth}`)
-        
-        if (defs) {
-            setLayerDefinitionExpression(defs.join(' and '))
-        } else {
-            setLayerDefinitionExpression(undefined)
-        }
-    }
+    // function filterMap() {
+    //     let defs = []
+    //     // WARNING: tight coupling with ArcGIS mapservice layer:
+    //     // https://gis.ngdc.noaa.gov/arcgis/rest/services/Sample_Index/MapServer/0
+    //     if (activeRepository) defs.push(`FACILITY_CODE = '${activeRepository.value}'`)
+    //     if (activePlatform) defs.push(`PLATFORM = '${activePlatform.value}'`)
+    //     if (activeLake) defs.push(`LAKE = '${activeLake.value}'`)
+    //     if (activeDevice) defs.push(`DEVICE = '${activeDevice.value}'`)
+    //     if (activeCruise) defs.push(`CRUISE = '${activeCruise.value}'`)
+    //     if (startDate) defs.push(`BEGIN_DATE like '${startDate}%'`)
+    //     // minDepth may be 0 and therefore falsey. maxDepth should not be 0
+    //     if (minDepth != null) defs.push(`WATER_DEPTH >= ${minDepth}`)
+    //     if (maxDepth) defs.push(`WATER_DEPTH <= ${maxDepth}`)
+    //
+    //     if (defs) {
+    //         console.log('returning: ', defs.join(' and '))
+    //         setLayerDefinitionExpression(defs.join(' and '))
+    //     } else {
+    //         console.log('returning undefined')
+    //         setLayerDefinitionExpression(undefined)
+    //     }
+    // }
     
 
     function logFilters() {
@@ -95,30 +98,51 @@ function SamplesControlPanel({
     
 
     function updateTableUrl() {
-        let searchParams=[]
-        if (activeDevice) { searchParams.push(`device=${activeDevice.value}`) }
-        if (activeRepository) { searchParams.push(`repository=${activeRepository.value}`) }
-        if (activePlatform) { searchParams.push(`platform=${activePlatform.value}`) }
-        if (activeLake) { searchParams.push(`lake=${activeLake.value}`) }
-        if (activeCruise) { searchParams.push(`cruise=${activeCruise.value}`) }
-        if (geoextent) { searchParams.push(`bbox=${geoextent.join(',')}`) }
-        if (startDate) { searchParams.push(`start_date=${startDate}`) }
-        if (minDepth != null) { searchParams.push(`min_depth=${minDepth}`) }
-        if (maxDepth) { searchParams.push(`max_depth=${maxDepth}`) }
 
-        if (searchParams.length) {
-            setTableUrl(`/samples_table?${searchParams.join('&')}`)
-        } else {
-            setTableUrl('/samples_table')
-        }
+        // let searchParams=[]
+        // if (activeDevice) { searchParams.push(`device=${activeDevice.value}`) }
+        // if (activeRepository) { searchParams.push(`repository=${activeRepository.value}`) }
+        // if (activePlatform) { searchParams.push(`platform=${activePlatform.value}`) }
+        // if (activeLake) { searchParams.push(`lake=${activeLake.value}`) }
+        // if (activeCruise) { searchParams.push(`cruise=${activeCruise.value}`) }
+        // if (geoextent) { searchParams.push(`bbox=${geoextent.join(',')}`) }
+        // if (startDate) { searchParams.push(`start_date=${startDate}`) }
+        // if (minDepth != null) { searchParams.push(`min_depth=${minDepth}`) }
+        // if (maxDepth) { searchParams.push(`max_depth=${maxDepth}`) }
+        //
+        // if (searchParams.length) {
+        //     setTableUrl(`/samples_table?${searchParams.join('&')}`)
+        // } else {
+        //     setTableUrl('/samples_table')
+        // }
     }
+
+    // collect current filter settings into single object to facilitate handling
+    function getCurrentFilters() {
+        let currentFilters = {}
+        if (activeRepository) currentFilters.repository = activeRepository.value
+        if (activePlatform) currentFilters.platform = activePlatform.value
+        if (activeLake) currentFilters.lake = activeLake.value
+        if (activeDevice) currentFilters.device = activeDevice.value
+        if (activeCruise) currentFilters.cruise = activeCruise.value
+        if (startDate) currentFilters.startDate = startDate
+        // minDepth may be 0 and therefore falsey. maxDepth should not be 0
+        if (minDepth != null) currentFilters.minDepth = minDepth
+        if (maxDepth) currentFilters.maxDepth = maxDepth
+        return currentFilters
+    }
+
 
     useEffect(async () => {
         console.log('filters have changed, get new count...')
-        updateTableUrl()
+        // collect current filter settings into single object to facilitate handling
+        const currentFilters = getCurrentFilters()
+        setTableUrl(buildTableUrl('/samples_table', currentFilters))
 
         // triggers map update even if to remove layer definition
-        filterMap()
+        // filterMap()
+        console.log('buildLayerDefinitionExpression: ', buildLayerDefinitionExpression(currentFilters))
+        setLayerDefinitionExpression(buildLayerDefinitionExpression(currentFilters))
     
         const filters =  [activeDevice, activeLake, activePlatform, activeRepository, activeCruise, geoextent, startDate, minDepth, maxDepth]
         const noFiltersSet = filters.every(val => !val)
@@ -136,17 +160,19 @@ function SamplesControlPanel({
             return    
         }
 
-        const queryParams = [{name: 'count_only', value: true}]
-        if (activeDevice) { queryParams.push({name:'device', value:activeDevice.value})}
-        if (activeRepository) { queryParams.push({name:'repository', value:activeRepository.value})}
-        if (activePlatform) { queryParams.push({name:'platform', value:activePlatform.value})}
-        if (activeLake) { queryParams.push({name:'lake', value:activeLake.value})}
-        if (activeCruise) { queryParams.push({name:'cruise', value:activeCruise.value})}
-        if (geoextent) { queryParams.push({name: 'bbox', value: geoextent.join(',')})}
-        if (startDate) { queryParams.push({name: 'start_date', value:startDate})}
-        if (minDepth) { queryParams.push({name: 'min_depth', value: minDepth})}
-        if (maxDepth) { queryParams.push({name: 'max_depth', value: maxDepth})}
-        const queryURL = buildQueryUrl('samples', queryParams)
+        const queryURL = buildSampleCountUrl(apiBaseUrl, currentFilters)
+        // // TODO: use URLSearchParams class
+        // const queryParams = [{name: 'count_only', value: true}]
+        // if (activeDevice) { queryParams.push({name:'device', value:activeDevice.value})}
+        // if (activeRepository) { queryParams.push({name:'repository', value:activeRepository.value})}
+        // if (activePlatform) { queryParams.push({name:'platform', value:activePlatform.value})}
+        // if (activeLake) { queryParams.push({name:'lake', value:activeLake.value})}
+        // if (activeCruise) { queryParams.push({name:'cruise', value:activeCruise.value})}
+        // if (geoextent) { queryParams.push({name: 'bbox', value: geoextent.join(',')})}
+        // if (startDate) { queryParams.push({name: 'start_date', value:startDate})}
+        // if (minDepth) { queryParams.push({name: 'min_depth', value: minDepth})}
+        // if (maxDepth) { queryParams.push({name: 'max_depth', value: maxDepth})}
+        // const queryURL = buildQueryUrl('samples', queryParams)
         console.debug(queryURL)
 
         const response = await fetch(queryURL)
@@ -169,8 +195,9 @@ function SamplesControlPanel({
     }
 
 
+    // TODO:  should reset go back to defaults specified in URL?
     function resetFilters() {
-        // console.log('inside resetFilters...')
+        console.log('inside resetFilters...')
         setActiveRepository(null)
         setActivePlatform(null)
         setActiveLake(null)
@@ -180,8 +207,11 @@ function SamplesControlPanel({
         document.getElementById('startDate').value = null
         document.getElementById('minDepthInput').value = null
         document.getElementById('maxDepthInput').value = null
-        setMinDepth()
-        setMaxDepth()    }
+        // TODO set values?
+        setMinDepth(null)
+        setMaxDepth(null)
+    }
+
 
     function checkboxHandler(evt) {
         // console.log('inside checkboxHandler with ', evt.target.checked)

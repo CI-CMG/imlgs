@@ -16,7 +16,7 @@ function RepositorySelect({
     startDate,
     geoextent}) {
 
-    // console.log('inside RepositorySelect...')
+    console.log('inside RepositorySelect...')
     const baseClass = 'RepositorySelect'
     const [repositories, setRepositories] = useState()
 
@@ -33,7 +33,7 @@ function RepositorySelect({
         if (geoextent) { queryParams.push({name: 'bbox', value: geoextent.join(',')})}
         
         const queryURL = buildQueryUrl('repositories', queryParams)
-        console.log(queryURL);
+        // console.log(queryURL);
 
         // Promise returned from fetch won’t reject on HTTP 404 or 500. 
         fetch(queryURL)
@@ -44,18 +44,22 @@ function RepositorySelect({
             .then((data) => {
                 console.debug(`${data.length} repositories retrieved`)
                 let repositories = data.map((item) => {return({value: item.facility_code, label:item.facility})})
+                console.log('setting list of repositories')
                 setRepositories(repositories)
             }).catch(err => console.error('Error in API request: ', err))    
     }, [activePlatform, activeDevice, activeLake, activeCruise, minDepth, maxDepth, startDate, geoextent])
 
-
+    function repositoryChangeHandler(value) {
+        console.log('insdie repositoryChangeHandler with ', value)
+        setActiveRepository(value)
+    }
     return(
         <Select
             styles={selectStyles}
             className="basic-single"
             name="repository"
             options={repositories}
-            // defaultValue={{label:'testme', value:'AOML'}}
+            // defaultValue={{value: 'AOML', label: 'NOAA-Atlantic Oceanographic and Meteorol. Lab'}}
             onChange={setActiveRepository}
             value={activeRepository}
         />

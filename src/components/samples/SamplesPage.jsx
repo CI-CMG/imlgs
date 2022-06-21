@@ -16,21 +16,22 @@ import MaterialUIDataGrid from "./MaterialUIDataGrid"
 import SampleDetailPanel from "./SampleDetailPanel"
 // import 'bootstrap/dist/css/bootstrap.min.css'
 import "./SamplesPage.css"
+import {extractDefaultFiltersFromUrl, buildLayerDefinitionExpression} from "../../FilterUtils";
+
 
 function SamplesPage({setCount, count}) {
     console.log('inside SamplesPage...')
     let match = useRouteMatch();
+
+    // pull out any default (initial) filter settings from URL
+    const url = new URL(location.href)
+    const filterDefaults = extractDefaultFiltersFromUrl(url)
+
+    //TODO read default extent from URL
     const [geoextent, setGeoextent] = useState()
     const [zoomToSelected, setZoomToSelected] = useState(true)
-    const [layerDefinitionExpression, setLayerDefinitionExpression] = useState()
+    const [layerDefinitionExpression, setLayerDefinitionExpression] = useState(buildLayerDefinitionExpression(filterDefaults))
 
-    
-    const url = new URL(location.href)
-    const searchParams = new URLSearchParams(url.search)
-    if (searchParams.has('repository')) { 
-        const defaultRepository = searchParams.get('repository')
-    }
-    
     return (
         <Switch>
             <Route path={`${match.path}/:imlgsId`}>
@@ -52,8 +53,9 @@ function SamplesPage({setCount, count}) {
                         zoomToSelected={zoomToSelected} 
                         setZoomToSelected={setZoomToSelected} 
                         setLayerDefinitionExpression={setLayerDefinitionExpression} 
-                        geoextent={geoextent}>
-                    </SamplesFilterPanel>
+                        geoextent={geoextent}
+                        filterDefaults={filterDefaults}
+                    />
                     {/* <MaterialUIDataGrid></MaterialUIDataGrid> */}
                     <FooterPanel></FooterPanel>
                 </div>            
