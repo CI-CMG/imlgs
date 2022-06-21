@@ -73,7 +73,7 @@ function CruisesPanel() {
             <tbody>{
                 cruiseList.map(item => (
                 <tr key={item.objectid}>
-                <td>{item.cruise}</td>
+                <td><Link to={{pathname:`/cruises/${item.cruise}`}}>{item.cruise}</Link></td>
                 <td>{item.leg}</td>
                 <td>{item.platform}</td>
                 <td><Link to={{pathname:`/repositories/${item.facility_code}`}}>{item.facility_code}</Link></td>
