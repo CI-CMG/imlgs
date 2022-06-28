@@ -1,0 +1,23 @@
+.Expenses--wrapper {
+    display: grid;
+    grid-template-columns: 400px auto;
+    /* grid-template-rows: auto; */
+    grid-template-areas:
+        "sidebar map";
+    width: 100vw;
+    height: calc(100vh - 120px);
+}
+
+
+.Expenses--map {
+    padding: 1rem 1rem;
+    grid-area: map;
+    background-color: red;
+
+}
+
+.Expenses--sidebar {
+    background-color: blue;
+    grid-area: sidebar;
+
+}
