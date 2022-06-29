@@ -39,32 +39,20 @@ function createSearchParamsString(defaultParams:Array<string>, validFilterKeys:A
     let queryStrings = [...defaultParams]
 
     for (const [key, value] of Object.entries(filters)) {
+        // API generally ignores invalid search params but this makes explicit what is supported in this context
         if (validFilterKeys.includes(key)) {
             queryStrings.push(`${key}=${value}`)
         }
     }
-    if (queryStrings.length) {
-        return ('?'+ queryStrings.join('&'))
-    } else {
-        return queryStrings.join('&')
-    }
+    return (queryStrings.length) ? '?'+ queryStrings.join('&'): ''
 }
 
 
 async function fetchRepositories({queryKey}) {
-    // API ignores invalid search params but this makes explicit what is supported in this context
-    const valid_filterKeys = ['platform', 'lake', 'cruise', 'device']
-
     const [, filters] = queryKey
-    let queryStrings = ['name_only=true']
-    for (const [key, value] of Object.entries(filters)) {
-        if (valid_filterKeys.includes(key)) {
-            queryStrings.push(`${key}=${value}`)
-        }
-    }
-    console.log('new value: ', createSearchParamsString(queryStrings, valid_filterKeys, filters))
-    
-    const response = await fetch(`${apiBaseUrl}/repositories?${queryStrings.join('&')}`)
+    const validKeys = ['platform', 'lake', 'cruise', 'device']
+    const searchParamsString = createSearchParamsString(['name_only=true'], validKeys, filters)
+    const response = await fetch(`${apiBaseUrl}/repositories${searchParamsString}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
@@ -73,20 +61,11 @@ async function fetchRepositories({queryKey}) {
 
 
 async function fetchPlatforms({queryKey}) {
-    // API ignores invalid search params but this makes explicit what is supported in this context
-    const valid_filterKeys = ['repository', 'lake', 'cruise', 'device']
-
     const [, filters] = queryKey
+    const validKeys = ['repository', 'lake', 'cruise', 'device']
     // no "name_only" option for platforms
-    let queryStrings = []
-    
-    for (const [key, value] of Object.entries(filters)) {
-        if (valid_filterKeys.includes(key)) {
-            queryStrings.push(`${key}=${value}`)
-        }
-    }
-    const searchString = (queryStrings.length) ? `?${queryStrings.join('&')}` : ''  
-    const response = await fetch(`${apiBaseUrl}/platforms${searchString}`)
+    const searchParamsString = createSearchParamsString([], validKeys, filters)
+    const response = await fetch(`${apiBaseUrl}/platforms${searchParamsString}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
@@ -95,20 +74,12 @@ async function fetchPlatforms({queryKey}) {
 
 
 async function fetchLakes({queryKey}) {
-    // API ignores invalid search params but this makes explicit what is supported in this context
-    const valid_filterKeys = ['repository', 'platform', 'cruise', 'device']
-
     const [, filters] = queryKey
+    const validKeys = ['repository', 'platform', 'cruise', 'device']
+
     // no "name_only" option for lakes
-    let queryStrings = []
-    
-    for (const [key, value] of Object.entries(filters)) {
-        if (valid_filterKeys.includes(key)) {
-            queryStrings.push(`${key}=${value}`)
-        }
-    }
-    const searchString = (queryStrings.length) ? `?${queryStrings.join('&')}` : ''  
-    const response = await fetch(`${apiBaseUrl}/lakes${searchString}`)
+    const searchParamsString = createSearchParamsString([], validKeys, filters)
+    const response = await fetch(`${apiBaseUrl}/lakes${searchParamsString}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
@@ -117,20 +88,12 @@ async function fetchLakes({queryKey}) {
 
 
 async function fetchDevices({queryKey}) {
-    // API ignores invalid search params but this makes explicit what is supported in this context
-    const valid_filterKeys = ['repository', 'lake', 'platform', 'cruise']
-
     const [, filters] = queryKey
+    const validKeys = ['repository', 'lake', 'platform', 'cruise']
+
     // no "name_only" option for lakes
-    let queryStrings = []
-    
-    for (const [key, value] of Object.entries(filters)) {
-        if (valid_filterKeys.includes(key)) {
-            queryStrings.push(`${key}=${value}`)
-        }
-    }
-    const searchString = (queryStrings.length) ? `?${queryStrings.join('&')}` : ''  
-    const response = await fetch(`${apiBaseUrl}/devices${searchString}`)
+    const searchParamsString = createSearchParamsString([], validKeys, filters)
+    const response = await fetch(`${apiBaseUrl}/devices${searchParamsString}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
@@ -140,11 +103,10 @@ async function fetchDevices({queryKey}) {
 
 async function fetchSampleCount({queryKey}) {
     const [, filters] = queryKey
-    let queryStrings = ['count_only=true']
-    for (const [key, value] of Object.entries(filters)) {
-        queryStrings.push(`${key}=${value}`)
-    }
-    const response = await fetch(`${apiBaseUrl}/samples?${queryStrings.join('&')}`)
+    // TODO add water depth, date
+    const validKeys = ['repository', 'lake', 'platform', 'cruise', 'device']
+    const searchParamsString = createSearchParamsString(['count_only=true'], validKeys, filters)
+    const response = await fetch(`${apiBaseUrl}/samples${searchParamsString}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
@@ -153,20 +115,10 @@ async function fetchSampleCount({queryKey}) {
 
 
 async function fetchCruises({queryKey}) {
-    console.log('inside fetchCruises...')
-    const valid_filterKeys = ['repository', 'lake', 'platform', 'device']
     const [, filters] = queryKey
-    let queryStrings = ['name_only=true']
-    
-    for (const [key, value] of Object.entries(filters)) {
-        if (valid_filterKeys.includes(key)) {
-            queryStrings.push(`${key}=${value}`)
-        }
-    }
-
-    const searchParams = (queryStrings.length ? `?${queryStrings.join('&')}` : '')  
-    const response = await fetch(`${apiBaseUrl}/cruises${searchParams}`)
-
+    const validKeys = ['repository', 'lake', 'platform', 'device']
+    const searchParamsString = createSearchParamsString([], validKeys, filters)
+    const response = await fetch(`${apiBaseUrl}/cruises${searchParamsString}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
@@ -176,7 +128,6 @@ async function fetchCruises({queryKey}) {
 
 async function fetchCruiseById({queryKey}) {
     const [_key, { cruiseId}] = queryKey
-    console.log('fetching details for cruise '+cruiseId)
     const response = await fetch(`${apiBaseUrl}/cruises/${cruiseId}`)
     if (! response.ok) {
         throw new Error(response.statusText)
