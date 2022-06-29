@@ -1,8 +1,12 @@
 
 const apiBaseUrl = 'https://www.ngdc.noaa.gov/geosamples-api'
 
+type Params = {
+    queryKey: [string, { id: number }];
+};
+
+
 const fetchTotalSampleCount = async () => {
-    // console.log('fetching total number of samples...')
     const response = await fetch(`${apiBaseUrl}/samples?count_only=true`)
     // Fetch API doesn't consider 404 responses to be errors
     if (! response.ok) {
@@ -11,13 +15,9 @@ const fetchTotalSampleCount = async () => {
     return await response.json()
 }
 
-type Params = {
-    queryKey: [string, { id: number }];
-};
 
 async function fetchRepositoryById({queryKey}) {
     const [_key, { repositoryId}] = queryKey
-    console.log('fetching details for repository '+repositoryId)
     const response = await fetch(`${apiBaseUrl}/repositories/${repositoryId}`)
     if (! response.ok) {
         throw new Error(response.statusText)
@@ -27,30 +27,43 @@ async function fetchRepositoryById({queryKey}) {
 
 
 async function fetchAllRepositories() {
-    console.log('inside fetchAllRepositories...')
-
     const response = await fetch(`${apiBaseUrl}/repositories?name_only=true`)
-
     if (! response.ok) {
         throw new Error(response.statusText)
     }
     return await response.json()
 }
 
-async function fetchFilteredRepositories({queryKey}) {
-    console.log('inside fetchFilteredRepositories...')
+
+function createSearchParamsString(defaultParams:Array<string>, validFilterKeys:Array<string>, filters:Array<string>){
+    let queryStrings = [...defaultParams]
+
+    for (const [key, value] of Object.entries(filters)) {
+        if (validFilterKeys.includes(key)) {
+            queryStrings.push(`${key}=${value}`)
+        }
+    }
+    if (queryStrings.length) {
+        return ('?'+ queryStrings.join('&'))
+    } else {
+        return queryStrings.join('&')
+    }
+}
+
+
+async function fetchRepositories({queryKey}) {
     // API ignores invalid search params but this makes explicit what is supported in this context
-    const valid_filterKeys = ['platform']
+    const valid_filterKeys = ['platform', 'lake', 'cruise', 'device']
 
     const [, filters] = queryKey
     let queryStrings = ['name_only=true']
-    console.log(filters)
     for (const [key, value] of Object.entries(filters)) {
         if (valid_filterKeys.includes(key)) {
             queryStrings.push(`${key}=${value}`)
         }
     }
-    console.log('filter repositories by ', queryStrings.join('&'))
+    console.log('new value: ', createSearchParamsString(queryStrings, valid_filterKeys, filters))
+    
     const response = await fetch(`${apiBaseUrl}/repositories?${queryStrings.join('&')}`)
     if (! response.ok) {
         throw new Error(response.statusText)
@@ -59,29 +72,73 @@ async function fetchFilteredRepositories({queryKey}) {
 }
 
 
-async function fetchFilteredPlatforms({queryKey}) {
-    console.log('inside fetchFilteredPlatforms...')
+async function fetchPlatforms({queryKey}) {
     // API ignores invalid search params but this makes explicit what is supported in this context
-    const valid_filterKeys = ['repository']
+    const valid_filterKeys = ['repository', 'lake', 'cruise', 'device']
 
     const [, filters] = queryKey
-    let queryStrings = ['name_only=true']
+    // no "name_only" option for platforms
+    let queryStrings = []
     
     for (const [key, value] of Object.entries(filters)) {
         if (valid_filterKeys.includes(key)) {
             queryStrings.push(`${key}=${value}`)
         }
     }
-    console.log('filter platforms by ', queryStrings.join('&'))
-    const response = await fetch(`${apiBaseUrl}/platforms?${queryStrings.join('&')}`)
+    const searchString = (queryStrings.length) ? `?${queryStrings.join('&')}` : ''  
+    const response = await fetch(`${apiBaseUrl}/platforms${searchString}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
     return await response.json()
 }
 
-async function fetchFilteredSampleCount({queryKey}) {
-    console.log('inside fetchFilteredSampleCount...')
+
+async function fetchLakes({queryKey}) {
+    // API ignores invalid search params but this makes explicit what is supported in this context
+    const valid_filterKeys = ['repository', 'platform', 'cruise', 'device']
+
+    const [, filters] = queryKey
+    // no "name_only" option for lakes
+    let queryStrings = []
+    
+    for (const [key, value] of Object.entries(filters)) {
+        if (valid_filterKeys.includes(key)) {
+            queryStrings.push(`${key}=${value}`)
+        }
+    }
+    const searchString = (queryStrings.length) ? `?${queryStrings.join('&')}` : ''  
+    const response = await fetch(`${apiBaseUrl}/lakes${searchString}`)
+    if (! response.ok) {
+        throw new Error(response.statusText)
+    }
+    return await response.json()
+}
+
+
+async function fetchDevices({queryKey}) {
+    // API ignores invalid search params but this makes explicit what is supported in this context
+    const valid_filterKeys = ['repository', 'lake', 'platform', 'cruise']
+
+    const [, filters] = queryKey
+    // no "name_only" option for lakes
+    let queryStrings = []
+    
+    for (const [key, value] of Object.entries(filters)) {
+        if (valid_filterKeys.includes(key)) {
+            queryStrings.push(`${key}=${value}`)
+        }
+    }
+    const searchString = (queryStrings.length) ? `?${queryStrings.join('&')}` : ''  
+    const response = await fetch(`${apiBaseUrl}/devices${searchString}`)
+    if (! response.ok) {
+        throw new Error(response.statusText)
+    }
+    return await response.json()
+}
+
+
+async function fetchSampleCount({queryKey}) {
     const [, filters] = queryKey
     let queryStrings = ['count_only=true']
     for (const [key, value] of Object.entries(filters)) {
@@ -97,13 +154,14 @@ async function fetchFilteredSampleCount({queryKey}) {
 
 async function fetchCruises({queryKey}) {
     console.log('inside fetchCruises...')
+    const valid_filterKeys = ['repository', 'lake', 'platform', 'device']
     const [, filters] = queryKey
-
-    // accepts optional search parameters of repository and platform
     let queryStrings = ['name_only=true']
-    // let queryStrings = []
+    
     for (const [key, value] of Object.entries(filters)) {
-        queryStrings.push(`${key}=${value}`)
+        if (valid_filterKeys.includes(key)) {
+            queryStrings.push(`${key}=${value}`)
+        }
     }
 
     const searchParams = (queryStrings.length ? `?${queryStrings.join('&')}` : '')  
@@ -139,8 +197,7 @@ async function fetchSamples({queryKey}) {
 }
 export {
     apiBaseUrl, 
-    fetchTotalSampleCount, fetchFilteredSampleCount,
-    fetchRepositoryById, fetchAllRepositories, fetchFilteredRepositories,
-    fetchFilteredPlatforms,
-    fetchCruises, fetchCruiseById}
+    fetchTotalSampleCount, fetchSampleCount,
+    fetchRepositoryById, fetchAllRepositories, fetchRepositories,
+    fetchPlatforms, fetchDevices, fetchLakes, fetchCruises, fetchCruiseById}
 
