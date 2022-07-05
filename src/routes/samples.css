@@ -3,7 +3,7 @@
 
 .Samples--wrapper {
     display: grid;
-    grid-template-columns: 425px auto;
+    grid-template-columns: 350px auto;
     /* grid-template-rows: auto; */
     grid-template-areas:
         "sidebar map";
