@@ -6,7 +6,7 @@ import {
   QueryClientProvider
 } from 'react-query'
 import { useParams } from "react-router-dom";
-import { fetchCruises } from '../geosamples-api'
+import { fetchCruises, fetchCruiseNames } from '../geosamples-api'
 import { extractDefaultFiltersFromUrl } from '../geosamples-utils'
 import "./cruises.css";
 
@@ -32,7 +32,7 @@ export default function Cruises() {
   const filterDefaults = extractDefaultFiltersFromUrl(url)
 
   const queryClient = useQueryClient()
-  const { data:cruiseList, error, status} = useQuery(["cruises", filterDefaults], fetchCruises, {
+  const { data:cruiseList, error, status} = useQuery(["cruises", filterDefaults], fetchCruiseNames, {
     staleTime: Infinity
   });
   // console.log(cruiseList)
