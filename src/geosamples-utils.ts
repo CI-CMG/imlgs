@@ -13,14 +13,29 @@ type filterParams = {
 function extractDefaultFiltersFromUrl(url:URL) {
     let defaults = {}
     const searchParams = new URLSearchParams(url.search)
-    // repository is the only filter with a label different from value and so must be retrieved from static list
     if (searchParams.has('repository')) { defaults.repository = searchParams.get('repository')}
     if (searchParams.has('platform'))   { defaults.platform = searchParams.get('platform')}
     if (searchParams.has('lake'))       { defaults.lake = searchParams.get('lake')}
     if (searchParams.has('device'))     { defaults.device = searchParams.get('device')}
     if (searchParams.has('cruise'))     { defaults.cruise = searchParams.get('cruise')}
+    if (searchParams.has('start_date')) { defaults.start_date = searchParams.get('start_date')}
+    if (searchParams.has('min_depth'))  { defaults.min_depth = searchParams.get('min_depth')}
+    if (searchParams.has('max_depth'))  { defaults.max_depth = searchParams.get('max_depth')}
+
     return defaults
 }
 
 
-export {extractDefaultFiltersFromUrl}
+function extractDefaultFiltersFromSearchParams(searchParams:URLSearchParams) {
+    let defaults = {}
+    const validKeys = ['repository', 'platform', 'lake', 'device', 'cruise', 'start_date', 'min_depth', 'max_depth']
+    searchParams.forEach((value, key) => {
+        if (validKeys.includes(key)) {
+            defaults[key] = value
+        }
+    })
+    return defaults
+}
+
+
+export {extractDefaultFiltersFromUrl, extractDefaultFiltersFromSearchParams}
