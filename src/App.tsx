@@ -12,6 +12,9 @@ import GlobalLoadingIndicator from './global-loading-indicator'
 import BasicMenu from './components/imlgs-nav-menu';
 import './App.css'
 
+const queryClient = new QueryClient()
+
+
 export default function App() {
   console.log('redrawing App...')
   const [renderCount, setRenderCount] = useState(0)
@@ -30,7 +33,6 @@ export default function App() {
     color:"white"
   }
 
-  const queryClient = new QueryClient()
 
   console.log('render count: ', renderCount)
   return (
