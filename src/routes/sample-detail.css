@@ -1,0 +1,21 @@
+.SampleDetail {
+    width: 50%;
+    margin: 0 auto;
+}
+
+/* .SampleDetail--intervalsTable tr:nth-child(even) {background: #CCC}; */
+/* .SampleDetail--intervalsTable tr:nth-child(odd) {background: #FFF}; */
+
+.SampleDetail--intervalsTable {
+    border: 1px solid black;
+    margin-bottom: 15px;
+}
+
+.SampleDetail--rowLabel {
+    font-weight: bold;
+}
+
+.SampleDetail--intervalTitle {
+    font-style: italic;
+    font-weight: bold;
+}

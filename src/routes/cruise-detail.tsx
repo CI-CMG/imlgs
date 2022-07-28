@@ -16,13 +16,14 @@ function addUniqueKey(list: CruiseLink[]) {
 }
 
 
+// WARNING: v2.x of API returns array of cruises rather than a single one
 export default function CruiseDetail() {
   const baseClass = 'CruiseDetail'
   const {cruiseId} = useParams();
   console.log('redrawing CruiseDetail with ', cruiseId)
 
   // TODO return multiple cruises where same cruiseId shared by multiple platforms
-  const { data:cruise, error, status } = useQuery(["cruiseDetail", {cruiseId}], fetchCruiseById, {
+  const { data, error, status } = useQuery(["cruiseDetail", {cruiseId}], fetchCruiseById, {
       // don't retry for 404 errors, try for up to 3 times for anything else
       retry: (failureCount:number, error:unknown) => {
           // TODO this doesn't seem to be working correctly
@@ -34,6 +35,8 @@ export default function CruiseDetail() {
       }
     }
   );
+
+  const cruise = Array.isArray(data) ? data[0] : data
   if (cruise && cruise.links) { addUniqueKey(cruise.links)}
   // console.log(cruise)
 
@@ -54,7 +57,10 @@ export default function CruiseDetail() {
                   <li style={{listStyle: "none"}} key={item.objectid}><a href={item.LINK} target="_blank" rel="noopener">{item.TYPE}</a></li>
               ))}
           </ul>
-          Show samples from this cruise on the <Link to={{pathname:`/samples?cruise=${cruiseId}`}}>map</Link> or in a 
+          <hr style={{width:"100%"}} />
+          Show samples from this cruise on the &nbsp;
+          <Link to={{pathname:`/samples?cruise=${cruiseId}`}}>map</Link>
+          &nbsp; or in a &nbsp; 
           <Link to={{pathname:`/samples/table?cruise=${cruiseId}`}}>table</Link>
         </div>
       : ''

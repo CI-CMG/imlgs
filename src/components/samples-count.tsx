@@ -13,10 +13,10 @@ import { extractDefaultFiltersFromUrl, extractDefaultFiltersFromSearchParams } f
 
 
 export default function SamplesCount() {
+    console.log('rendering SamplesCount...')
     const baseClass = 'SamplesCount'
     let [searchParams, setSearchParams] = useSearchParams();
     let filterDefaults = extractDefaultFiltersFromSearchParams(searchParams)
-    // console.log(filterDefaults)
 
     const { data:totalCount, error, status} = useQuery(["totalSampleCount"], fetchTotalSampleCount, {
         staleTime: Infinity
@@ -28,7 +28,7 @@ export default function SamplesCount() {
     return (
         <div>
             <h3>{(totalCount && filteredCount) ? 
-          `${filteredCount.toLocaleString()} out of ${totalCount.toLocaleString()} samples selected` 
+          `${filteredCount.toLocaleString()} out of ${totalCount.toLocaleString()} samples` 
           : 'Loading...'}
         </h3>
         </div>

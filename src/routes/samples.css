@@ -12,16 +12,14 @@
     background-color: whitesmoke;
 }
 
-
 .Samples--sidebar {
     grid-area: sidebar;
     overflow: auto;
     padding: 1rem;
-    color: blue;
+    color: black;
     text-decoration: none;
 }
 
 .Samples--main {
     grid-area: map;
-    background-color: burlywood;
 }
