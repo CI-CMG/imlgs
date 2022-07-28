@@ -1,5 +1,6 @@
 
-const apiBaseUrl = 'http://localhost/geosamples-api'
+// const apiBaseUrl = 'http://localhost/geosamples-api'
+const apiBaseUrl = 'https://www.ngdc.noaa.gov/geosamples-api'
 
 
 function buildQueryUrl(resourcePath, filters = []) {

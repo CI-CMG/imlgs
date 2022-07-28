@@ -13,6 +13,7 @@ import ArcGISMap from "@arcgis/core/Map"
 import MapView from "@arcgis/core/views/MapView"
 import esriConfig from '@arcgis/core/config.js'
 import Sandbox from "./components/Sandbox"
+// import { defineConfig } from 'vite'
 import {
   useQuery,
   useQueryClient,
@@ -21,11 +22,34 @@ import {
 } from 'react-query'
 import './App.css'
 import ShowTablePage from './components/ShowTablePage'
+import {buildQueryUrl} from "./ApiUtils";
 
 function App() {
   console.log('inside App...')
+  console.log(__VERSION__)
   const [count, setCount] = useState(0)
   const queryClient = new QueryClient()
+
+  // const getAllRepositories = async() => {
+  //   const queryURL = buildQueryUrl('repositories')
+  //   const response = await fetch(queryURL)
+  //   if (response.status !== 200) {
+  //     throw "failed to retrieve list of repositories"
+  //   }
+  //   const data = await response.json()
+  //   return data.map((item) => {
+  //     return ({value: item.facility_code, label: item.facility})
+  //   })
+  // }
+  // function lazyLoad() {
+  //   getAllRepositories().then((response)=>{
+  //     console.log('response: ', response)
+  //     return response
+  //   })
+  // }
+  //
+  // const [allRepositories, setAllRespositories] = useState(lazyLoad)
+  // console.log('allRepositories:' , allRepositories)
 
   /*
   // required if not in ./public/assets
@@ -58,11 +82,11 @@ function App() {
   )
 }
 */
-  /* basename="/~jcc/imlgs" */
   console.log('inside App...')
+  console.log('using Router with basename ', import.meta.env.VITE_ROUTER_BASENAME)
   return (
     <QueryClientProvider client={queryClient}>   
-    <Router basename="/~jcc/imlgs">
+    <Router basename={import.meta.env.VITE_ROUTER_BASENAME}>
         <Switch>
           <Route path="/about">
             <AboutPage/>

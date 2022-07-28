@@ -1,44 +1,44 @@
-import { LinkSharp } from "@material-ui/icons"
+import {LinkSharp} from "@material-ui/icons"
 import React, {useEffect, useState} from "react"
-import { useParams } from "react-router-dom"
+import {useParams} from "react-router-dom"
 import {apiBaseUrl} from '../../ApiUtils'
 import "./SampleDetailPanel.css"
 
 
 function SampleDetailPanel() {
-    console.log('inside SampleDetailPanel...')
+    // console.log('inside SampleDetailPanel...')
     const {imlgsId} = useParams();
     const [sample, setSample] = useState()
     const [intervals, setIntervals] = useState([])
     const [recordNotFound, setRecordNotFound] = useState()
-    console.log('intervals: ', intervals)
+    // console.log('intervals: ', intervals)
 
     useEffect(async () => {
         console.debug(`getting intervals for sample ${imlgsId}...`);
         const queryURL = `${apiBaseUrl}/intervals?imlgs=${imlgsId}`
         // console.debug(queryURL)
-    
+
         const response = await fetch(queryURL)
         if (response.status == 404) {
-           console.warn(`no intervals for IMLGS ${imlgsId}`)
+            console.warn(`no intervals for IMLGS ${imlgsId}`)
         }
         if (response.status !== 200) {
             console.error("Error in API request: failed to retrieve data")
             return
         }
         const json = await response.json()
-        console.debug(`${json.length} intervals retrieved`)
-        console.debug(json)
-        json.forEach(item => console.log(item.interval))
+        // console.debug(`${json.length} intervals retrieved`)
+        // console.debug(json)
+        // json.forEach(item => console.log(item.interval))
         setIntervals(json)
-      }, []);
+    }, []);
 
 
     useEffect(async () => {
         console.debug(`getting details for sample ${imlgsId}...`);
         const queryURL = `${apiBaseUrl}/samples/${imlgsId}`
         // console.debug(queryURL)
-    
+
         const response = await fetch(queryURL)
         if (response.status == 404) {
             setRecordNotFound(true)
@@ -48,97 +48,203 @@ function SampleDetailPanel() {
             return
         }
         const json = await response.json()
-        console.debug(`record retrieved`)
-        console.debug(json)
+        // console.debug(`record retrieved`)
+        // console.debug(json)
+        // console.log('calling setSample with ', json)
         setSample(json)
-      }, []);
+    }, []);
 
-      
+
     function formatInterval(interval) {
-          let rows = []
-          if (interval.depth_top != null && interval.depth_bot != null) {
-            rows.push(`${interval.depth_top} to ${interval.depth_bot} cm in core`)
-          }
-          if (interval.int_comments) { rows.push(`Comments: ${interval.int_comments}`)}
-          if (interval.rock_lith) { rows.push(`Lithology: ${interval.rock_lith}`)}
-          if (interval.rock_min) { rows.push(`Mineralogy: ${interval.rock_min}`)}
-          if (interval.lith1) { rows.push(`Primary Composition: ${interval.lith1}`)}
-          if (interval.text1) { rows.push(`Primary Texture: ${interval.text1}`)}
-          if (interval.lith2) { rows.push(`Secondary Composition: ${interval.lith2}`)}
-          if (interval.text2) { rows.push(`Secondary Texture: ${interval.text2}`)}
-          // TODO add other information elements
+        const fieldsList = [
+            // {label: 'Interval', field: 'interval' },
+            {label: 'Primary Lithologic Composition', field: 'lith1' },
+            {label: 'Primary Texture', field: 'text1' },
+            {label: 'Secondary Lithologic Composition', field: 'lith2'},
+            {label: 'Secondary Texture', field: 'text2' },
+            {label: 'Other Component 1', field: 'comp1' },
+            {label: 'Other Component 2', field: 'comp2' },
+            {label: 'Other Component 3', field: 'comp3' },
+            {label: 'Other Component 4', field: 'comp4' },
+            {label: 'Other Component 5', field: 'comp5' },
+            {label: 'Other Component 6', field: 'comp6' },
+            {label: 'Rock Lithology', field: 'rock_lith' },
+            {label: 'Rock Mineralogy', field: 'rock_min' },
+            {label: 'Rock Weathering and Metamorphism', field: 'weath_meta' },
+            {label: 'Rock Glass Remarks and MN/Fe Oxide Coating', field: 'remark'},
+            {label: 'Geologic Age', field: 'age' },
+            {label: 'Absolute Age Top', field: 'absolute_age_top' },
+            {label: 'Absolute Age Bottom', field: 'absolute_age_bottom' },
+            {label: 'Color (Munsell Code)', field: 'munsell_code' },
+            {label: 'Description', field: 'description' },
+            {label: 'Comments', field: 'int_comments' },
+            {label: 'Exhausted - No Longer Available', field: 'exhaust_code' },
+            {label: 'IGSN', field: 'igsn' },
+            {label: 'Photo Link', field: 'photo_link' }
+        ]
 
+        let rows = []
+        let title = interval.interval ? `Interval ${interval.interval}`: ''
+        if (interval.depth_top != null && interval.depth_bot != null) {
+            title += `: ${interval.depth_top} to ${interval.depth_bot} cm in core`
+        }
+        rows.push(title)
+        fieldsList.filter(item => interval[item.field]).forEach(item => {
+           rows.push(`${item.label}: ${interval[item.field]}`)
+        })
 
         return (
             <table key={interval.interval}>
-            <thead></thead>
-            <tbody>
-            { rows.map((row,idx) => <tr key={idx}><td>{row}</td></tr>) }
-            </tbody>
+                <thead></thead>
+                <tbody>
+                {rows.map((row, idx) => <tr key={idx}>
+                    <td>{row}</td>
+                </tr>)}
+                </tbody>
             </table>
         )
-      }
-      
+    }
 
-      function formatLinks(links) {
-        console.log('inside formatLinks with ', links)
-        return (
-          <div>
-          <ul>
-            { links.map((row,idx) => <li key={idx}><a href={row.link}>{row.linklevel} {row.type} at {row.source}</a></li>) }
-          </ul>
-          </div>
-        )
-      }
 
-      function formatCruiseLinks(links, cruise) {
-        console.log('inside formatCruiseLinks with ', links)
+    function formatLinks(links) {
+        // console.log('inside formatLinks with ', links)
         return (
-          <div>
-          <ul>
-            { links.map((row,idx) => <li key={idx}><a href={row.link}>{cruise} {row.type} at {row.source}</a></li>) }
-          </ul>
-          </div>
+            <div>
+                <ul>
+                    {links.map((row, idx) => <li key={idx}><a
+                        href={row.link}>{row.linklevel} {row.type} at {row.source}</a></li>)}
+                </ul>
+            </div>
         )
-      }
+    }
+
+    function formatCruiseLinks(links, cruise) {
+        // console.log('inside formatCruiseLinks with ', links)
+        return (
+            <div>
+                <ul>
+                    {links.map((row, idx) => <li key={idx}><a href={row.link}>{cruise} {row.type} at {row.source}</a>
+                    </li>)}
+                </ul>
+            </div>
+        )
+    }
+
+    //format string of YYYYMMDD to YYYY-MM-DD
+    function formatDate(dateString) {
+        const chars = dateString.split('')
+        return(`${chars.slice(0,4).join('')}-${chars.slice(4,6).join('')}-${chars.slice(6,8).join('')}`)
+    }
+
+
+    // WARNING: this is called twice with same Sample record
+    function formatSampleDetail(sample) {
+        // console.log('inside formatSampleDetail with ', sample)
+
+        // shallow clone. Avoid modifying the state variable which is passed in
+        let sampleClone = Object.assign({}, sample)
+
+        // augment or reformat certain fields individually
+        if (sampleClone.lon && sampleClone.lat) {
+            sampleClone.location = `${sampleClone.lat}, ${sampleClone.lon}`
+        }
+        if (sampleClone.end_lon && sampleClone.end_lat) {
+            sampleClone.end_location = `${sampleClone.end_lat}, ${sampleClone.end_lon}`
+        }
+
+        if (sampleClone.water_depth) {
+            sampleClone.water_depth = sampleClone.water_depth.toLocaleString()
+        }
+        if (sampleClone.end_water_depth) {
+            sampleClone.end_water_depth = sampleClone.end_water_depth.toLocaleString()
+        }
+
+        // Date fields seem to all be YYYYMMDD format
+        let fieldList = ['last_update', 'begin_date', 'end_date']
+        fieldList.filter(i => sampleClone[i]).forEach(i => {
+                sampleClone[i] = formatDate(sampleClone[i])
+        })
+        //TODO why does array literal behave differently?
+        //['water_depth', 'end_water_depth'].forEach(i => console.log(i))
+        fieldList = ['water_depth', 'end_water_depth']
+        fieldList.filter(i => sampleClone[i]).forEach((i) => {
+            sampleClone[i] = sampleClone[i].toLocaleString()
+        })
+
+        //see https://www.ngdc.noaa.gov/mgg/curator/curatorcoding.html
+        const fieldsList = [
+            // {label: 'Repository', field: 'facility' },
+            {label: 'Ship/Platform', field: 'platform' },
+            // {label: 'Cruise ID', field: 'cruise' },
+            {label: 'Leg', field: 'leg' },
+            {label: 'Sample ID', field: 'sample' },
+            {label: 'Sampling Device', field: 'device' },
+            {label: 'Latitude/Longitude', field: 'location'},
+            {label: 'Ending Latitude/Longitude', field: 'end_location'},
+            {label: 'Water Depth (m)', field: 'water_depth' },
+            {label: 'Ending Water Depth (m)', field: 'end_water_depth' },
+            {label: 'Date Sample Collected', field: 'begin_date' },
+            {label: 'Date Sample Collection Ended', field: 'end_date' },
+            {label: 'Principal Investigator', field: 'pi' },
+            {label: 'Storage Method', field: 'storage_meth' },
+            {label: 'Physiographic Province', field: 'province' },
+            {label: 'Lake', field: 'lake' },
+            {label: 'Core Length (cm)', field: 'cored_length' },
+            {label: 'Core Diameter(cm)', field: 'cored_diam' },
+            {label: 'Sample Comments', field: 'sample_comments' },
+            {label: 'IGSN', field: 'igsn' },
+            {label: 'Repository Overview', field: 'other_link' },
+            {label: 'Last Updated', field: 'last_update' }
+        ]
+
+        let tableRowElements = fieldsList.filter(item => sampleClone[item.field]).map(item => {
+            return (<tr key={item.field}><td>{item.label}</td><td>{sampleClone[item.field]}</td></tr>)
+        })
+        // splice in <a> elements
+        tableRowElements.splice(0,0,
+            <tr key="facility"><td>Repository</td><td><a href={`/repositories/${sampleClone.facility_code}`}>{sampleClone.facility}</a></td></tr>
+        )
+        tableRowElements.splice(2,0,
+            <tr key="cruise"><td>Cruise ID</td><td><a href={`/cruises/${sampleClone.cruise}`}>{sampleClone.cruise}</a></td></tr>
+        )
+        if (sampleClone.other_link.startsWith('http')) {
+            tableRowElements.splice(15,1,
+                <tr key="other_link"><td>Other Link</td><td><a href={sampleClone.other_link}>{sampleClone.other_link}</a></td></tr>
+            )
+        }
+
+        return tableRowElements
+    }
 
     return (
         <div className="SampleDetailPanel">
             <h2>Geosample Detail</h2>
-            {recordNotFound? <h4>No record with IMLGS Id {imlgsId}</h4>: ''}
-            {!recordNotFound && sample?
+            {recordNotFound ? <h4>No record with IMLGS Id {imlgsId}</h4> : ''}
+            {!recordNotFound && sample ?
                 <div>
-                <table>
-                <caption></caption>
-                <thead></thead>
-                <tbody>
-                    <tr><td>Repository:</td><td>{sample.facility}</td></tr>
-                    <tr><td>Ship:</td><td>{sample.platform}</td></tr>
-                    <tr><td>Cruise:</td><td>{sample.cruise}</td></tr>
-                    <tr><td>Sample:</td><td>{sample.sample}</td></tr>
-                    <tr><td>Device:</td><td>{sample.device}</td></tr>
-                    <tr><td>Latitude:</td><td>{sample.lat}</td></tr>
-                    <tr><td>Longitude:</td><td>{sample.lon}</td></tr>
-                    <tr><td>Water Depth(m):</td><td>{sample.water_depth}</td></tr>
-                    <tr><td>Date:</td><td>{sample.begin_date}</td></tr>
-                    <tr><td>PI:</td><td>{sample.pi}</td></tr>
-                    <tr><td>Storage:</td><td>{sample.storage_meth}</td></tr>
-                    <tr><td>Province:</td><td>{sample.province}</td></tr>
-                </tbody>
-                </table>
-                <br/>
-                {formatLinks(sample.links)}
-                {formatCruiseLinks(sample.cruise_links, sample.cruise)}
+                    <table>
+                        <caption></caption>
+                        <thead></thead>
+                        <tbody>
+                        {formatSampleDetail(sample)}
+                        </tbody>
+                    </table>
+                    <br/>
+                    {formatLinks(sample.links)}
+                    {formatCruiseLinks(sample.cruise_links, sample.cruise)}
                 </div>
-            : ''}
-            {intervals.length? intervals.map((interval) => formatInterval(interval)) : ''}
-                {/* <ol>
+                : ''}
+            {intervals.length ? intervals.map((interval) => formatInterval(interval)) : ''}
+            {/* <ol>
                     {
                         intervals.map((item) => (
                             <li key={item.interval}>{formatInterval(item)}</li>
                         ))
                     }
                 </ol> */}
+            <div style={{padding:"25px"}}>
+            <span>see <a href={'https://www.ngdc.noaa.gov/mgg/curator/curatorcoding.html'}>field descriptions</a> for more information</span>
+            </div>
         </div>
     )
 }
