@@ -1,0 +1,22 @@
+.Cruise--info {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.Cruise--info ul {
+    list-style-type: none;
+}
+
+.Cruise--title {
+    width: 100%;
+    margin: 25 auto;
+}
+
+.Cruise--errorMessage {
+    margin: 0 auto;
+}
+
+.Cruise {
+    background-color: white;
+    grid-area: details;
+}
