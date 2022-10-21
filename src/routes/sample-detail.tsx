@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import {
   useQuery,
   useQueries
@@ -170,10 +170,16 @@ export default function SampleDetail() {
       })
       // splice in <a> elements
       tableRowElements.splice(0,0,
-          <tr key="facility"><td>Repository</td><td><a href={`/repositories/${sampleClone.facility_code}`}>{sampleClone.facility}</a></td></tr>
+          <tr key="facility">
+            <td>Repository</td>
+            <td><Link to={`/repositories/${sampleClone.facility_code}`}>{sampleClone.facility}</Link></td>
+        </tr>
       )
       tableRowElements.splice(2,0,
-          <tr key="cruise"><td>Cruise ID</td><td><a href={`/cruises/${sampleClone.cruise}`}>{sampleClone.cruise}</a></td></tr>
+          <tr key="cruise">
+            <td>Cruise ID</td>
+            <td><Link to={`/cruises/${sampleClone.cruise}`}>{sampleClone.cruise}</Link></td>
+        </tr>
       )
       if (sampleClone.other_link.startsWith('http')) {
           tableRowElements.splice(15,1,

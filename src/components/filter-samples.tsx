@@ -173,6 +173,7 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
 
   const checkForReturnKey = (event:React.KeyboardEvent<HTMLInputElement>) => {
     console.log('inside checkForReturnKey...')
+    console.log(event.target)
     if (event.key === 'Enter') {
       event.target.blur()
     }

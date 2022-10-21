@@ -182,9 +182,9 @@ export default function MapPanel(
                             "<br><b>Location:</b> {LON}, {LAT}" +
                             "<br><b>Year:</b> {YEAR}" +
                             "<br><b>Water Depth:</b> {WATER_DEPTH}m" +
-                            '<br><a href="http://localhost:5000/samples/{IMLGS}">more detail</a>'
+                            '<br><a href="https://gisdev.ngdc.noaa.gov/viewers/imlgs/samples/{IMLGS}">more detail</a>'
                         };
-                        //                            '<br><a href="https://maps.ngdc.noaa.gov/viewers/imlgs/samples/{IMLGS}">more detail</a>'
+                        //                            '<br><a href="https://maps.ngdc.noaa.gov/viewers/beta/imlgs/samples/{IMLGS}">more detail</a>'
 
                     return feature
                   })

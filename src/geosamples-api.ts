@@ -1,8 +1,9 @@
 import { Filter, Repository, Cruise, Sample, Interval, DepthRange } from './imlgs-types';
 import {QueryKey, QueryOptions, QueryFnData} from 'react-query/types/core/types';
 
+const apiBaseUrl = 'https://wwwtest.ngdc.noaa.gov/geosamples-api'
 // const apiBaseUrl = 'https://www.ngdc.noaa.gov/geosamples-api'
-const apiBaseUrl = 'https://gisdev.ngdc.noaa.gov/imlgs/api'
+// const apiBaseUrl = 'https://gisdev.ngdc.noaa.gov/imlgs/api'
 // const apiBaseUrl = 'http://localhost:8080/imlgs/api'
 
 
@@ -49,8 +50,11 @@ function createSearchParamsString(validFilterKeys:string[], filters:Filter[], de
     // clone the incoming array
     let queryStrings = [...defaultParams]
 
+    // console.log('filters: ', filters)
     for (const [key, value] of Object.entries(filters)) {
-        let isBlank = value.trim().length === 0
+        // TODO replace this hack to handle blank parameter values
+        let isBlank = false
+        if (typeof value === 'string' && value.trim().length === 0) { isBlank = true }
         // API generally ignores invalid search params but this makes explicit what is supported in this context
         if (validFilterKeys.includes(key) && ! isBlank) {
             // temporary work around until API updated
@@ -61,7 +65,7 @@ function createSearchParamsString(validFilterKeys:string[], filters:Filter[], de
             }
         }
     }
-    console.log('filters: ', queryStrings)
+    // console.log('filters: ', queryStrings)
     return (queryStrings.length) ? '?'+ queryStrings.join('&'): ''
 }
 
@@ -171,7 +175,7 @@ async function fetchSamples(queryData:QueryFnData): Promise<Sample[]> {
     const [, filters]:[string, Filter[]] = queryData.queryKey
     const validKeys = ['repository', 'lake', 'platform', 'device', 'cruise', 'date', 'bbox', 'min_depth', 'max_depth', 'offset', 'page_size']
     const searchParamsString = createSearchParamsString(validKeys, filters)
-    console.log(searchParamsString)
+    // console.log(searchParamsString)
     const response = await fetch(`${apiBaseUrl}/samples${searchParamsString}`)
     if (! response.ok) {
         throw new Error(response.statusText)
