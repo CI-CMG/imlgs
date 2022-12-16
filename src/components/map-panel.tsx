@@ -16,9 +16,10 @@ import CoordinateConversion from "@arcgis/core/widgets/CoordinateConversion";
 // import IdentifyTask from "@arcgis/core/tasks/IdentifyTask"
 // import IdentifyParameters from "@arcgis/core/tasks/support/IdentifyParameters"
 import {webMercatorToGeographic} from "@arcgis/core/geometry/support/webMercatorUtils";
+import { mapserviceUrl, mapviewerUrl } from '../envConfig';
 import "./map-panel.css";
 
-const mapserviceUrl = 'https://gis.ngdc.noaa.gov/arcgis/rest/services/web_mercator/sample_index_dynamic/MapServer'
+// const mapserviceUrl = 'https://gis.ngdc.noaa.gov/arcgis/rest/services/web_mercator/sample_index_dynamic/MapServer'
 
 
 /**
@@ -177,15 +178,12 @@ export default function MapPanel(
                         feature.popupTemplate = {
                         // autocasts as new PopupTemplate()
                         title: "Sample {IMLGS}",
-                        content:
-                            "<b>Repository:</b> {FACILITY_CODE}" +
-                            "<br><b>Location:</b> {LON}, {LAT}" +
-                            "<br><b>Year:</b> {YEAR}" +
-                            "<br><b>Water Depth:</b> {WATER_DEPTH}m" +
-                            '<br><a href="https://gisdev.ngdc.noaa.gov/viewers/imlgs/samples/{IMLGS}">more detail</a>'
+                        content: `<b>Repository:</b> {FACILITY_CODE}
+                          <br><b>Location:</b> {LON}, {LAT}
+                          <br><b>Year:</b> {YEAR}
+                          <br><b>Water Depth:</b> {WATER_DEPTH}m
+                          <br><a href="${mapviewerUrl}/{IMLGS}">more detail</a>`
                         };
-                        //                            '<br><a href="https://maps.ngdc.noaa.gov/viewers/beta/imlgs/samples/{IMLGS}">more detail</a>'
-
                     return feature
                   })
                 }).then(showPopup)

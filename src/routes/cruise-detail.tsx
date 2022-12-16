@@ -48,9 +48,10 @@ export default function CruiseDetail() {
       {cruise ?
         <div className={`${baseClass}--info`}>
           <ul>
-              <li>Repository: <Link to={{pathname:`/repositories/${cruise.facility_code}`}}>{cruise.facility_code}</Link></li>
-              <li>Ship/Platform: {cruise.platform}</li>
-              {(cruise.leg) ? <li>Leg: {cruise.leg}</li>: ''}
+            {/* TODO handle case of multiple facilities */}
+              <li>Repository: <Link to={{pathname:`/repositories/${cruise.facility_codes[0]}`}}>{cruise.facility_codes[0]}</Link></li>
+              <li>Ship/Platform: {cruise.platforms.join(', ')}</li>
+              {(cruise.legs) ? <li>Leg(s): {cruise.legs.join(', ')}</li>: ''}
           </ul>
           <ul>
               {cruise.links.map(item => (

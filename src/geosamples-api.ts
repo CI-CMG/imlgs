@@ -1,11 +1,6 @@
 import { Filter, Repository, Cruise, Sample, Interval, DepthRange } from './imlgs-types';
 import {QueryKey, QueryOptions, QueryFnData} from 'react-query/types/core/types';
-
-const apiBaseUrl = 'https://wwwtest.ngdc.noaa.gov/geosamples-api'
-// const apiBaseUrl = 'https://www.ngdc.noaa.gov/geosamples-api'
-// const apiBaseUrl = 'https://gisdev.ngdc.noaa.gov/imlgs/api'
-// const apiBaseUrl = 'http://localhost:8080/imlgs/api'
-
+import {apiBaseUrl} from './envConfig'
 
 // const fetchTotalSampleCount = async () => {
 //     const response = await fetch(`${apiBaseUrl}/samples?count_only=true`)
@@ -17,7 +12,7 @@ const apiBaseUrl = 'https://wwwtest.ngdc.noaa.gov/geosamples-api'
 // }
 
 async function fetchTotalSampleCount(): Promise<number> {
-    const response = await fetch(`${apiBaseUrl}/samples?count_only=true`)
+    const response = await fetch(`${apiBaseUrl}/samples/count`)
     // Fetch API doesn't consider 404 responses to be errors
     if (! response.ok) {
         throw new Error(response.statusText)
@@ -73,53 +68,52 @@ function createSearchParamsString(validFilterKeys:string[], filters:Filter[], de
 async function fetchRepositories(queryData:QueryFnData): Promise<Repository[]> {
     const [, filters]:[string, Filter[]] = queryData.queryKey
     const validKeys = ['platform', 'lake', 'cruise', 'device', 'date', 'bbox', 'min_depth', 'max_depth']
-    const searchParamsString = createSearchParamsString(validKeys, filters, ['name_only=true'])
-    const response = await fetch(`${apiBaseUrl}/repositories${searchParamsString}`)
+    const searchParamsString = createSearchParamsString(validKeys, filters)
+    const response = await fetch(`${apiBaseUrl}/repositories/name${searchParamsString}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
-    return await response.json()
+    const payload = await response.json()
+    return payload.items as Repository[]
 }
 
 
 async function fetchPlatforms(queryData:QueryFnData): Promise<string[]> {
     const [, filters]:[string, Filter[]] = queryData.queryKey
     const validKeys = ['repository', 'lake', 'cruise', 'device', 'date', 'bbox', 'min_depth', 'max_depth']
-    // no "name_only" option for platforms
-    const searchParamsString = createSearchParamsString(validKeys, filters)
+    const searchParamsString = createSearchParamsString(validKeys, filters, ['items_per_page=2000'])
     const response = await fetch(`${apiBaseUrl}/platforms${searchParamsString}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
-    return await response.json()
+    const payload = await response.json()
+    return payload.items as string[]
 }
 
 
 async function fetchLakes(queryData:QueryFnData): Promise<string[]> {
     const [, filters]:[string, Filter[]] = queryData.queryKey
     const validKeys = ['repository', 'platform', 'cruise', 'device', 'date', 'bbox', 'min_depth', 'max_depth']
-
-    // no "name_only" option for lakes
-    const searchParamsString = createSearchParamsString(validKeys, filters)
+    const searchParamsString = createSearchParamsString(validKeys, filters, ['items_per_page=2000'])
     const response = await fetch(`${apiBaseUrl}/lakes${searchParamsString}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
-    return await response.json()
+    const payload = await response.json()
+    return payload.items as string[]
 }
 
 
 async function fetchDevices(queryData:QueryFnData): Promise<string[]> {
     const [, filters]:[string, Filter[]] = queryData.queryKey
     const validKeys = ['repository', 'lake', 'platform', 'cruise', 'date', 'bbox', 'min_depth', 'max_depth']
-
-    // no "name_only" option for lakes
-    const searchParamsString = createSearchParamsString(validKeys, filters)
+    const searchParamsString = createSearchParamsString(validKeys, filters, ['items_per_page=2000'])
     const response = await fetch(`${apiBaseUrl}/devices${searchParamsString}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
-    return await response.json()
+    const payload = await response.json()
+    return payload.items as string[]
 }
 
 
@@ -127,8 +121,8 @@ async function fetchSampleCount(queryData:QueryFnData):Promise<number> {
     const [, filters]:[string, Filter[]] = queryData.queryKey
     // TODO add water depth, date
     const validKeys = ['repository', 'lake', 'platform', 'cruise', 'device', 'date', 'bbox', 'min_depth', 'max_depth']
-    const searchParamsString = createSearchParamsString(validKeys, filters, ['count_only=true'])
-    const response = await fetch(`${apiBaseUrl}/samples${searchParamsString}`)
+    const searchParamsString = createSearchParamsString(validKeys, filters)
+    const response = await fetch(`${apiBaseUrl}/samples/count${searchParamsString}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
@@ -140,30 +134,31 @@ async function fetchSampleCount(queryData:QueryFnData):Promise<number> {
 async function fetchCruises(queryData:QueryFnData): Promise<Cruise[]> {
     const [, filters]:[string, Filter[]] = queryData.queryKey
     const validKeys = ['repository', 'lake', 'platform', 'device', 'date', 'bbox', 'min_depth', 'max_depth']
-    const searchParamsString = createSearchParamsString(validKeys, filters)
+    const searchParamsString = createSearchParamsString(validKeys, filters, ['items_per_page=2000'])
     const response = await fetch(`${apiBaseUrl}/cruises${searchParamsString}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
-    return await response.json()
-}
+    const payload = await response.json()
+    return payload.items as Cruise[]}
 
 
-async function fetchCruiseNames(queryData:QueryFnData): Promise<string[]> {
+async function fetchCruiseNames(queryData:QueryFnData): Promise<Cruise[]> {
     const [, filters]:[string, Filter[]] = queryData.queryKey
     const validKeys = ['repository', 'lake', 'platform', 'device', 'date', 'bbox', 'min_depth', 'max_depth']
-    const searchParamsString = createSearchParamsString(validKeys, filters, ['name_only=true'])
-    const response = await fetch(`${apiBaseUrl}/cruises${searchParamsString}`)
+    const searchParamsString = createSearchParamsString(validKeys, filters, ['items_per_page=2000'])
+    const response = await fetch(`${apiBaseUrl}/cruises/name${searchParamsString}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
-    return await response.json()
+    const payload = await response.json()
+    return payload.items as Cruise[]
 }
 
 
 async function fetchCruiseById(queryData:QueryFnData): Promise<Cruise> {
     const [, { cruiseId}] = queryData.queryKey
-    const response = await fetch(`${apiBaseUrl}/cruises/${cruiseId}`)
+    const response = await fetch(`${apiBaseUrl}/cruises/detail/${cruiseId}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }

@@ -17,13 +17,16 @@ import Cruise from './routes/cruise';
 import RepositoryDetail from './routes/repository-detail';
 import './index.css'
 import SamplesTable from './routes/samples-table';
+import {apiBaseUrl, routerBasename} from './envConfig'
+import myConfig from './config.json'
+
+// values from mode-specific vite.js config file
+const devApiBaseUrl = import.meta.env.VITE_apiBaseUrl
 
 // TS non-null assertion operator since root element will always exist
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    {/* <BrowserRouter basename="/viewers/beta/imlgs/"> */}
-    {/* <BrowserRouter basename={"/imlgs/"}> */}
-    <BrowserRouter basename={"/viewers/imlgs/"}>
+    <BrowserRouter basename={routerBasename}>
     <Routes>
       <Route path="/" element={<App />} >
         <Route path="samples" element={<Samples />} />

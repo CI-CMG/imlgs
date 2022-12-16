@@ -71,15 +71,21 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
   let repositories = (results[0].data) ? results[0].data : []
   // if a select's options list contains only one value, make it the active one
   if (repositories.length == 1) { repository = repositories[0].facility_code }
+
   let platforms = (results[1].data) ? results[1].data : []
   if (platforms.length == 1) { platform = platforms[0] }
+
   // lakes is only one of the selects which may have 0 options
   let lakes = (results[2].data?.length) ? results[2].data : []
   if (lakes.length == 1) { lake = lake[0] }
+
   let devices = (results[3].data) ? results[3].data : []
   if (devices.length == 1) { device = devices[0] }
+  
   let cruises = (results[4].data?.length) ? results[4].data : []
-  if (cruises.length == 1) { cruise = cruises[0] }
+  console.log({cruises})
+  if (cruises.length == 1) { cruise = cruises[0].cruise }
+
   // console.log('results: ', results)
 
 
@@ -245,9 +251,9 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
               onChange={handleCruiseChange}
               size='small'
             >
-              {cruises.map(name => (
-              <MenuItem key={name} value={name}>
-                {name}
+              {cruises.map(item => (
+              <MenuItem key={item.id} value={item.cruise}>
+                {item.cruise}
               </MenuItem>
             ))}
             </Select>
