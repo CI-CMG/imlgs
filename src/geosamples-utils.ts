@@ -10,7 +10,10 @@ interface filterParams {
     max_depth?: number,
     bbox?: string,
     offset?: number,
-    pageSize?: number
+    page?: number,
+    items_per_page?: number,
+    pageSize?: number,
+    cruise_id?: string
 }
 /**
  * Given a URL, return an object with default values for the filter Select widgets.
@@ -28,6 +31,8 @@ function extractDefaultFiltersFromUrl(url:URL) {
     if (searchParams.has('min_depth'))  { defaults.min_depth = searchParams.get('min_depth')}
     if (searchParams.has('max_depth'))  { defaults.max_depth = searchParams.get('max_depth')}
     if (searchParams.has('bbox'))       { defaults.bbox = searchParams.get('bbox')}
+    if (searchParams.has('cruise_id'))  { defaults.cruise_id = searchParams.get('cruise_id')}
+    if (searchParams.has('facility_id')){ defaults.facility_id = searchParams.get('facility_id')}
 
     return defaults
 }
@@ -35,7 +40,7 @@ function extractDefaultFiltersFromUrl(url:URL) {
 
 function extractDefaultFiltersFromSearchParams(searchParams:URLSearchParams) {
     let defaults = {}
-    const validKeys = ['repository', 'platform', 'lake', 'device', 'cruise', 'date', 'min_depth', 'max_depth', 'bbox', 'page_size', 'offset']
+    const validKeys = ['repository', 'platform', 'lake', 'device', 'cruise', 'date', 'min_depth', 'max_depth', 'bbox', 'page_size', 'offset', 'cruise_id', 'facility_id']
     searchParams.forEach((value, key) => {
         if (validKeys.includes(key)) {
             defaults[key] = value

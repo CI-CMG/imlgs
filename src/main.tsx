@@ -42,7 +42,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           />
           <Route path=":cruiseId" element={<CruiseDetail/>}/>
         </Route>
-        <Route path="/cruises/:cruiseId/:platformId" element={<Cruise />}/>        
+        <Route path="/cruise/:cruiseId" element={<CruiseDetail />}/>        
         <Route path="/repositories" element={<Respositories />}>
           <Route index
             element={

@@ -18,6 +18,7 @@
     const { data:repositories, error, status} = useQuery(["allRepositories"], fetchAllRepositories, {
       staleTime: Infinity
     });
+    console.log({repositories})
 
     type Repository = {
       // email_link: string,
@@ -36,8 +37,8 @@
             repositories.map((repository) => (
             <Link
               style={{ display: "block", margin: "1rem 0", color: "#282c34", textDecoration: "none" }}
-              to={`/repositories/${repository.facility_code}`}
-              key={repository.facility_code}
+              to={`/repositories/${repository.id}`}
+              key={repository.id}
             >
               {repository.facility}
             </Link>

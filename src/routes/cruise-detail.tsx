@@ -16,7 +16,6 @@ function addUniqueKey(list: CruiseLink[]) {
 }
 
 
-// WARNING: v2.x of API returns array of cruises rather than a single one
 export default function CruiseDetail() {
   const baseClass = 'CruiseDetail'
   const {cruiseId} = useParams();
@@ -38,32 +37,36 @@ export default function CruiseDetail() {
 
   const cruise = Array.isArray(data) ? data[0] : data
   if (cruise && cruise.links) { addUniqueKey(cruise.links)}
-  // console.log(cruise)
+  console.log(cruise)
 
 
   return (
     <div className={baseClass}>
-      <h2 className={`${baseClass}--title`} style={{paddingLeft: "50px", paddingBottom: "50px"}}>Cruise: {cruiseId}</h2>
       {/* {(!cruise) ? <h4>no data</h4>: ''} */}
       {cruise ?
+        <>
+        <h2 className={`${baseClass}--title`} style={{paddingLeft: "50px", paddingBottom: "50px"}}>Cruise: {cruise.cruise}</h2>
         <div className={`${baseClass}--info`}>
           <ul>
             {/* TODO handle case of multiple facilities */}
+              <li>Id: {cruise.id}</li>
               <li>Repository: <Link to={{pathname:`/repositories/${cruise.facility_codes[0]}`}}>{cruise.facility_codes[0]}</Link></li>
               <li>Ship/Platform: {cruise.platforms.join(', ')}</li>
+              <li>Year: {cruise.year}</li>
               {(cruise.legs) ? <li>Leg(s): {cruise.legs.join(', ')}</li>: ''}
           </ul>
           <ul>
               {cruise.links.map(item => (
-                  <li style={{listStyle: "none"}} key={item.objectid}><a href={item.LINK} target="_blank" rel="noopener">{item.TYPE}</a></li>
+                  <li style={{listStyle: "none"}} key={item.objectid}><a href={item.link} target="_blank" rel="noopener">{item.type}</a></li>
               ))}
           </ul>
           <hr style={{width:"100%"}} />
           Show samples from this cruise on the &nbsp;
-          <Link to={{pathname:`/samples?cruise=${cruiseId}`}}>map</Link>
+          <Link to={{pathname:`/samples?cruise=${cruise.cruise}`}}>map</Link>
           &nbsp; or in a &nbsp; 
-          <Link to={{pathname:`/samples/table?cruise=${cruiseId}`}}>table</Link>
+          <Link to={{pathname:`/samples/table?cruise=${cruise.cruise}`}}>table</Link>
         </div>
+        </>
       : ''
       }
     </div>

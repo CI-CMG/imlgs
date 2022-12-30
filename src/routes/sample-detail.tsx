@@ -3,7 +3,7 @@ import {
   useQuery,
   useQueries
 } from 'react-query'
-import { apiBaseUrl, fetchSampleById, fetchIntervalsBySampleId } from "../geosamples-api";
+import { apiBaseUrl, fetchSampleById, fetchIntervalsBySampleId, lookupCruiseId } from "../geosamples-api";
 import Button from '@mui/material/Button';
 import './sample-detail.css'
 
@@ -16,6 +16,7 @@ export default function SampleDetail() {
       { queryKey: ['intervalsBySampleId', {sampleId}], queryFn: fetchIntervalsBySampleId },
     ])
     const queriesComplete = results.every(it => it.isSuccess)
+    console.log(results)
     let sample = (results[0].data) ? results[0].data : []
     let intervals = (results[1].data) ? results[1].data : []
     console.log(sample)
@@ -107,7 +108,7 @@ export default function SampleDetail() {
 
   // WARNING: this is called twice with same Sample record
   function formatSampleDetail(sample) {
-      // console.log('inside formatSampleDetail with ', sample)
+      console.log('inside formatSampleDetail with ', sample)
 
       // shallow clone. Avoid modifying the state variable which is passed in
       let sampleClone = Object.assign({}, sample)
@@ -172,20 +173,20 @@ export default function SampleDetail() {
       tableRowElements.splice(0,0,
           <tr key="facility">
             <td>Repository</td>
-            <td><Link to={`/repositories/${sampleClone.facility_code}`}>{sampleClone.facility}</Link></td>
+            <td><Link to={`/repositories/${sampleClone.repositoryId}`}>{sampleClone.facility}</Link></td>
         </tr>
       )
       tableRowElements.splice(2,0,
           <tr key="cruise">
             <td>Cruise ID</td>
-            <td><Link to={`/cruises/${sampleClone.cruise}`}>{sampleClone.cruise}</Link></td>
+            <td><Link to={`/cruises/${sampleClone.cruiseId}`}>{sampleClone.cruise}</Link></td>
         </tr>
       )
-      if (sampleClone.other_link.startsWith('http')) {
-          tableRowElements.splice(15,1,
-              <tr key="DOI_link"><td>DOI</td><td><a href={sampleClone.other_link}>{sampleClone.other_link}</a></td></tr>
-          )
-      }
+    //   if (sampleClone.other_link.startsWith('http')) {
+    //       tableRowElements.splice(15,1,
+    //           <tr key="DOI_link"><td>DOI</td><td><a href={sampleClone.other_link}>{sampleClone.other_link}</a></td></tr>
+    //       )
+    //   }
       return tableRowElements
     }
 

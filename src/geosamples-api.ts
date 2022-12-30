@@ -24,20 +24,42 @@ async function fetchTotalSampleCount(): Promise<number> {
 
 async function fetchRepositoryById(queryData:QueryFnData): Promise<Repository> {
     const [, { repositoryId}] = queryData.queryKey
-    const response = await fetch(`${apiBaseUrl}/repositories/${repositoryId}`)
+    const response = await fetch(`${apiBaseUrl}/repositories/detail/${repositoryId}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
     return await response.json()
 }
 
-// only returns name, code
-async function fetchAllRepositories(): Promise<Repository[]> {
-    const response = await fetch(`${apiBaseUrl}/repositories?name_only=true`)
+async function fetchRepositoryByCode(queryData:QueryFnData): Promise<Repository> {
+    const [, { repositoryId}] = queryData.queryKey
+    const response = await fetch(`${apiBaseUrl}/repositories/summary?repository=${repositoryId}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
-    return await response.json()
+    const payload = await response.json()
+    console.log('payload = ', payload)
+    return payload.items[0]
+}
+
+async function fetchRepository(queryData:QueryFnData): Promise<Repository> {
+    const [, { repositoryId}] = queryData.queryKey
+
+    if (repositoryId && isNaN(parseInt(repositoryId))) {
+        return fetchRepositoryByCode(queryData)
+      } else {
+        return fetchRepositoryById(queryData)
+      }
+}
+
+// only returns name, code
+async function fetchAllRepositories(): Promise<Repository[]> {
+    const response = await fetch(`${apiBaseUrl}/repositories/name`)
+    if (! response.ok) {
+        throw new Error(response.statusText)
+    }
+    const payload = await response.json()
+    return payload.items as Repository[]
 }
 
 
@@ -165,32 +187,82 @@ async function fetchCruiseById(queryData:QueryFnData): Promise<Cruise> {
     return await response.json()
 }
 
+async function lookupCruiseId({cruise, year}): Promise<number|null> {
+    console.log('inside lookupCruiseId with ', cruise, year)
+    const response = await fetch(`${apiBaseUrl}/cruises/detail?cruise=${cruise}&year=${year}`)
+    if (! response.ok) {
+        throw new Error(response.statusText)
+    }
+    const payload = await response.json()
+    if (!payload.items.length) {
+        return null
+    }
+    // theoretically possible to have duplicate cruise names w/in same year
+    if (payload.items.length > 1) {
+        console.warn('multiple matching cruises. returning only the first id')
+    }
+    return payload.items[0].id
+}
 
-async function fetchSamples(queryData:QueryFnData): Promise<Sample[]> {
+
+async function lookupRepositoryId({repositoryCode}): Promise<number|null> {
+    const response = await fetch(`${apiBaseUrl}/repositories/summary?repository=${repositoryCode}`)
+    if (! response.ok) {
+        throw new Error(response.statusText)
+    }
+    const payload = await response.json()
+    if (!payload.items.length) {
+        return null
+    }
+    return payload.items[0].id
+}
+
+async function fetchSamples(queryData:QueryFnData) {
     const [, filters]:[string, Filter[]] = queryData.queryKey
-    const validKeys = ['repository', 'lake', 'platform', 'device', 'cruise', 'date', 'bbox', 'min_depth', 'max_depth', 'offset', 'page_size']
+    // URL query params allowed for Samples
+    const validKeys = [
+        'repository',
+        'lake',
+        'platform',
+        'device',
+        'cruise',
+        'date',
+        'bbox',
+        'min_depth',
+        'max_depth',
+        'page',
+        'items_per_page',
+        'cruise_id',
+        'facility_id'
+    ]
     const searchParamsString = createSearchParamsString(validKeys, filters)
     // console.log(searchParamsString)
-    const response = await fetch(`${apiBaseUrl}/samples${searchParamsString}`)
+    const response = await fetch(`${apiBaseUrl}/samples/summary${searchParamsString}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
     return await response.json()
+    // const payload = await response.json()
+    // return payload.items as Sample[]
 }
 
 async function fetchSampleById(queryData:QueryFnData): Promise<Sample> {
     const [, { sampleId}] = queryData.queryKey
-    const response = await fetch(`${apiBaseUrl}/samples/${sampleId}`)
+    const response = await fetch(`${apiBaseUrl}/samples/detail/${sampleId}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
-    return await response.json()
+    const sample = await response.json()
+    // augment Sample with cruiseId and repositoryId
+    sample.cruiseId = await lookupCruiseId({cruise: sample.cruise, year: sample.begin_date.substr(0,4)})
+    sample.repositoryId = await lookupRepositoryId({repositoryCode: sample.facility_code})
+    return sample
 }
 
 
 async function fetchIntervalsBySampleId(queryData:QueryFnData): Promise<Interval[]> {
     const [, { sampleId}] = queryData.queryKey
-    const response = await fetch(`${apiBaseUrl}/intervals?imlgs=${sampleId}`)
+    const response = await fetch(`${apiBaseUrl}/intervals/detail?imlgs=${sampleId}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
@@ -211,8 +283,9 @@ async function fetchDepthRange(queryData:QueryFnData): Promise<DepthRange> {
 
 
 export {
-    apiBaseUrl, fetchTotalSampleCount, fetchSampleCount, fetchRepositoryById, fetchAllRepositories, 
-    fetchIntervalsBySampleId, fetchSampleById, fetchSamples, fetchDepthRange,
-    fetchRepositories, fetchPlatforms, fetchDevices, fetchLakes, fetchCruises, fetchCruiseNames, fetchCruiseById
+    apiBaseUrl, fetchTotalSampleCount, fetchSampleCount, fetchRepositoryById, 
+    fetchAllRepositories, fetchIntervalsBySampleId, fetchSampleById, fetchSamples, 
+    fetchDepthRange, fetchRepositories, fetchPlatforms, fetchDevices, fetchLakes, 
+    fetchCruises, fetchCruiseNames, fetchCruiseById, lookupCruiseId, fetchRepository
 }
 
