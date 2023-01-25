@@ -54,7 +54,7 @@ export default function SamplesTable() {
   }
 
   function previousPage() {
-    setPage((page) => (page > 1)? 1 : page - 1)
+    setPage((page) => (page <= 1)? 1 : page - 1)
   }
 
   function exportCSV() {
