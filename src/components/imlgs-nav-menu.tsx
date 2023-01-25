@@ -12,7 +12,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 export default function BasicMenu() {
     console.log('rendering BasicMenu...')
     const options = [
-        {label: 'About', href: 'https://ngdc.noaa.gov/mgg/curator/'},
+        {label: 'About the IMLGS', href: 'https://ngdc.noaa.gov/mgg/curator/'},
         {label: 'Developer Documentation (API)', href: 'https://www.ngdc.noaa.gov/geosamples-api/swagger-ui/index.html?configUrl=/geosamples-api/swagger-config.json'}
     ]
   

@@ -18,7 +18,9 @@ export default function SampleDetail() {
     const queriesComplete = results.every(it => it.isSuccess)
     console.log(results)
     let sample = (results[0].data) ? results[0].data : []
-    let intervals = (results[1].data) ? results[1].data : []
+    let intervals = (results[0].data?.intervals) ? results[0].data.intervals : []
+    // let intervals = (results[1].data) ? results[1].data : []
+
     console.log(sample)
     console.log(intervals)
 
@@ -194,7 +196,7 @@ export default function SampleDetail() {
         let searchParams = new URLSearchParams()
         searchParams.set('format', 'csv')
         searchParams.set('imlgs', sampleId)
-        const queryURL = `${apiBaseUrl}/intervals?${searchParams.toString()}`
+        const queryURL = `${apiBaseUrl}/intervals/csv?${searchParams.toString()}`
         console.log(queryURL)
         window.open(queryURL)
     }
@@ -230,7 +232,7 @@ export default function SampleDetail() {
                     }
                 </ol> */}
             <div style={{padding:"25px"}}>
-            <span>see <a href={'https://www.ngdc.noaa.gov/mgg/curator/curatorcoding.html'}>field descriptions</a> for more information</span>
+            <span>see the <a href={'https://www.ngdc.noaa.gov/mgg/curator/curatorcoding.html'}>IMLGS controlled vocabulary</a> for more information</span>
             </div>
 
 

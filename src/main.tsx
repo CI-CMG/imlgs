@@ -17,12 +17,13 @@ import Cruise from './routes/cruise';
 import RepositoryDetail from './routes/repository-detail';
 import './index.css'
 import SamplesTable from './routes/samples-table';
-import {apiBaseUrl, routerBasename} from './envConfig'
+// import {apiBaseUrl, routerBasename} from './envConfig'
 import myConfig from './config.json'
 
 // values from mode-specific vite.js config file
-const devApiBaseUrl = import.meta.env.VITE_apiBaseUrl
-
+const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
+const routerBasename = import.meta.env.VITE_routerBasename
+console.log({routerBasename})
 // TS non-null assertion operator since root element will always exist
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -36,7 +37,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route index
             element={
               <main style={{ padding: "1rem" }}>
-                <p>Select an Cruise to show details</p>
+                <p style={{fontSize: 'large'}}>Select a Cruise to show details</p>
               </main>
             }
           />
@@ -47,7 +48,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route index
             element={
               <main style={{ padding: "1rem" }}>
-                <p>Select an Repository to show details</p>
+                <p style={{fontSize: 'large'}}>Select a Repository to show details</p>
               </main>
             }
           />

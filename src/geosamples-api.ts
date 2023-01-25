@@ -1,6 +1,7 @@
 import { Filter, Repository, Cruise, Sample, Interval, DepthRange } from './imlgs-types';
 import {QueryKey, QueryOptions, QueryFnData} from 'react-query/types/core/types';
-import {apiBaseUrl} from './envConfig'
+// import {apiBaseUrl} from './envConfig'
+const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
 
 // const fetchTotalSampleCount = async () => {
 //     const response = await fetch(`${apiBaseUrl}/samples?count_only=true`)
@@ -38,7 +39,6 @@ async function fetchRepositoryByCode(queryData:QueryFnData): Promise<Repository>
         throw new Error(response.statusText)
     }
     const payload = await response.json()
-    console.log('payload = ', payload)
     return payload.items[0]
 }
 
@@ -253,8 +253,10 @@ async function fetchSampleById(queryData:QueryFnData): Promise<Sample> {
         throw new Error(response.statusText)
     }
     const sample = await response.json()
-    // augment Sample with cruiseId and repositoryId
-    sample.cruiseId = await lookupCruiseId({cruise: sample.cruise, year: sample.begin_date.substr(0,4)})
+    // augment Sample with cruiseId and repositoryId.
+    const year = sample.begin_date ? sample.begin_date.substr(0,4) : null
+    // TODO use cruise, year, and platform to uniquely identify cruise?
+    sample.cruiseId = await lookupCruiseId({cruise: sample.cruise, year: year})
     sample.repositoryId = await lookupRepositoryId({repositoryCode: sample.facility_code})
     return sample
 }
@@ -263,6 +265,16 @@ async function fetchSampleById(queryData:QueryFnData): Promise<Sample> {
 async function fetchIntervalsBySampleId(queryData:QueryFnData): Promise<Interval[]> {
     const [, { sampleId}] = queryData.queryKey
     const response = await fetch(`${apiBaseUrl}/intervals/detail?imlgs=${sampleId}`)
+    if (! response.ok) {
+        throw new Error(response.statusText)
+    }
+    return await response.json()
+}
+
+
+async function fetchIntervalById(queryData:QueryFnData): Promise<Interval[]> {
+    const [, {id}] = queryData.queryKey
+    const response = await fetch(`${apiBaseUrl}/intervals/detail/${id}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
@@ -286,6 +298,7 @@ export {
     apiBaseUrl, fetchTotalSampleCount, fetchSampleCount, fetchRepositoryById, 
     fetchAllRepositories, fetchIntervalsBySampleId, fetchSampleById, fetchSamples, 
     fetchDepthRange, fetchRepositories, fetchPlatforms, fetchDevices, fetchLakes, 
-    fetchCruises, fetchCruiseNames, fetchCruiseById, lookupCruiseId, fetchRepository
+    fetchCruises, fetchCruiseNames, fetchCruiseById, lookupCruiseId, fetchRepository,
+    fetchIntervalById
 }
 

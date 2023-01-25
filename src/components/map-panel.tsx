@@ -16,11 +16,12 @@ import CoordinateConversion from "@arcgis/core/widgets/CoordinateConversion";
 // import IdentifyTask from "@arcgis/core/tasks/IdentifyTask"
 // import IdentifyParameters from "@arcgis/core/tasks/support/IdentifyParameters"
 import {webMercatorToGeographic} from "@arcgis/core/geometry/support/webMercatorUtils";
-import { mapserviceUrl, mapviewerUrl } from '../envConfig';
+// import { mapserviceUrl, mapviewerUrl } from '../envConfig';
 import "./map-panel.css";
 
 // const mapserviceUrl = 'https://gis.ngdc.noaa.gov/arcgis/rest/services/web_mercator/sample_index_dynamic/MapServer'
-
+const mapserviceUrl = import.meta.env.VITE_mapserviceUrl
+const mapviewerUrl = import.meta.env.VITE_mapviewerUrl
 
 /**
  * constructs a SQL-like expression for displaying subsets of the data in the mapservice.
@@ -39,7 +40,7 @@ import "./map-panel.css";
     if (searchParams.has('date')) { defs.push(`BEGIN_DATE like '${searchParams.get('date')}%'`) }
     // empty string causes depth queries to fail
     if (searchParams.get('min_depth')) { defs.push(`WATER_DEPTH >= '${searchParams.get('min_depth')}'`) }
-    if (searchParams.get('max_depth')) { defs.push(`FACILITY_CODE <= '${searchParams.get('max_depth')}'`) }
+    if (searchParams.get('max_depth')) { defs.push(`WATER_DEPTH <= '${searchParams.get('max_depth')}'`) }
 
     if (defs.length) {
         return(defs.join(' and '))
