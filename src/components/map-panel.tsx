@@ -16,7 +16,6 @@ import CoordinateConversion from "@arcgis/core/widgets/CoordinateConversion";
 // import IdentifyTask from "@arcgis/core/tasks/IdentifyTask"
 // import IdentifyParameters from "@arcgis/core/tasks/support/IdentifyParameters"
 import {webMercatorToGeographic} from "@arcgis/core/geometry/support/webMercatorUtils";
-// import { mapserviceUrl, mapviewerUrl } from '../envConfig';
 import "./map-panel.css";
 
 // const mapserviceUrl = 'https://gis.ngdc.noaa.gov/arcgis/rest/services/web_mercator/sample_index_dynamic/MapServer'

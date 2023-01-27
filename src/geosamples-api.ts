@@ -1,6 +1,5 @@
 import { Filter, Repository, Cruise, Sample, Interval, DepthRange } from './imlgs-types';
 import {QueryKey, QueryOptions, QueryFnData} from 'react-query/types/core/types';
-// import {apiBaseUrl} from './envConfig'
 const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
 
 // const fetchTotalSampleCount = async () => {
