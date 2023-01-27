@@ -12,17 +12,21 @@ export interface Filter {
 
 
 export interface Repository {
+    id: number;
     facility: string;
     facility_code: string;
     sample_count?: number;
     facility_comment?: string;
 }
 
+
 export interface Cruise {
+    id: number;
     cruise: string;
-    facility_code: string;
-    platform: string;
-    leg?: string;
+    year: number;
+    facility_codes: string[];
+    platforms: string[];
+    legs?: string[];
     links: CruiseLink[];
 }
 

@@ -35,7 +35,7 @@ export default function Cruises() {
   const { data:cruiseList, error, status} = useQuery(["cruises", filterDefaults], fetchCruiseNames, {
     staleTime: Infinity
   });
-  // console.log(cruiseList)
+  console.log(cruiseList)
   
   // augment cruiseList with unique value to use as key
   // addUniqueKey(cruiseList)
@@ -45,7 +45,7 @@ export default function Cruises() {
         <nav className={`${baseClass}--sidebar`}>
         {(!cruiseList) ? <h4>no data</h4>: ''}
         {cruiseList ?
-          cruiseList.map((cruiseId) => (
+          cruiseList.map((cruise) => (
             <NavLink
               className={`${baseClass}--navlink`}
               style={({ isActive }) => {
@@ -55,10 +55,10 @@ export default function Cruises() {
                   color: isActive ? "red" : "",
                 };
               }}
-              to={`/cruises/${cruiseId}`}
-              key={cruiseId}
+              to={`/cruises/${cruise.id}`}
+              key={cruise.id}
             >
-              {cruiseId}
+              {cruise.cruise}
             </NavLink>
           ))
           : ''

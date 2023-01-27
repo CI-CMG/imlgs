@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from 'react-query'
 import DOMPurify from 'dompurify'
-import { fetchRepositoryById } from '../geosamples-api'
+import { fetchRepositoryById, fetchRepository } from '../geosamples-api'
 import './repository-detail.css'
 
 
@@ -17,7 +17,7 @@ export default function RepositoryDetail() {
   const baseClass = 'RepositoryDetail'
   const {repositoryId} = useParams();
   const { data, error, status } = useQuery(["repositoryDetail", {repositoryId}], 
-    fetchRepositoryById, {
+    fetchRepository, {
       // don't retry for 404 errors, try for up to 3 times for anything else
       retry: (failureCount, error) => {
           if (error.statusCode === 404 || failureCount > 3) {
@@ -28,7 +28,7 @@ export default function RepositoryDetail() {
       }
     }
   );
-  
+
   return (
     <div className={baseClass}>
         { data ?
