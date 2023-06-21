@@ -253,11 +253,13 @@ async function fetchSampleById(queryData:QueryFnData): Promise<Sample> {
         throw new Error(response.statusText)
     }
     const sample = await response.json()
+/*
     // augment Sample with cruiseId and repositoryId.
     const year = sample.begin_date ? sample.begin_date.substr(0,4) : null
     // TODO use cruise, year, and platform to uniquely identify cruise?
     sample.cruiseId = await lookupCruiseId({cruise: sample.cruise, year: year})
     sample.repositoryId = await lookupRepositoryId({repositoryCode: sample.facility_code})
+*/
     return sample
 }
 
