@@ -9,20 +9,20 @@ import './sample-detail.css'
 
 export default function SampleDetail() {
     const {sampleId} = useParams();
-    console.log('redrawing SampleDetail with ', sampleId)
+    // console.log('redrawing SampleDetail with ', sampleId)
     const baseClass = 'SampleDetail'
     const results = useQueries([
       { queryKey: ['sampleById', {sampleId}], queryFn: fetchSampleById },
       { queryKey: ['intervalsBySampleId', {sampleId}], queryFn: fetchIntervalsBySampleId },
     ])
     const queriesComplete = results.every(it => it.isSuccess)
-    console.log(results)
+    // console.log(results)
     let sample = (results[0].data) ? results[0].data : []
     let intervals = (results[0].data?.intervals) ? results[0].data.intervals : []
     // let intervals = (results[1].data) ? results[1].data : []
 
-    console.log(sample)
-    console.log(intervals)
+    // console.log(sample)
+    // console.log(intervals)
 
 
     function formatInterval(interval) {
@@ -90,7 +90,7 @@ export default function SampleDetail() {
   }
 
   function formatCruiseLinks(links, cruise) {
-      // console.log('inside formatCruiseLinks with ', links)
+    //   console.log('inside formatCruiseLinks with ', links)
       return (
           <div>
               <ul>
@@ -102,7 +102,7 @@ export default function SampleDetail() {
   }
 
   //format string of YYYYMMDD to YYYY-MM-DD
-  function formatDate(dateString) {
+  function formatDate(dateString: string) {
       const chars = dateString.split('')
       return(`${chars.slice(0,4).join('')}-${chars.slice(4,6).join('')}-${chars.slice(6,8).join('')}`)
   }
@@ -110,7 +110,7 @@ export default function SampleDetail() {
 
   // WARNING: this is called twice with same Sample record
   function formatSampleDetail(sample) {
-      console.log('inside formatSampleDetail with ', sample)
+    //   console.log('inside formatSampleDetail with ', sample)
 
       // shallow clone. Avoid modifying the state variable which is passed in
       let sampleClone = Object.assign({}, sample)
@@ -129,7 +129,6 @@ export default function SampleDetail() {
       if (sampleClone.end_water_depth) {
           sampleClone.end_water_depth = sampleClone.end_water_depth.toLocaleString()
       }
-
       // Date fields seem to all be YYYYMMDD format
       let fieldList = ['last_update', 'begin_date', 'end_date']
       fieldList.filter(i => sampleClone[i]).forEach(i => {
@@ -175,15 +174,16 @@ export default function SampleDetail() {
       tableRowElements.splice(0,0,
           <tr key="facility">
             <td>Repository</td>
-            <td><Link to={`/repositories/${sampleClone.repositoryId}`}>{sampleClone.facility}</Link></td>
+            <td><Link to={`/repositories/${sampleClone.facility.id}`}>{sampleClone.facility.facility}</Link></td>
         </tr>
       )
       tableRowElements.splice(2,0,
           <tr key="cruise">
             <td>Cruise ID</td>
-            <td><Link to={`/cruises/${sampleClone.cruiseId}`}>{sampleClone.cruise}</Link></td>
+            <td><Link to={`/cruises/${sampleClone.cruise.id}`}>{sampleClone.cruise.cruise}</Link></td>
         </tr>
       )
+
     //   if (sampleClone.other_link.startsWith('http')) {
     //       tableRowElements.splice(15,1,
     //           <tr key="DOI_link"><td>DOI</td><td><a href={sampleClone.other_link}>{sampleClone.other_link}</a></td></tr>
@@ -197,7 +197,7 @@ export default function SampleDetail() {
         searchParams.set('format', 'csv')
         searchParams.set('imlgs', sampleId)
         const queryURL = `${apiBaseUrl}/intervals/csv?${searchParams.toString()}`
-        console.log(queryURL)
+        // console.log(queryURL)
         window.open(queryURL)
     }
 
@@ -217,7 +217,7 @@ export default function SampleDetail() {
                     </table>
                     <br/>
                     {formatLinks(sample.links)}
-                    {formatCruiseLinks(sample.cruise_links, sample.cruise)}
+                    {formatCruiseLinks(sample.cruise.links, sample.cruise.cruise)}
                 </div>
                 : ''}
             {intervals.length ?
