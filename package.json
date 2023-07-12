@@ -1,19 +1,20 @@
 {
   "name": "imlgs",
   "private": true,
-  "version": "0.0.0",
+  "version": "2.1.0",
   "scripts": {
-    "dev": "vite --port 5000",
+    "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "build:gh": "tsc && vite build --config vite.config.gh.js",
     "preview": "vite preview"
   },
   "dependencies": {
     "@arcgis/core": "^4.27.6",
-    "@emotion/react": "^11.9.3",
-    "@emotion/styled": "^11.9.3",
-    "@mui/icons-material": "^5.8.4",
-    "@mui/material": "^5.8.5",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.14.0",
+    "@mui/icons-material": "^5.14.0",
     "dompurify": "^3.0.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
