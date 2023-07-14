@@ -39,9 +39,11 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
   let startDate = getSearchParamValue('date')
   let minDepth = getSearchParamValue('min_depth')
   let maxDepth = getSearchParamValue('max_depth')
+  let igsn = getSearchParamValue('igsn')
   const minDepthInput = useRef(null)
   const maxDepthInput = useRef(null)
   const dateInput = useRef(null)
+  const igsnInput = useRef(null)
   const filterPanel = useRef(null)
 
   function getSearchParamValue(name:string) {
@@ -56,7 +58,7 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
   const url = new URL(location.href)
   // key/value pairs of any URL search parameters used to filter samples
   const filterDefaults = extractDefaultFiltersFromUrl(url)
-  // console.log('filterDefaults: ', filterDefaults)
+  console.log('filterDefaults: ', filterDefaults)
 
   
   // execute queries used to populate Select components
@@ -83,7 +85,6 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
   if (devices.length == 1) { device = devices[0] }
   
   let cruises = (results[4].data?.length) ? results[4].data : []
-  console.log({cruises})
   if (cruises.length == 1) { cruise = cruises[0].cruise }
 
   // console.log('results: ', results)
@@ -133,7 +134,7 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
   const handleResetFilterBtn = (event:React.MouseEvent<HTMLElement>) => {
     // console.log('Reset Filters button clicked ',event )
     let newSearchParams = new URLSearchParams(searchParams)
-    const searchParamNames = ['repository', 'platform', 'device', 'cruise', 'lake', 'date', 'min_depth', 'max_depth']
+    const searchParamNames = ['repository', 'platform', 'device', 'cruise', 'lake', 'date', 'min_depth', 'max_depth', 'igsn']
     searchParamNames.forEach(name => {
       if (searchParams.has(name)) {
         newSearchParams.delete(name)
@@ -144,6 +145,7 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
     minDepthInput.current.value = ''
     // minDepthInput.current.defaultValue = ''
     maxDepthInput.current.value = ''
+    igsnInput.current.value = ''
   }
 
 
@@ -170,6 +172,15 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
     newSearchParams.set('max_depth', event.target.value)
     setSearchParams(newSearchParams);
 
+  }
+
+  const handleIgsnChange = (event: React.FocusEvent<HTMLInputElement>) => {
+    console.log('inside handleIgsnChange with ', event.target.value)
+    // if igsn found in samples set IGSN parameter
+    // else if igsn found in intervals set IMLGS parameter
+    let newSearchParams = new URLSearchParams(searchParams)
+    newSearchParams.set('igsn', event.target.value)
+    setSearchParams(newSearchParams)
   }
 
   // const handleZoomToSelectedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -300,6 +311,12 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
         onBlur={handleMaxDepthChange} defaultValue={maxDepth} onKeyDown={checkForReturnKey} 
         sx={{marginBottom: '5px', width:"60px"}} />
       </div>
+
+      <TextField 
+        id="igsn-text" label="IGSN" variant="standard" inputRef={igsnInput}
+        onBlur={handleIgsnChange} defaultValue={igsn} onKeyDown={checkForReturnKey}
+        sx={{width:'120px', paddingBottom:"5px"}} size="small"
+      />
 
       <div style={{display: "flex", justifyContent: "center", marginTop: "25px", width:"100%"}}>
           <Button variant="contained" onClick={handleResetFilterBtn}>Reset Filters</Button>
