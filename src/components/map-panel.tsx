@@ -5,6 +5,7 @@ import MapView from "@arcgis/core/views/MapView";
 import MapImageLayer from "@arcgis/core/layers/MapImageLayer";
 import Graphic from "@arcgis/core/Graphic";
 import Extent from "@arcgis/core/geometry/Extent";
+import Point from "@arcgis/core/geometry/Point";
 import Geometry from "@arcgis/core/geometry/Geometry";
 import ExtentToolbar from "./extent-toolbar"
 import * as identify from "@arcgis/core/rest/identify";
@@ -21,6 +22,8 @@ import "./map-panel.css";
 // const mapserviceUrl = 'https://gis.ngdc.noaa.gov/arcgis/rest/services/web_mercator/sample_index_dynamic/MapServer'
 const mapserviceUrl = import.meta.env.VITE_mapserviceUrl
 const mapviewerUrl = import.meta.env.VITE_mapviewerUrl
+// console.log({mapserviceUrl})
+// console.log({mapviewerUrl})
 
 /**
  * constructs a SQL-like expression for displaying subsets of the data in the mapservice.
@@ -40,6 +43,7 @@ const mapviewerUrl = import.meta.env.VITE_mapviewerUrl
     // empty string causes depth queries to fail
     if (searchParams.get('min_depth')) { defs.push(`WATER_DEPTH >= '${searchParams.get('min_depth')}'`) }
     if (searchParams.get('max_depth')) { defs.push(`WATER_DEPTH <= '${searchParams.get('max_depth')}'`) }
+    if (searchParams.get('igsn')) { defs.push(`IGSN = '${searchParams.get('igsn')}'`) }
 
     if (defs.length) {
         return(defs.join(' and '))
@@ -168,20 +172,21 @@ export default function MapPanel(
                     .identify(mapserviceUrl, identifyParams)
                     .then(function (response) {
                         const results = response.results
-                        console.log(results)
                         return results.map(function(result) {
-                        const feature = result.feature;
+                        const feature = result.feature
+                        // console.log({feature})
                         // hack to work around JSAPI extraneous precision in some cases
                         feature.attributes.LAT = parseFloat(feature.attributes.LAT.toFixed(5))
                         feature.attributes.LON = parseFloat(feature.attributes.LON.toFixed(5))
                         feature.attributes.WATER_DEPTH = (feature.attributes.WATER_DEPTH) ? feature.attributes.WATER_DEPTH.toLocaleString() : 'N/A'
                         feature.popupTemplate = {
                         // autocasts as new PopupTemplate()
-                        title: "Sample {IMLGS}",
+                        title: "Sample ID {SAMPLE}",
                         content: `<b>Repository:</b> {FACILITY_CODE}
                           <br><b>Location:</b> {LON}, {LAT}
                           <br><b>Year:</b> {YEAR}
                           <br><b>Water Depth:</b> {WATER_DEPTH}m
+                          <br><b>Device:</b> {DEVICE}
                           <br><a href="${mapviewerUrl}/{IMLGS}">more detail</a>`
                         };
                     return feature
@@ -228,7 +233,7 @@ export default function MapPanel(
       const queryURL = mapserviceUrl+'/0/query';
       const urlSearchParams = new URLSearchParams()
       urlSearchParams.append("where", layerDefinitionExpression);
-      urlSearchParams.append("returnExtentOnly", true);
+      urlSearchParams.append("returnExtentOnly", 'true');
       // urlSearchParams.append("outSR", 4326)
       urlSearchParams.append("f", "json");
       const myRequest = new Request(queryURL, { 
@@ -241,10 +246,23 @@ export default function MapPanel(
               .then(response => response.json())
               .then((data) => {
                 console.log('extent: ', data.extent)
-                // mapView.current.goTo(data.extent)
-                mapView.current.extent = data.extent
+                // single point's bbox cannot be used for view extent
+                if (data.extent.xmin == data.extent.xmax || data.extent.ymin == data.extent.ymax) {
+                  const centerPoint = new Point({
+                    x: data.extent.xmin,
+                    y: data.extent.ymin,
+                    spatialReference: data.extent.spatialReference
+                  })
+                  mapView.current?.goTo({
+                    center: centerPoint,
+                    zoom: 8
+                  })
+                } else {
+                  if (mapView.current) { mapView.current.extent = data.extent }
+                }
               });
       } catch (error) {
+          console.error("failed to zoomTo ")
           console.error(error);
       } 
   
