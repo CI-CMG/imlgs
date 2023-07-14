@@ -3,11 +3,34 @@ import {
   useQuery,
   useQueries
 } from 'react-query'
-import { apiBaseUrl, fetchSampleById, fetchIntervalsBySampleId, lookupCruiseId } from "../geosamples-api";
+import { apiBaseUrl, fetchSampleById, fetchIntervalsBySampleId, fetchIntervalByIgsn, lookupCruiseId } from "../geosamples-api";
 import Button from '@mui/material/Button';
 import './sample-detail.css'
 
+
+// one-time only - setup mapping between repository Id and DOI (other_link attribute)
+let repositoryDOIs = new Map<number, string>()
+const repositoryIds = await fetch(`${apiBaseUrl}/repositories/name`)
+  .then(response => response.json())
+  .then(response => response.items.map(it => it.id))
+
+repositoryIds.forEach(async (id:number) => {
+    const doiLink = await fetch(`${apiBaseUrl}/repositories/detail/${id}`)
+    .then(response => response.json())
+    .then(response => response.other_link)
+    repositoryDOIs.set(id, doiLink)
+});
+
+
 export default function SampleDetail() {
+  const igsn = 'ECS00001H'
+  const { data, error, status} = useQuery(['sampleByIgsn', igsn], fetchIntervalByIgsn, {
+    staleTime: Infinity
+  });
+  console.log('data: ', data)
+  
+
+
     const {sampleId} = useParams();
     // console.log('redrawing SampleDetail with ', sampleId)
     const baseClass = 'SampleDetail'
@@ -21,11 +44,17 @@ export default function SampleDetail() {
     let intervals = (results[0].data?.intervals) ? results[0].data.intervals : []
     // let intervals = (results[1].data) ? results[1].data : []
 
-    // console.log(sample)
+    console.log(sample)
     // console.log(intervals)
 
 
     function formatInterval(interval) {
+      console.log('inside formatInterval with ', interval)
+      
+      // special handling for array of geologic ages
+      if (interval.ages?.length) {
+        interval.age = interval.ages.join(', ')
+      }
       const fieldsList = [
           // {label: 'Interval', field: 'interval' },
           {label: 'Primary Lithologic Composition', field: 'lith1' },
@@ -50,7 +79,8 @@ export default function SampleDetail() {
           {label: 'Comments', field: 'int_comments' },
           {label: 'Exhausted - No Longer Available', field: 'exhaust_code' },
           {label: 'IGSN', field: 'igsn' },
-          {label: 'Photo Link', field: 'photo_link' }
+          {label: 'Photo Link', field: 'photo_link' },
+          {label: 'Bulk Weight (kg)', field: 'weight'}
       ]
 
       let rows = []
@@ -110,7 +140,7 @@ export default function SampleDetail() {
 
   // WARNING: this is called twice with same Sample record
   function formatSampleDetail(sample) {
-    //   console.log('inside formatSampleDetail with ', sample)
+      // console.log('inside formatSampleDetail with ', sample)
 
       // shallow clone. Avoid modifying the state variable which is passed in
       let sampleClone = Object.assign({}, sample)
@@ -129,10 +159,15 @@ export default function SampleDetail() {
       if (sampleClone.end_water_depth) {
           sampleClone.end_water_depth = sampleClone.end_water_depth.toLocaleString()
       }
+
+      const doi = repositoryDOIs.get(sample.facility.id)
+      if (doi) {
+        sampleClone['other_link'] = <a target="_blank" href={doi}>{doi}</a>
+      }
       // Date fields seem to all be YYYYMMDD format
       let fieldList = ['last_update', 'begin_date', 'end_date']
       fieldList.filter(i => sampleClone[i]).forEach(i => {
-              sampleClone[i] = formatDate(sampleClone[i])
+          sampleClone[i] = formatDate(sampleClone[i])
       })
       //TODO why does array literal behave differently?
       //['water_depth', 'end_water_depth'].forEach(i => console.log(i))
@@ -163,8 +198,7 @@ export default function SampleDetail() {
           {label: 'Core Diameter(cm)', field: 'cored_diam' },
           {label: 'Sample Comments', field: 'sample_comments' },
           {label: 'IGSN', field: 'igsn' },
-          {label: 'Repository Overview', field: 'other_link' },
-          {label: 'Last Updated', field: 'last_update' }
+          {label: 'Repository Archive Overview', field: 'other_link' },
       ]
 
       let tableRowElements = fieldsList.filter(item => sampleClone[item.field]).map(item => {
@@ -203,7 +237,7 @@ export default function SampleDetail() {
 
     return (
       <main className={baseClass} style={{ padding: "1rem 0" }}>
-        <h2>Sample Detail for {sampleId}</h2>
+        <h2>Data and Information for Sample {sample.sample}</h2>
 
         {!queriesComplete ? <h4>No record with IMLGS Id {sampleId}</h4> : ''}
             {queriesComplete && sample ?
