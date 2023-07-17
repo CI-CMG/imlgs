@@ -1,4 +1,5 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom"
+import { useEffect } from "react"
 import {
   useQuery,
   useQueries
@@ -10,28 +11,21 @@ import './sample-detail.css'
 
 // one-time only - setup mapping between repository Id and DOI (other_link attribute)
 let repositoryDOIs = new Map<number, string>()
-const repositoryIds = await fetch(`${apiBaseUrl}/repositories/name`)
+fetch(`${apiBaseUrl}/repositories/name`)
   .then(response => response.json())
   .then(response => response.items.map(it => it.id))
-
-repositoryIds.forEach(async (id:number) => {
-    const doiLink = await fetch(`${apiBaseUrl}/repositories/detail/${id}`)
-    .then(response => response.json())
-    .then(response => response.other_link)
-    repositoryDOIs.set(id, doiLink)
-});
+  .then(ids => {
+    ids.forEach(id => {
+      fetch(`${apiBaseUrl}/repositories/detail/${id}`)
+      .then(response => response.json())
+      .then(response => response.other_link)
+      .then(doiLink => repositoryDOIs.set(id, doiLink))
+    })
+  })
 
 
 export default function SampleDetail() {
-  const igsn = 'ECS00001H'
-  const { data, error, status} = useQuery(['sampleByIgsn', igsn], fetchIntervalByIgsn, {
-    staleTime: Infinity
-  });
-  console.log('data: ', data)
-  
-
-
-    const {sampleId} = useParams();
+    const {sampleId} = useParams()
     // console.log('redrawing SampleDetail with ', sampleId)
     const baseClass = 'SampleDetail'
     const results = useQueries([
@@ -44,12 +38,12 @@ export default function SampleDetail() {
     let intervals = (results[0].data?.intervals) ? results[0].data.intervals : []
     // let intervals = (results[1].data) ? results[1].data : []
 
-    console.log(sample)
+    // console.log(sample)
     // console.log(intervals)
 
 
     function formatInterval(interval) {
-      console.log('inside formatInterval with ', interval)
+      // console.log('inside formatInterval with ', interval)
       
       // special handling for array of geologic ages
       if (interval.ages?.length) {
