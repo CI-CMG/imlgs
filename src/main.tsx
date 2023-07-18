@@ -17,7 +17,6 @@ import Cruise from './routes/cruise';
 import RepositoryDetail from './routes/repository-detail';
 import './index.css'
 import SamplesTable from './routes/samples-table';
-import myConfig from './config.json'
 
 // values from mode-specific vite.js config file
 const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
