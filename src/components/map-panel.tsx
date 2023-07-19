@@ -41,8 +41,8 @@ const mapviewerUrl = import.meta.env.VITE_mapviewerUrl
     // TODO start_date or startDate? pattern match or ">=" on string?
     if (searchParams.has('date')) { defs.push(`BEGIN_DATE like '${searchParams.get('date')}%'`) }
     // empty string causes depth queries to fail
-    if (searchParams.get('min_depth')) { defs.push(`WATER_DEPTH >= '${searchParams.get('min_depth')}'`) }
-    if (searchParams.get('max_depth')) { defs.push(`WATER_DEPTH <= '${searchParams.get('max_depth')}'`) }
+    if (searchParams.get('min_depth')) { defs.push(`WATER_DEPTH >= ${searchParams.get('min_depth')}`) }
+    if (searchParams.get('max_depth')) { defs.push(`WATER_DEPTH <= ${searchParams.get('max_depth')}`) }
     if (searchParams.get('igsn')) { defs.push(`IGSN = '${searchParams.get('igsn')}'`) }
 
     if (defs.length) {
@@ -56,9 +56,7 @@ const mapviewerUrl = import.meta.env.VITE_mapviewerUrl
 export default function MapPanel(
     {zoomToSelected}: {zoomToSelected:boolean}
 ) {
-    const baseClass = 'MapPanel'
-    console.log('rendering MapPanel...')
-   
+    const baseClass = 'MapPanel'   
     // useRef to facilitiate access to values shared between useEffect blocks that shouldn't change w/ each 
     // render. Better to use variables outside component?
     const mapDiv = useRef<HTMLDivElement>(null);
@@ -90,7 +88,6 @@ export default function MapPanel(
     
     // runs when component is mounted
     useEffect(() => {
-        console.log("inside useEffect to set up map");
         const map = new ArcGISMap({
             basemap: "oceans"
         });
@@ -100,7 +97,6 @@ export default function MapPanel(
             if (mapView.current) {
               console.warn('MapView already exists')
             } else {
-              console.log('constructing new MapView')
               const view = new MapView({
                 map: map,
                 container: mapDiv.current,
@@ -118,7 +114,6 @@ export default function MapPanel(
               
 
               view.when(function(){
-                console.log('MapView is ready...');
                 view.ui.add(extentToolbarContainer.current, "top-left");
                 view.ui.add(searchWidget, {position: "top-right"});
                 view.ui.add(homeWidget, {position: "top-left"});
@@ -138,7 +133,6 @@ export default function MapPanel(
             if (samplesLayer.current) {
               console.warn("MapImageLayer already exists")
             } else {
-              console.log('constructing MapImageLayer...')
               // console.log('initial layer definition expression: ', layerDefinitionExpression)
               const layer = new MapImageLayer({
                 url: mapserviceUrl,
@@ -215,7 +209,6 @@ export default function MapPanel(
         }
 
         return () => {
-            console.log('cleanup from map setup...')
             // mapView.current = undefined
             // setLayerView(undefined)
             // geoextent.current = undefined
@@ -224,8 +217,6 @@ export default function MapPanel(
 
 
     function zoomTo(layerDefinitionExpression:string) {
-      console.log('inside zoomTo...', zoomToSelected)
-      console.log(layerDefinitionExpression)
       if (! mapView.current) {
         console.warn('cannot zoomTo before MapView is ready')
         return
@@ -245,7 +236,10 @@ export default function MapPanel(
           fetch(myRequest)
               .then(response => response.json())
               .then((data) => {
-                console.log('extent: ', data.extent)
+                if(isNaN(data.extent.xmin) || isNaN(data.extent.xmax)|| isNaN(data.extent.ymin) || isNaN(data.extent.ymax)) {
+                  console.warn('Cannot zoom to empty extent')
+                  return
+                }
                 // single point's bbox cannot be used for view extent
                 if (data.extent.xmin == data.extent.xmax || data.extent.ymin == data.extent.ymax) {
                   const centerPoint = new Point({
@@ -273,7 +267,6 @@ export default function MapPanel(
     // re-defining layerdefinitionExpression in separate useEffect so ArcGIS setup not re-run with every
     // state change (i.e. URL search param change)
     useEffect(() => {
-        console.log("inside useEffect to update layerDefinition to: ", layerDefinitionExpression)
         // TODO why are MapImageLayer and MapView not available the first time this is run?
         if (! mapView.current || ! samplesLayer.current) {
             console.warn('MapView and/or MapImageLayer are not yet ready')
@@ -283,8 +276,6 @@ export default function MapPanel(
         // "All Samples"
         const sublayer = samplesLayer.current.findSublayerById(0)
         if (sublayer) {
-            console.log('setting layerDefinition of sublayer to ', layerDefinitionExpression, typeof(layerDefinitionExpression))
-            console.log('changing definitionExpression from ', sublayer.definitionExpression, ' to ', layerDefinitionExpression, '...' )
             sublayer.definitionExpression = layerDefinitionExpression
         } else {
             console.error('sublayer not found')
@@ -321,7 +312,7 @@ export default function MapPanel(
 
 
     function updateAreaOfInterest(coords:Array<number>|undefined) {
-      console.log('inside updateAreaOfInterest with ', coords)
+      // console.log('inside updateAreaOfInterest with ', coords)
       // console.log(searchParams.has('bbox'))
       let newSearchParams = new URLSearchParams(searchParams)
       if (coords) {
