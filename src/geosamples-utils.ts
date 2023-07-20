@@ -34,6 +34,8 @@ function extractDefaultFiltersFromUrl(url:URL) {
     if (searchParams.has('cruise_id'))  { defaults.cruise_id = searchParams.get('cruise_id')}
     if (searchParams.has('facility_id')){ defaults.facility_id = searchParams.get('facility_id')}
     if (searchParams.has('igsn'))       { defaults.igsn = searchParams.get('igsn')}
+    if (searchParams.has('province'))       { defaults.province = searchParams.get('province')}
+    if (searchParams.has('sampleid'))       { defaults.sampleid = searchParams.get('sampleid')}
 
     return defaults
 }
@@ -41,7 +43,7 @@ function extractDefaultFiltersFromUrl(url:URL) {
 
 function extractDefaultFiltersFromSearchParams(searchParams:URLSearchParams) {
     let defaults = {}
-    const validKeys = ['repository', 'platform', 'lake', 'device', 'cruise', 'date', 'min_depth', 'max_depth', 'bbox', 'page_size', 'offset', 'cruise_id', 'facility_id', 'igsn']
+    const validKeys = ['repository', 'platform', 'lake', 'device', 'cruise', 'date', 'min_depth', 'max_depth', 'bbox', 'page_size', 'offset', 'cruise_id', 'facility_id', 'igsn', 'province', 'igsn']
     searchParams.forEach((value, key) => {
         if (validKeys.includes(key)) {
             defaults[key] = value

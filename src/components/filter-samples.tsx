@@ -18,7 +18,9 @@ import {
   fetchDevices, 
   fetchLakes,
   fetchCruiseNames,
-  fetchPlatforms } from '../geosamples-api'
+  fetchPlatforms,
+  fetchProvinces
+ } from '../geosamples-api'
 import { extractDefaultFiltersFromUrl } from '../geosamples-utils'
 import { Filter} from '../imlgs-types';
 import './filter-samples.css'
@@ -40,10 +42,15 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
   let minDepth = getSearchParamValue('min_depth')
   let maxDepth = getSearchParamValue('max_depth')
   let igsn = getSearchParamValue('igsn')
+  let province = getSearchParamValue('igsn')
+  let sampleId = getSearchParamValue('sampleid')
+
   const minDepthInput = useRef(null)
   const maxDepthInput = useRef(null)
   const dateInput = useRef(null)
   const igsnInput = useRef(null)
+  const provinceInput = useRef(null)
+  const sampleIdInput = useRef(null)
   const filterPanel = useRef(null)
 
   function getSearchParamValue(name:string) {
@@ -68,6 +75,7 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
     { queryKey: ['lakes', filterDefaults], queryFn: fetchLakes },
     { queryKey: ['devices', filterDefaults], queryFn: fetchDevices },
     { queryKey: ['cruises', filterDefaults], queryFn: fetchCruiseNames },
+    { queryKey: ['provinces', filterDefaults], queryFn: fetchProvinces },
   ])
   const queriesComplete = results.every(it => it.isSuccess)
   let repositories = (results[0].data) ? results[0].data : []
@@ -87,54 +95,57 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
   let cruises = (results[4].data?.length) ? results[4].data : []
   if (cruises.length == 1) { cruise = cruises[0].cruise }
 
+  let provinces = (results[5].data?.length) ? results[5].data : []
+  if (provinces.length == 1) { province = provinces[0] }
+
+
   // console.log('results: ', results)
 
 
   const handleRepositoryChange = (event:SelectChangeEvent<string>, child:React.ReactNode) => {
-    // let formData = new FormData(event.currentTarget);
-    let repository = event.target.value
     let newSearchParams = new URLSearchParams(searchParams)
-    newSearchParams.set('repository', repository)
+    newSearchParams.set('repository', event.target.value)
     setSearchParams(newSearchParams);
   };
 
 
   const handlePlatformChange = (event:SelectChangeEvent<string>, child:React.ReactNode) => {
-    let platform = event.target.value
     let newSearchParams = new URLSearchParams(searchParams)
-    newSearchParams.set('platform', platform)
+    newSearchParams.set('platform', event.target.value)
     setSearchParams(newSearchParams);
   };
 
 
   const handleCruiseChange = (event:SelectChangeEvent<string>, child:React.ReactNode) => {
-    let cruise = event.target.value
     let newSearchParams = new URLSearchParams(searchParams)
-    newSearchParams.set('cruise', cruise)
+    newSearchParams.set('cruise', event.target.value)
     setSearchParams(newSearchParams);
   };
 
 
   const handleLakeChange = (event:SelectChangeEvent<string>, child:React.ReactNode) => {
-    let lake = event.target.value
     let newSearchParams = new URLSearchParams(searchParams)
-    newSearchParams.set('lake', lake)
+    newSearchParams.set('lake', event.target.value)
     setSearchParams(newSearchParams);
   };
 
 
   const handleDeviceChange = (event:SelectChangeEvent<string>, child:React.ReactNode) => {
-    let device = event.target.value
     let newSearchParams = new URLSearchParams(searchParams)
-    newSearchParams.set('device', device)
+    newSearchParams.set('device', event.target.value)
     setSearchParams(newSearchParams);
   };
 
+  const handleProvinceChange = (event:SelectChangeEvent<string>, child:React.ReactNode) => {
+    let newSearchParams = new URLSearchParams(searchParams)
+    newSearchParams.set('province', event.target.value)
+    setSearchParams(newSearchParams)
+  }
 
   const handleResetFilterBtn = (event:React.MouseEvent<HTMLElement>) => {
     // console.log('Reset Filters button clicked ',event )
     let newSearchParams = new URLSearchParams(searchParams)
-    const searchParamNames = ['repository', 'platform', 'device', 'cruise', 'lake', 'date', 'min_depth', 'max_depth', 'igsn']
+    const searchParamNames = ['repository', 'platform', 'device', 'cruise', 'lake', 'date', 'min_depth', 'max_depth', 'igsn', 'province', 'sampleid']
     searchParamNames.forEach(name => {
       if (searchParams.has(name)) {
         newSearchParams.delete(name)
@@ -146,6 +157,7 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
     // minDepthInput.current.defaultValue = ''
     maxDepthInput.current.value = ''
     igsnInput.current.value = ''
+    sampleIdInput.current.value = ''
   }
 
 
@@ -180,6 +192,13 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
     // else if igsn found in intervals set IMLGS parameter
     let newSearchParams = new URLSearchParams(searchParams)
     newSearchParams.set('igsn', event.target.value)
+    setSearchParams(newSearchParams)
+  }
+
+  const handleSampleIdChange = (event: React.FocusEvent<HTMLInputElement>) => {
+    console.log('inside handleSampleIdChange with ', event.target.value)
+    let newSearchParams = new URLSearchParams(searchParams)
+    newSearchParams.set('sampleid', event.target.value)
     setSearchParams(newSearchParams)
   }
 
@@ -291,6 +310,25 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
           </FormControl>
       : ''}
 
+        {provinces && provinces.length ? 
+          <FormControl fullWidth variant='standard' sx={{paddingBottom: '15px'}}>
+            <InputLabel id="device-select-label">Physiographic Province</InputLabel>
+            <Select
+              labelId="province-select-label"
+              value={province}
+              label="Physiographic Province"
+              onChange={handleProvinceChange}
+              size='small'
+            >
+              {provinces.map(name => (
+              <MenuItem key={name} value={name}>
+                {name}
+              </MenuItem>
+            ))}
+            </Select>
+          </FormControl>
+        : ''}
+
       <TextField 
         id="date-text" label="Date" variant="standard" helperText="YYYYMMDD" inputRef={dateInput}
         onBlur={handleDateChange} defaultValue={startDate} onKeyDown={checkForReturnKey}
@@ -312,11 +350,21 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
         sx={{marginBottom: '5px', width:"60px"}} />
       </div>
 
+      <div>
       <TextField 
         id="igsn-text" label="IGSN" variant="standard" inputRef={igsnInput}
         onBlur={handleIgsnChange} defaultValue={igsn} onKeyDown={checkForReturnKey}
         sx={{width:'120px', paddingBottom:"5px"}} size="small"
       />
+      </div>
+
+      <div>
+      <TextField 
+        id="sampleid-text" label="Sample Id" variant="standard" inputRef={sampleIdInput}
+        onBlur={handleSampleIdChange} defaultValue={sampleId} onKeyDown={checkForReturnKey}
+        sx={{width:'120px', paddingBottom:"5px"}} size="small"
+      />
+      </div>
 
       <div style={{display: "flex", justifyContent: "center", marginTop: "25px", width:"100%"}}>
           <Button variant="contained" onClick={handleResetFilterBtn}>Reset Filters</Button>

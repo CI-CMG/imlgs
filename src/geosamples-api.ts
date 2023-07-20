@@ -138,6 +138,19 @@ async function fetchDevices(queryData:QueryFnData): Promise<string[]> {
 }
 
 
+async function fetchProvinces(queryData:QueryFnData): Promise<string[]> {
+  const [, filters]:[string, Filter[]] = queryData.queryKey
+  const validKeys = ['repository', 'lake', 'platform', 'cruise', 'date', 'bbox', 'min_depth', 'max_depth']
+  const searchParamsString = createSearchParamsString(validKeys, filters, ['items_per_page=2000'])
+  const response = await fetch(`${apiBaseUrl}/physiographic_provinces${searchParamsString}`)
+  if (! response.ok) {
+      throw new Error(response.statusText)
+  }
+  const payload = await response.json()
+  return payload.items as string[]
+}
+
+
 async function fetchSampleCount(queryData:QueryFnData):Promise<number> {
     const [, filters]:[string, Filter[]] = queryData.queryKey
     // TODO add water depth, date
@@ -232,7 +245,10 @@ async function fetchSamples(queryData:QueryFnData) {
         'page',
         'items_per_page',
         'cruise_id',
-        'facility_id'
+        'facility_id',
+        'igsn',
+        'province',
+        'sampleid'
     ]
     const searchParamsString = createSearchParamsString(validKeys, filters)
     // console.log(searchParamsString)
@@ -283,6 +299,18 @@ async function fetchIntervalById(queryData:QueryFnData): Promise<Interval[]> {
 }
 
 
+async function fetchIntervalByIgsn(queryData:QueryFnData): Promise<Interval> {
+  const [, {igsn}] = queryData.queryKey
+  console.log('inside fetchIntervalByIgsn with ', igsn)
+  const response = await fetch(`${apiBaseUrl}/intervals/detail?igsn=${igsn}`)
+  if (! response.ok) {
+      throw new Error(response.statusText)
+  }
+  return await response.json()
+}
+
+
+
 async function fetchDepthRange(queryData:QueryFnData): Promise<DepthRange> {
     const [, filters]:[string, Filter[]] = queryData.queryKey
     const validKeys = ['repository', 'lake', 'platform', 'device', 'cruise', 'date', 'bbox', 'min_depth', 'max_depth', 'offset', 'page_size']
@@ -300,6 +328,6 @@ export {
     fetchAllRepositories, fetchIntervalsBySampleId, fetchSampleById, fetchSamples, 
     fetchDepthRange, fetchRepositories, fetchPlatforms, fetchDevices, fetchLakes, 
     fetchCruises, fetchCruiseNames, fetchCruiseById, lookupCruiseId, fetchRepository,
-    fetchIntervalById
+    fetchProvinces, fetchIntervalById, fetchIntervalByIgsn
 }
 

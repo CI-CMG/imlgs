@@ -44,6 +44,8 @@ const mapviewerUrl = import.meta.env.VITE_mapviewerUrl
     if (searchParams.get('min_depth')) { defs.push(`WATER_DEPTH >= ${searchParams.get('min_depth')}`) }
     if (searchParams.get('max_depth')) { defs.push(`WATER_DEPTH <= ${searchParams.get('max_depth')}`) }
     if (searchParams.get('igsn')) { defs.push(`IGSN = '${searchParams.get('igsn')}'`) }
+    if (searchParams.get('province')) { defs.push(`PROVINCE = '${searchParams.get('province')}'`) }
+    if (searchParams.get('sampleid')) { defs.push(`SAMPLE = '${searchParams.get('sampleid')}'`) }
 
     if (defs.length) {
         return(defs.join(' and '))
@@ -56,7 +58,7 @@ const mapviewerUrl = import.meta.env.VITE_mapviewerUrl
 export default function MapPanel(
     {zoomToSelected}: {zoomToSelected:boolean}
 ) {
-    const baseClass = 'MapPanel'   
+    const baseClass = 'MapPanel'
     // useRef to facilitiate access to values shared between useEffect blocks that shouldn't change w/ each 
     // render. Better to use variables outside component?
     const mapDiv = useRef<HTMLDivElement>(null);
