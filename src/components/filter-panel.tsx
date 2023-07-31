@@ -17,7 +17,7 @@ import {
   fetchProvinces, 
   fetchRepositoryNames
 } from '../queries'
-import { useQueryClient, useQuery, useQueries } from "@tanstack/react-query"
+import { useQueryClient, useQuery, useQueries, UseQueryResult } from "@tanstack/react-query"
 
 const notEmpty= /^\S+/
 
@@ -43,7 +43,6 @@ function searchParamsToFilters(searchParams: URLSearchParams): URLSearchParams {
     'lake',
     'province',
     'igsn',
-    'sampleid',
     'min_depth',
     'max_depth',
     'cruise_year'
@@ -102,12 +101,30 @@ export default function FilterPanel(props:Props) {
     setInputElementFromSearchParameter('lake-select', url.searchParams.get("lake") )
     setInputElementFromSearchParameter('province-select', url.searchParams.get("province") )
     setInputElementFromSearchParameter('igsn-text', url.searchParams.get("igsn") )
-    setInputElementFromSearchParameter('sampleid-text', url.searchParams.get("sampleid") )
     setInputElementFromSearchParameter('min_depth-text', url.searchParams.get("min_depth") )
     setInputElementFromSearchParameter('max_depth-text', url.searchParams.get("max_depth") )
     setInputElementFromSearchParameter('cruise_year-text', url.searchParams.get("cruise_year") )
   }, [url.searchParams])
  
+
+  useEffect(() => {
+    console.log('inside useEffect to set initial Select option...')
+    const selectNames = [
+      'repository-select', 
+      'platform-select', 
+      'device-select', 
+      'cruise-select', 
+      'lake-select', 
+      'province-select']
+      
+      selectNames.forEach(name => {
+      const element = document.getElementById(name) as HTMLSelectElement
+      if (element && element.options.length == 2) {
+        element.selectedIndex = 1
+      }
+    })
+  }, [results])
+
 
   function submitForm() {
     console.log('inside submitForm...')
@@ -117,6 +134,8 @@ export default function FilterPanel(props:Props) {
     const searchForm = document?.getElementById("search-form") as HTMLFormElement
     for (const element of searchForm.elements) {
       const inputElem = element as HTMLFormElement
+      // why is FIELDSET in the HTMLFormControlsCollection?
+      if (inputElem.tagName === 'FIELDSET') { continue }
       // TODO check for whitespace only?
       if (inputElem.value !== '') { formData.append(inputElem.name, inputElem.value)}
     }
@@ -223,7 +242,15 @@ export default function FilterPanel(props:Props) {
             }
           </select>
           :
-          <p style={{'fontSize': 'x-small', 'textAlign':'center'}}>No repositories with this combination of filters.</p>
+          <select
+            name="repository"
+            title="No repositories with this combination of filters"
+            id='repository-select' 
+            disabled
+            style={{'width':'80%'}}
+          >
+            <option value="">-- repository --</option>
+          </select>
           }
         </div>
 
@@ -236,7 +263,15 @@ export default function FilterPanel(props:Props) {
             }
           </select>
           :
-            <p style={{'fontSize': 'x-small', 'textAlign':'center'}}>No platforms with this combination of filters.</p>
+          <select 
+            name="platform" 
+            id='platform-select'
+            title="no platforms with this combination of filters"
+            disabled
+            style={{'width':'80%'}}
+          >
+            <option value="">-- platform --</option>
+          </select>
         }          
         </div>
 
@@ -249,7 +284,15 @@ export default function FilterPanel(props:Props) {
             }
           </select>
           :
-          <p style={{'fontSize': 'x-small', 'textAlign':'center'}}>No devices with this combination of filters.</p>
+          <select 
+            name="device" 
+            id='device-select'
+            title="no devices with this combination of filters"
+            disabled
+            style={{'width':'80%'}}
+          >
+          <option value="">-- device --</option>
+        </select>
       }   
         </div>
         <div style={{'paddingTop': '10px','textAlign': 'center'}}>
@@ -264,7 +307,14 @@ export default function FilterPanel(props:Props) {
             }
           </select>
           :
-          <p style={{'fontSize': 'x-small', 'textAlign':'center'}}>No lakes with this combination of filters.</p>
+          <select 
+            name="lake" 
+            id='lake-select'
+            title='no lakes with this combination of filters'
+            disabled
+            style={{'width':'80%'}}>
+            <option value="">-- lake --</option>
+          </select>
         }   
         </div>
 
@@ -277,14 +327,21 @@ export default function FilterPanel(props:Props) {
             }          
             </select>
             :
-            <p style={{'fontSize': 'x-small', 'textAlign':'center'}}>No provinces with this combination of filters.</p>
+            <select 
+              name="province" 
+              id='province-select'
+              title='no physiographic provinces with this combination of filters'
+              disabled
+              style={{'width':'80%'}}
+            >
+              <option value="">-- province --</option>
+            </select>
         }   
         </div>
 
         
-        <div style={{'paddingLeft': '10px', 'paddingRight': '10px', 'paddingTop': '10px'}}>
-          <fieldset style={{'display': 'flex', 'alignItems': 'center', 'justifyContent': 'space-around'}}>
-          <legend style={{'fontSize': 'small'}}>Unique Identifier</legend>
+        <div style={{'display': 'flex', 'alignItems': 'center', 'justifyContent': 'space-around', 'paddingTop': '10px'}}>
+          <div>
           <label htmlFor="igsn-text" style={{'paddingRight':'5px', 'fontSize': 'small'}}>IGSN</label>
           <input
             id="igsn-text"
@@ -298,20 +355,22 @@ export default function FilterPanel(props:Props) {
             onKeyDown={event => checkForEnterKey(event) }
             onBlur={onBlurHandler}
           />
-          <label htmlFor="sampleid-text" style={{'paddingLeft': '25px', 'paddingRight':'5px', 'fontSize': 'small'}}>Sample</label>
-          <input
-            id="sampleid-text"
-            aria-label="Sample Id"
-            type="search"
-            name="sampleid"
-            maxLength={9}
-            minLength={1}
-            size={12}
-            autoComplete='off'
-            onKeyDown={event => checkForEnterKey(event) }
-            onBlur={onBlurHandler}
-          />
-          </fieldset>
+          </div>
+          <div>
+            <label htmlFor="cruise_year-text" style={{'paddingRight':'5px', 'fontSize': 'small'}}>Cruise Year</label>
+            <input
+              id="cruise_year-text"
+              aria-label="cruise year"
+              type="search"
+              name="cruise_year"
+              maxLength={4}
+              minLength={4}
+              size={6}
+              autoComplete='off'
+              onKeyDown={event => checkForEnterKey(event) }
+              onBlur={onBlurHandler}
+            />
+          </div>
         </div>
 
         <div style={{'paddingLeft': '10px', 'paddingRight': '10px', 'marginTop': '10px'}}>
@@ -343,21 +402,6 @@ export default function FilterPanel(props:Props) {
             />
         </fieldset>
         </div>
-        <div style={{'paddingTop': '10px','textAlign': 'center'}}>
-          <label htmlFor="cruise_year-text" style={{'paddingRight':'5px', 'fontSize': 'small'}}>Cruise Year</label>
-          <input
-            id="cruise_year-text"
-            aria-label="cruise year"
-            type="search"
-            name="cruise_year"
-            maxLength={4}
-            minLength={4}
-            size={6}
-            autoComplete='off'
-            onKeyDown={event => checkForEnterKey(event) }
-            onBlur={onBlurHandler}
-          />
-          </div>
         
         </Form>
         <div style={{'marginTop':'10px'}}>
