@@ -1,0 +1,19 @@
+.RepositoryDetail--contactInfoDiv {
+  width: 50%;
+  margin: 0 auto;
+}
+
+.RepositoryDetail--contactInfoTitle {
+  width: 100%;
+  margin: 25px auto;
+  text-align: center;
+}
+
+.RepositoryDetail--errorMessage {
+  margin: 0 auto;
+}
+
+.RepositoryDetail {
+  background-color: whitesmoke;
+  grid-area: details;
+}

@@ -1,0 +1,10 @@
+.Footer {
+  background-color:#112E51;
+  grid-area: footer;
+  height: 100%;
+}
+
+.Footer--appversion {
+  color: white;
+  font-size: x-small;
+}
