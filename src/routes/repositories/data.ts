@@ -1,6 +1,7 @@
 // import { RouteLoaderFunction, LoaderFunction, LoaderFunctionArgs } from "react-router-dom"
 
 import { QueryClient } from "@tanstack/react-query"
+import { LoaderFunctionArgs } from "react-router-dom"
 
 interface RepositoryName {
   id: number,
@@ -44,11 +45,8 @@ export async function getRepository( id: string ): Promise<RepositoryDetail> {
   }
 }
 
-interface RepositoryLoaderParams {
-  repositoryId: string;
-}
 
-
+/*
 // export async function repositoryLoader({request, params}: {request: Request, params: RepositoryLoaderParams}) {
 export async function repositoryLoader({params}:{params:RepositoryLoaderParams}) {
   // export async function repositoryLoader(params) {
@@ -62,7 +60,7 @@ export async function repositoryLoader({params}:{params:RepositoryLoaderParams})
   }
   return { repository }
 }
-
+*/
   
 export const repositoryDetailQuery = (repositoryId:string) => ({
   queryKey: ['repositories', 'detail', repositoryId],
@@ -72,13 +70,16 @@ export const repositoryDetailQuery = (repositoryId:string) => ({
 
 export const loader = 
   (queryClient:QueryClient) =>
-  async ({ params }: {params: RepositoryLoaderParams}) => {
-    console.log('inside repository loader with ', params.repositoryId)
-    const query = repositoryDetailQuery(params.repositoryId)
-    
+    async (params:LoaderFunctionArgs) => {
+    const { repositoryId } = params.params
+
+    if (! repositoryId) {
+      throw new Error("repositoryId argument required")
+    }
+    const query = repositoryDetailQuery(repositoryId)
+
     return (
-      queryClient.getQueryData(query.queryKey) ??
-      (await queryClient.fetchQuery(query))
+      (await queryClient.ensureQueryData(query))
     )
   }
 
