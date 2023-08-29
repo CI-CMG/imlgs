@@ -19,10 +19,14 @@ export default function Repository () {
   if (!repositoryId) {
     throw new Error("Repository Id must be provided")
   }
+  const id = parseInt(repositoryId)
+    if (isNaN(id)) {
+      throw new Error("repositoryId must be a number")
+    }
   // 'repository' property name comes from response of loader function 
   // const { repository } = useLoaderData() as Awaited<ReturnType<typeof repositoryLoader>>
   const { data: repository }: {data: RepositoryDetail} = useQuery({
-    ...repositoryDetailQuery(repositoryId), 
+    ...repositoryDetailQuery(id), 
     initialData})
   const baseClass = 'RepositoryDetail'
   

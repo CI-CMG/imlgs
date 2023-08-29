@@ -5,10 +5,17 @@ import ErrorPage, {PageNotFound} from './routes/error-page'
 import Repositories, { Index as RepositoriesIndex } from './routes/repositories/repositories'
 import { loader as repositoryLoader, repositoriesLoader } from './routes/repositories/data'
 import Repository from './routes/repositories/repository'
+import Cruises, { Index as CruisesIndex } from './routes/cruises/cruises'
+import { loader as cruiseLoader, cruisesLoader } from './routes/cruises/data'
+import Cruise from './routes/cruises/cruise'
 import Samples from './routes/samples/samples'
+import SampleDetail from './routes/sample/sample'
+import { loader as sampleLoader } from './routes/sample/data'
+import SamplesTable from './routes/table/table'
 import {
   createBrowserRouter,
   RouterProvider,
+  Navigate
 } from "react-router-dom"
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -31,10 +38,19 @@ const router = createBrowserRouter([
     // loader: rootLoader,
     children: [
       // default to the Samples page
-      { index: true, element: <Samples/>},
+      // { index: true, element: <Samples/>},
       {
         path: "samples",
-        element: <Samples/>,
+        element: <Samples/>
+      },
+      {
+        path: "samples/table",
+        element: <SamplesTable/>
+      },
+      {
+        path: "samples/:id",
+        element: <SampleDetail/>,
+        loader: sampleLoader(queryClient)
       },
       {
         path: "repositories",
@@ -49,11 +65,29 @@ const router = createBrowserRouter([
           },
         ]
       },
-        {
-          path: "*",
-          element: <PageNotFound/>,
-          errorElement: <ErrorPage />
-        }
+      {
+        path: "cruises",
+        element: <Cruises/>,
+        loader: cruisesLoader,
+        children: [
+          { index: true, element: <CruisesIndex /> },
+          {
+            path: ":cruiseId",
+            element: <Cruise/>,
+            loader: cruiseLoader(queryClient),
+          },
+        ]
+      },
+      {
+        // different way to default to /samples which changes the URL
+        path: "",
+        element: <Navigate to="/samples"/>
+      },
+      {
+        path: "*",
+        element: <PageNotFound/>,
+        errorElement: <ErrorPage />
+      }
     ]
   }
 ])

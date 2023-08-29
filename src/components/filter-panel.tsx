@@ -15,7 +15,10 @@ import {
   fetchLakes, 
   fetchPlatforms, 
   fetchProvinces, 
-  fetchRepositoryNames
+  fetchRepositoryNames,
+  fetchMetamorphism,
+  fetchMineralogies,
+  fetchWeathering
 } from '../queries'
 import { useQueryClient, useQuery, useQueries, UseQueryResult } from "@tanstack/react-query"
 
@@ -87,6 +90,11 @@ export default function FilterPanel(props:Props) {
       { queryKey: ['cruises', filters.toString()], queryFn: () => fetchCruiseNames(filters) },
       { queryKey: ['lakes', filters.toString()], queryFn: () => fetchLakes(filters) },
       { queryKey: ['provinces', filters.toString()], queryFn: () => fetchProvinces(filters) },
+      { queryKey: ['weathering', filters.toString()], queryFn: () => fetchWeathering(filters) },
+      { queryKey: ['metamorphism', filters.toString()], queryFn: () => fetchMetamorphism(filters) },
+      { queryKey: ['mineralogies', filters.toString()], queryFn: () => fetchMineralogies(filters) },
+      // { queryKey: ['lithologies', filters.toString()], queryFn: () => fetchlithologies(filters) },
+
     ]
   })
   console.log({results})
@@ -184,7 +192,6 @@ export default function FilterPanel(props:Props) {
 
 
   function formatCruiseSelect(data: string[]) {
-    console.log('inside formatCruiseSelect with ', data.length, ' records')
     if (data && data.length > 0 && data.length < 500) {
       return (
       <select name="cruise" id='cruise-select' onChange={onChangeHandler} style={{'width':'80%'}}>
@@ -401,6 +408,40 @@ export default function FilterPanel(props:Props) {
               onBlur={onBlurHandler}
             />
         </fieldset>
+        </div>
+
+        <div style={{'paddingLeft': '10px', 'paddingRight': '10px', 'marginTop': '10px'}}>
+          <fieldset>
+            <legend>Core Sample Attributes</legend>
+            <select name="lithology" id='lithology-select' onChange={onChangeHandler} style={{'width':'80%'}}>
+              <option value="">-- Lithology --</option>
+            </select>
+            <select name="texture" id='texture-select' onChange={onChangeHandler} style={{'width':'80%'}}>
+              <option value="">-- Texture --</option>
+            </select>
+            <select name="mineralogy" id='mineralogy-select' onChange={onChangeHandler} style={{'width':'80%'}}>
+              <option value="">-- Mineralogy --</option>
+              {
+                results[8].data?.map(name => <option value={name} key={name}>{name}</option>)
+              }          
+
+            </select>
+            <select name="weathering" id='weathering-select' onChange={onChangeHandler} style={{'width':'80%'}}>
+              <option value="">-- Weathering --</option>
+              {
+                results[6].data?.map(name => <option value={name} key={name}>{name}</option>)
+              }          
+
+            </select>
+            <select name="metamorphism" id='metamorphism-select' onChange={onChangeHandler} style={{'width':'80%'}}>
+              <option value="">-- Metamorphism --</option>
+              {
+                results[7].data?.map(name => <option value={name} key={name}>{name}</option>)
+              }          
+
+            </select>
+
+          </fieldset>
         </div>
         
         </Form>

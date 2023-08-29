@@ -1,4 +1,4 @@
-.Repositories--wrapper {
+.Cruises--wrapper {
   display: grid;
   grid-template-columns: 300px auto;
   grid-template-areas:
@@ -9,7 +9,7 @@
   background-color: var(--body-background-color);
 }
 
-.Repositories--sidebar {
+.Cruises--sidebar {
   grid-area: sidebar;
   overflow: auto;
   padding: 1rem;
@@ -19,17 +19,17 @@
 }
 
 
-.Repositories--datatable {
+.Cruises--datatable {
   width: 100%;
   border: 1px solid black;
   border-collapse: collapse;
 }
 
-.Repositories--datatable td {
+.Cruises--datatable td {
   border: 1px solid black;
 }
 
-.Repositories--navlink {
+.Cruises--navlink {
   display: block;
   margin: 1rem 0;
   color: #282c34;

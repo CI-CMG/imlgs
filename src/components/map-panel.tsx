@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router-dom"
-import { useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import ArcGISMap from "@arcgis/core/Map"
 import MapView from "@arcgis/core/views/MapView"
 import MapImageLayer from "@arcgis/core/layers/MapImageLayer"
@@ -9,7 +9,7 @@ import IdentifyResult from "@arcgis/core/rest/support/IdentifyResult"
 import PopupTemplate from "@arcgis/core/PopupTemplate"
 import Point from "@arcgis/core/geometry/Point"
 // import Geometry from "@arcgis/core/geometry/Geometry"
-// import ExtentToolbar from "./extent-toolbar"
+import ExtentToolbar from "./extent-toolbar"
 import * as identify from "@arcgis/core/rest/identify"
 import IdentifyParameters from "@arcgis/core/rest/support/IdentifyParameters"
 import Search from "@arcgis/core/widgets/Search"
@@ -19,7 +19,7 @@ import CoordinateConversion from "@arcgis/core/widgets/CoordinateConversion"
 // import IdentifyTask from "@arcgis/core/tasks/IdentifyTask"
 // import IdentifyParameters from "@arcgis/core/tasks/support/IdentifyParameters"
 // import {webMercatorToGeographic} from "@arcgis/core/geometry/support/webMercatorUtils"
-import "./map-panel.css";
+import "./map-panel.css"
 
 const mapserviceUrl = import.meta.env.VITE_mapserviceUrl
 const mapviewerUrl = import.meta.env.VITE_mapviewerUrl
@@ -72,6 +72,7 @@ export function buildLayerDefinitionExpression(searchParams:URLSearchParams) {
   return defs.length ? defs.join(' and ') : ''
 }
 
+
 const defaultCenter = new Point({longitude: -98.5833, latitude: 39.8333})
 const defaultZoom = 4
 
@@ -90,21 +91,20 @@ export default function MapPanel({zoomToSelected}: {zoomToSelected:boolean}) {
   const mapDiv = useRef<HTMLDivElement>(null)
   const samplesLayer = useRef<MapImageLayer>()
   const mapView = useRef<MapView>()
+  const extentToolbarContainer = useRef<HTMLDivElement|null>(null)
 
-  // const [layerView, setLayerView] = useState()
+  const [layerView, setLayerView] = useState<MapView>()
 
-
-
-  const identifyParams = new IdentifyParameters();
-  identifyParams.tolerance = 3;
-  identifyParams.layerIds = [0];
-  identifyParams.layerOption = "top";
+  const identifyParams = new IdentifyParameters()
+  identifyParams.tolerance = 3
+  identifyParams.layerIds = [0]
+  identifyParams.layerOption = "top"
 
    // runs when component is mounted
    useEffect(() => {
     const map = new ArcGISMap({
         basemap: "oceans"
-    });
+    })
     
     // wait until DOM node has been constructed
     if (mapDiv.current) {
@@ -114,30 +114,30 @@ export default function MapPanel({zoomToSelected}: {zoomToSelected:boolean}) {
             container: mapDiv.current,
             zoom: defaultZoom,
             center: defaultCenter
-          });
+          })
           mapView.current = view
 
-          const searchWidget = new Search({view: view});
-          const homeWidget = new Home({view: view});
-          const ccWidget = new CoordinateConversion({view: view});
-          const scaleBar = new ScaleBar({view: view});
+          const searchWidget = new Search({view: view})
+          const homeWidget = new Home({view: view})
+          const ccWidget = new CoordinateConversion({view: view})
+          const scaleBar = new ScaleBar({view: view})
           scaleBar.style = 'ruler'
           
 
           view.when(function(){
-            // view.ui.add(extentToolbarContainer.current, "top-left");
-            view.ui.add(searchWidget, {position: "top-right"});
-            view.ui.add(homeWidget, {position: "top-left"});
-            view.ui.add(ccWidget, {position: "bottom-left"});
-            view.ui.add(scaleBar, {position: "bottom-right"});
+            if (extentToolbarContainer.current) { view.ui.add(extentToolbarContainer.current, "top-left") }
+            view.ui.add(searchWidget, {position: "top-right"})
+            view.ui.add(homeWidget, {position: "top-left"})
+            view.ui.add(ccWidget, {position: "bottom-left"})
+            view.ui.add(scaleBar, {position: "bottom-right"})
             
 
-            // setLayerView(view)
+            setLayerView(view)
             if (zoomToSelected && layerDefinitionExpression) {
               zoomTo(layerDefinitionExpression)
             }
-            view.on("click", executeIdentify);
-          });
+            view.on("click", executeIdentify)
+          })
         } // end setup MapView
        
         if (!samplesLayer.current) {
@@ -148,12 +148,12 @@ export default function MapPanel({zoomToSelected}: {zoomToSelected:boolean}) {
                 {id: 0, visible: true, definitionExpression: layerDefinitionExpression}
             ]
           })
-          samplesLayer.current = layer;
+          samplesLayer.current = layer
           map.add(layer)
         } // end setup MapImageLayer
 
       } else {
-        console.log("mapDiv not yet available");
+        console.log("mapDiv not yet available")
     }
 
     return () => {
@@ -200,16 +200,16 @@ function executeIdentify(event:__esri.ViewClickEvent) {
       return
   }
   // Set the geometry to the location of the view click
-  identifyParams.width = mapView.current.width;
-  identifyParams.height = mapView.current.height;    
-  identifyParams.geometry = event.mapPoint;
-  identifyParams.mapExtent = mapView.current.extent;
+  identifyParams.width = mapView.current.width
+  identifyParams.height = mapView.current.height
+  identifyParams.geometry = event.mapPoint
+  identifyParams.mapExtent = mapView.current.extent
   if (samplesLayer.current) {
     identifyParams.sublayers = samplesLayer.current.sublayers.toArray()
     // only be one sublayer defined for MapImageLayer
     identifyParams.sublayers[0].definitionExpression = layerDefinitionExpression
   }
-  // identifyParams.layerOption = "visible";
+  // identifyParams.layerOption = "visible"
   // document.getElementById("viewDiv").style.cursor = "wait"
   identify
     .identify(mapserviceUrl, identifyParams)
@@ -243,7 +243,7 @@ function executeIdentify(event:__esri.ViewClickEvent) {
       mapView.current.popup.open({
         features: response,
         location: event.mapPoint
-      });
+      })
     }
     if (mapDiv.current) { mapDiv.current.style.cursor = "auto" }
   }
@@ -255,12 +255,12 @@ function zoomTo(layerDefinitionExpression:string) {
     // console.warn('cannot zoomTo before MapView is ready')
     return
   }
-  const queryURL = mapserviceUrl+'/0/query';
+  const queryURL = mapserviceUrl+'/0/query'
   const urlSearchParams = new URLSearchParams()
-  urlSearchParams.append("where", layerDefinitionExpression);
-  urlSearchParams.append("returnExtentOnly", 'true');
+  urlSearchParams.append("where", layerDefinitionExpression)
+  urlSearchParams.append("returnExtentOnly", 'true')
   // urlSearchParams.append("outSR", 4326)
-  urlSearchParams.append("f", "json");
+  urlSearchParams.append("f", "json")
   const myRequest = new Request(queryURL, { 
     method: "POST", 
     body: urlSearchParams
@@ -288,16 +288,29 @@ function zoomTo(layerDefinitionExpression:string) {
         } else {
           if (mapView.current) { mapView.current.extent = data.extent }
         }
-      });
+      })
   } catch (error) {
       console.error("failed to zoomTo ")
-      console.error(error);
+      console.error(error)
   } 
+}
+
+
+function updateAreaOfInterest(coords:Array<number>|undefined) {
+  if (!coords) { return }
+  console.log('inside updateAreaOfInterest with ', coords)
+  const mySearchParams = new URLSearchParams(searchParams)
+  mySearchParams.set('bbox', coords.join(','))
+  setSearchParams(mySearchParams)
 }
 
 
 return (
     <div className={baseClass} ref={mapDiv}>
+      <div ref={extentToolbarContainer}>
+        {layerView ? <ExtentToolbar mapView={layerView} setSelectedExtent={updateAreaOfInterest}/> : ''}
+      </div>
+
     </div>
   )
 }

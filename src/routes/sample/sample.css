@@ -1,0 +1,32 @@
+.SampleDetail {
+  width: 50%;
+  margin: 0 auto;
+}
+
+tr:nth-child(even) {background: #CCC};
+tr:nth-child(odd) {background: #FFF};
+th { font-weight: bold;}
+
+.SampleDetail--table,th,td {
+  border: 1px black solid;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-collapse: collapse;
+  /* tr:nth-child(even) {background: #CCC};
+}
+/* .SampleDetail--intervalsTable tr:nth-child(even) {background: #CCC}; */
+/* .SampleDetail--intervalsTable tr:nth-child(odd) {background: #FFF}; */
+
+.SampleDetail--intervalsTable {
+  border: 1px solid black;
+  margin-bottom: 15px;
+}
+
+.SampleDetail--rowLabel {
+  font-weight: bold;
+}
+
+.SampleDetail--intervalTitle {
+  font-style: italic;
+  font-weight: bold;
+}

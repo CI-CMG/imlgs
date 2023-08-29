@@ -1,5 +1,5 @@
 .Header {
-  background-color:#112E51;
+  background-color: var(--noaa-background-color);
   padding-bottom: 25px;
   grid-area: header;
 }
@@ -28,4 +28,8 @@
   margin-right: 10px;
   margin-top: 5px;
   /* border: 0; */
+}
+
+.Nav {
+  padding-left: 50px;
 }

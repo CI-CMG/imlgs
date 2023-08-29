@@ -16,8 +16,8 @@ export default function Repositories() {
             repositories.map((repository) => (
             <Link
               style={{ display: "block", margin: "1rem 0", color: "#282c34", textDecoration: "none" }}
-              to={`/repositories/${repository.facility_code}`}
-              key={repository.facility_code}
+              to={`/repositories/${repository.id}`}
+              key={repository.id}
             >
               {repository.facility}
             </Link>
