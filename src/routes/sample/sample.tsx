@@ -2,7 +2,6 @@ import './sample.css'
 import { useLoaderData, useParams, Link } from "react-router-dom"
 import { loader, Sample, sampleDetailQuery, Link as SampleLink, Interval } from "./data"
 import { useQuery } from "@tanstack/react-query"
-import { lookupRepositoryDOI } from "../repositories/data"
 
 
 function buildDetailsRow(fieldName: string, label: string, value: string) {
@@ -109,8 +108,6 @@ function formatSampleDetail(sampleDetail:Sample) {
   if (sample.cored_diam !== undefined) { tableRows.push(buildDetailsRow('cored_diam', 'Core Diameter(cm)', sample.cored_diam.toString()))}
   if (sample.sample_comments !== undefined) { tableRows.push(buildDetailsRow('sample_comments', 'Sample Comments', sample.sample_comments))}
   if (sample.igsn !== undefined) { tableRows.push(buildDetailsRow('igsn', 'IGSN', sample.igsn))}
-  // work around API response lacking facility DOI
-  // const doi = lookupRepositoryDOI(sample.facility.id)
   if (sample.facility.doi) {
     tableRows.push(
     <tr key="other_link">
