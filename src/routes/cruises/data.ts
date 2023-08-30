@@ -2,6 +2,7 @@
 
 import { QueryClient } from "@tanstack/react-query"
 import { LoaderFunctionArgs } from "react-router-dom"
+import { RepositoryName, getRepositoryNameByCode } from "../repositories/data"
 const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
 
 
@@ -14,9 +15,10 @@ interface CruiseName {
 
 
 export interface CruiseDetail extends CruiseName {
-  facility_codes?: Array<string>,
+  facility_codes: Array<string>,
   platforms?: Array<string>,
-  links?: Array<CruiseLink>
+  links?: Array<CruiseLink>,
+  facilities?: Array<RepositoryName>
 }
 
 
@@ -39,11 +41,18 @@ export async function getCruises(): Promise<CruiseName[]> {
 
 export async function getCruise( id: number ): Promise<CruiseDetail> {
   const response = await fetch(`${apiBaseUrl}/cruises/detail/${id}`)
-  if (response.status === 200) {
-    return response.json()
-  } else {
+  if (response.status !== 200) {
     throw new Error(`${response.status}`)
   }
+  const payload = await response.json() as CruiseDetail
+  // augment CruiseDetail with more complete Repository information
+  const facilities = new Array<RepositoryName>
+  payload.facility_codes?.forEach(async code => {
+    const repository: RepositoryName = await getRepositoryNameByCode(code)
+    facilities.push(repository)
+  })
+  payload.facilities = facilities
+  return payload
 }
 
   

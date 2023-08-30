@@ -5,13 +5,13 @@ import { LoaderFunctionArgs } from "react-router-dom"
 const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
 
 
-interface RepositoryName {
-  id: string,
+export interface RepositoryName {
+  id: number,
   facility: string,
   facility_code: string
 }
 
-interface RepositorySummary extends RepositoryName {
+export interface RepositorySummary extends RepositoryName {
   sample_count: number,
   facility_comment: string
 }
@@ -50,7 +50,21 @@ export async function getRepository( id: number ): Promise<RepositoryDetail> {
   }
 }
 
-  
+ 
+export async function getRepositoryNameByCode( code: string ): Promise<RepositoryName> {
+  const response = await fetch(`${apiBaseUrl}/repositories/name?repository=${code}`)
+  if (response.status !== 200) {
+    throw new Error(response.status.toString())
+  }
+  const payload = await response.json()
+  // should only be one repository matching code
+  if (payload.items.length !== 1) {
+    throw new Error('invalid facility code')
+  }
+  return payload.items[0]
+}
+
+
 export const repositoryDetailQuery = (repositoryId:number) => ({
   queryKey: ['repositories', 'detail', repositoryId],
   queryFn: async () => getRepository(repositoryId)

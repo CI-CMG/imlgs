@@ -15,6 +15,7 @@ function formatDate(dateString: string) {
   return(`${chars.slice(0,4).join('')}-${chars.slice(4,6).join('')}-${chars.slice(6,8).join('')}`)
 }
 
+
 function buildIntervalRow(label:string, value:string) {
   return (<><span className={'SampleDetail--rowLabel'}>{label}:</span> {value}</>)
 }

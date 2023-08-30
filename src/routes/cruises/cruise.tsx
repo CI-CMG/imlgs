@@ -1,39 +1,16 @@
 import './cruise.css'
 import { useLoaderData, useParams, Link } from "react-router-dom"
 import { loader as cruiseLoader, cruiseDetailQuery, CruiseDetail } from "./data"
+// import { RepositoryName } from '../repositories/data'
 import { QueryClient, useQuery } from "@tanstack/react-query"
 const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
 
-interface RepositoryName {
-  id: number,
-  facility: string,
-  facility_code: string
-}
-
-interface Payload {
-  items: Array<RepositoryName>
-}
-
-const repositoryLookup = new Map()
-
-export async function loadRepositoryIds() {
-  const response = await fetch(`${apiBaseUrl}/repositories/name`)
-  if (! response.ok) {
-    throw new Error(response.statusText)
-  }
-  const payload = await response.json() as Payload
-  payload.items.forEach(it => {
-    repositoryLookup.set(it.facility_code, it.id)
-  })
-}
-
-loadRepositoryIds()
-
 
 function formatFacilities(data: CruiseDetail) {
-  const facilities = data.facility_codes?.map((code, idx) => {
+  const facilities = data.facilities?.map(facility => {
     // work around inconsistency in API
-    return <Link key={idx} to={{pathname:`/repositories/${repositoryLookup.get(code)}`}}>{code}</Link>
+    return <Link key={facility.id} to={{pathname:`/repositories/${facility.id}`}}>{facility.facility_code}</Link>
+
   });
   return facilities
 }
