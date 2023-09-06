@@ -6,7 +6,7 @@ import { RepositoryName, getRepositoryNameByCode } from "../repositories/data"
 const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
 
 
-interface CruiseName {
+export interface CruiseName {
   id: number,
   cruise: string,
   year?: number,
@@ -31,12 +31,26 @@ export interface CruiseLink {
 
 
 export async function getCruises(): Promise<CruiseName[]> {
-  const response = await fetch(`${apiBaseUrl}/cruises/name`)
-  if (! response.ok) {
-    throw new Error(response.statusText)
+  const url = new URL(window.location.href)
+  console.log(url.toString())
+  console.log(url.searchParams)
+  const results = [];
+  let totalPages = 1
+  let currentPage = 0;
+
+  while (totalPages  > currentPage) {
+    currentPage = currentPage + 1;
+    const response = await fetch(`${apiBaseUrl}/cruises/name?items_per_page=1000&page=${currentPage}`)
+    if (! response.ok) {
+      throw new Error(response.statusText)
+    }
+    const payload = await response.json()
+    if (currentPage === 1) {
+      totalPages = payload.total_pages
+    }
+    results.push(...payload.items);
   }
-  const payload = await response.json()
-  return payload.items as CruiseName[]
+  return results as CruiseName[]
 }
 
 export async function getCruise( id: number ): Promise<CruiseDetail> {

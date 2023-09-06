@@ -1,5 +1,6 @@
 import './filter-panel.css'
 import { useEffect, useRef, useState } from "react"
+import { searchParamsToFilters } from '../utilities'
 import { 
   Outlet, 
   NavLink,
@@ -34,29 +35,6 @@ function setInputElementFromSearchParameter(id: string, value: string|null) {
   inputElement.value = (value && notEmpty.test(value))? value : '' 
 }
 
-
-// filter out unsupported and params with empty values
-function searchParamsToFilters(searchParams: URLSearchParams): URLSearchParams {
-  const filterParams = new URLSearchParams()
-  const supportedFilterNames: string[] = [
-    'repository',
-    'platform',
-    'device',
-    'cruise',
-    'lake',
-    'province',
-    'igsn',
-    'min_depth',
-    'max_depth',
-    'cruise_year'
-  ]
-  supportedFilterNames.forEach(name => {
-    // value should never get null or empty string but extra statement is to keep TypeScript satisfied
-    const value = (searchParams.has(name) && searchParams.get(name)) ? searchParams.get(name) : ''
-    if (value) { filterParams.set(name, value)}
-  })
-  return filterParams
-}
 
 export interface Props {
   zoomToSelected: boolean,
