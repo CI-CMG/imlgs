@@ -1,7 +1,11 @@
 import './header.css'
 import { NavLink } from "react-router-dom"
+import { searchParamsToFilters } from "../utilities"
 
 export default function Header() {
+  const url = new URL(window.location.href)
+  const filters = searchParamsToFilters(url.searchParams)
+  console.log('inside headers: ', filters)
   const activeStyle = {
     textDecoration: "none",
     color: "white",
@@ -41,7 +45,7 @@ export default function Header() {
       >
         <div id="breadcrumbs">
           <NavLink to="/samples" style={({isActive}) => isActive ? activeStyle : inactiveStyle}>Samples</NavLink> | {" "}
-          <NavLink to="/cruises" style={({isActive}) => isActive ? activeStyle : inactiveStyle}>Cruises</NavLink>  | {" "}
+          <NavLink to={`/cruises?${filters.toString()}`} style={({isActive}) => isActive ? activeStyle : inactiveStyle}>Cruises</NavLink>  | {" "}
           <NavLink to="/repositories" style={({isActive}) => isActive ? activeStyle : inactiveStyle}>Respositories</NavLink>
         </div>
         {/* <BasicMenu/> */}

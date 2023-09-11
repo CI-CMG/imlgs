@@ -1,16 +1,8 @@
 import './samples.css'
-import { useEffect, useRef, useState } from "react"
-import { 
-  Outlet, 
-  NavLink,
-  useLoaderData,
-  Form,
-  redirect,
-  useNavigation,
-  useSubmit
-} from "react-router-dom"
+import { useState } from "react"
 import FilterPanel from '../../components/filter-panel'
 import MapPanel from '../../components/map-panel'
+
 
 // const notEmpty= /^\S+/
 
@@ -61,7 +53,7 @@ export default function Samples() {
   return (
     <div className={`${baseClass}--wrapper`}>
       <div className={`${baseClass}--sidebar`}>
-        {/* <SamplesCount/> */}
+
         <FilterPanel 
           zoomToSelected={zoomToSelected} 
           zoomToggleHandler={boolean => setZoomToSelected(boolean)}

@@ -3,6 +3,7 @@
 import { QueryClient } from "@tanstack/react-query"
 import { LoaderFunctionArgs } from "react-router-dom"
 import { RepositoryName, getRepositoryNameByCode } from "../repositories/data"
+import { searchParamsToFilters } from "../../utilities"
 const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
 
 
@@ -32,15 +33,18 @@ export interface CruiseLink {
 
 export async function getCruises(): Promise<CruiseName[]> {
   const url = new URL(window.location.href)
-  console.log(url.toString())
-  console.log(url.searchParams)
+  const filters = searchParamsToFilters(url.searchParams)
+  filters.set('items_per_page', '1000')
+  console.log('inside getCruises: all filters: ', filters.toString())
+
   const results = [];
   let totalPages = 1
   let currentPage = 0;
 
   while (totalPages  > currentPage) {
-    currentPage = currentPage + 1;
-    const response = await fetch(`${apiBaseUrl}/cruises/name?items_per_page=1000&page=${currentPage}`)
+    currentPage = currentPage + 1
+    filters.set('page', currentPage.toString())
+    const response = await fetch(`${apiBaseUrl}/cruises/name?${filters.toString()}`)
     if (! response.ok) {
       throw new Error(response.statusText)
     }

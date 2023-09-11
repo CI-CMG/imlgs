@@ -68,6 +68,21 @@ export function buildLayerDefinitionExpression(searchParams:URLSearchParams) {
     if (searchParams.get('province') && searchParams.get('province')) { 
       defs.push(`PROVINCE = '${searchParams.get('province')}'`) 
     }
+    if (searchParams.get('weathering') && searchParams.get('weathering')) { 
+      defs.push(`WEATHERING='weathering - ${searchParams.get('weathering')}'`) 
+    }
+    if (searchParams.get('metamorphism') && searchParams.get('metamorphism')) { 
+      defs.push(`Metamorphism='metamorphism - ${searchParams.get('metamorphism')}'`) 
+    }
+    if (searchParams.get('mineralogy') && searchParams.get('mineralogy')) { 
+      defs.push(`MINERALOGY = '${searchParams.get('mineralogy')}'`) 
+    }
+    if (searchParams.get('texture') && searchParams.get('texture')) { 
+      defs.push(`TEXTURE like '%${searchParams.get('texture')}%'`) 
+    }
+    if (searchParams.get('lithology') && searchParams.get('lithology')) { 
+      defs.push(`LITHOLOGY like '%${searchParams.get('lithology')}%'`) 
+    }
   }
   return defs.length ? defs.join(' and ') : ''
 }

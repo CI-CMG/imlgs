@@ -19,9 +19,12 @@ import {
   fetchRepositoryNames,
   fetchMetamorphism,
   fetchMineralogies,
-  fetchWeathering
+  fetchWeathering,
+  fetchLithologies,
+  fetchTextures
 } from '../queries'
 import { useQueryClient, useQuery, useQueries, UseQueryResult } from "@tanstack/react-query"
+import SamplesCount from './samples-count';
 
 const notEmpty= /^\S+/
 
@@ -71,8 +74,8 @@ export default function FilterPanel(props:Props) {
       { queryKey: ['weathering', filters.toString()], queryFn: () => fetchWeathering(filters) },
       { queryKey: ['metamorphism', filters.toString()], queryFn: () => fetchMetamorphism(filters) },
       { queryKey: ['mineralogies', filters.toString()], queryFn: () => fetchMineralogies(filters) },
-      // { queryKey: ['lithologies', filters.toString()], queryFn: () => fetchlithologies(filters) },
-
+      { queryKey: ['lithologies', filters.toString()], queryFn: () => fetchLithologies(filters) },
+      { queryKey: ['textures', filters.toString()], queryFn: () => fetchTextures(filters) },
     ]
   })
   console.log({results})
@@ -90,6 +93,11 @@ export default function FilterPanel(props:Props) {
     setInputElementFromSearchParameter('min_depth-text', url.searchParams.get("min_depth") )
     setInputElementFromSearchParameter('max_depth-text', url.searchParams.get("max_depth") )
     setInputElementFromSearchParameter('cruise_year-text', url.searchParams.get("cruise_year") )
+    setInputElementFromSearchParameter('weathering-select', url.searchParams.get("weathering") )
+    setInputElementFromSearchParameter('metamorphism-select', url.searchParams.get("metamorphism") )
+    setInputElementFromSearchParameter('mineralogy-select', url.searchParams.get("mineralogy") )
+    setInputElementFromSearchParameter('lithology-select', url.searchParams.get("lithology") )
+    setInputElementFromSearchParameter('texture-select', url.searchParams.get("texture") )
   }, [url.searchParams])
  
 
@@ -101,7 +109,13 @@ export default function FilterPanel(props:Props) {
       'device-select', 
       'cruise-select', 
       'lake-select', 
-      'province-select']
+      'province-select',
+      'weathering-select',
+      'mineralology-select',
+      'metamorphism-select',
+      'lithology-select',
+      'texture-select'
+    ]
       
       selectNames.forEach(name => {
       const element = document.getElementById(name) as HTMLSelectElement
@@ -208,6 +222,8 @@ export default function FilterPanel(props:Props) {
 
   return (
     <div className={baseClass}>
+      <SamplesCount/>
+
       <Form
         id="search-form"
         role="search"
@@ -393,24 +409,37 @@ export default function FilterPanel(props:Props) {
             <legend>Core Sample Attributes</legend>
             <select name="lithology" id='lithology-select' onChange={onChangeHandler} style={{'width':'80%'}}>
               <option value="">-- Lithology --</option>
+              {
+                results[9].data?.map(name => <option value={name} key={name}>{name}</option>)
+              }     
             </select>
             <select name="texture" id='texture-select' onChange={onChangeHandler} style={{'width':'80%'}}>
               <option value="">-- Texture --</option>
+              {
+                results[10].data?.map(name => <option value={name} key={name}>{name}</option>)
+              }     
             </select>
             <select name="mineralogy" id='mineralogy-select' onChange={onChangeHandler} style={{'width':'80%'}}>
               <option value="">-- Mineralogy --</option>
               {
                 results[8].data?.map(name => <option value={name} key={name}>{name}</option>)
               }          
-
             </select>
-            <select name="weathering" id='weathering-select' onChange={onChangeHandler} style={{'width':'80%'}}>
-              <option value="">-- Weathering --</option>
+            { results[6].data && results[6].data?.length ?
+              <select name="weathering" id='weathering-select' onChange={onChangeHandler} style={{'width':'80%'}} title="weathering code">
+                <option value="">-- Weathering --</option>
               {
                 results[6].data?.map(name => <option value={name} key={name}>{name}</option>)
               }          
+              </select>
+            :
+            <select name="weathering" id='weathering-select' onChange={onChangeHandler} style={{'width':'80%'}}
+              title='no weathering codes with this combination of filters' disabled           
+            >
+              <option value="">-- Weathering --</option>
 
             </select>
+          }
             <select name="metamorphism" id='metamorphism-select' onChange={onChangeHandler} style={{'width':'80%'}}>
               <option value="">-- Metamorphism --</option>
               {
