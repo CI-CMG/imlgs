@@ -2,34 +2,46 @@
 
 import { QueryClient } from "@tanstack/react-query"
 import { LoaderFunctionArgs } from "react-router-dom"
+import { z } from "zod"
+
 const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
 
+const RepositoryNameSchema = z.object({
+  id: z.number(),
+  facility: z.string(),
+  facility_code: z.string()
+});
 
-export interface RepositoryName {
-  id: number,
-  facility: string,
-  facility_code: string
-}
+//TODO verify optional fields
+const RepositoryDetailSchema = RepositoryNameSchema.extend({
+  sample_count: z.number(),
+  facility_comment: z.string().optional(),
+  inst_code: z.string().optional(),
+  addr1: z.string().optional(),
+  addr2: z.string().optional(),
+  addr3: z.string().optional(),
+  addr4: z.string().optional(),
+  contact1: z.string().optional(),
+  contact2: z.string().optional(),
+  contact3: z.string().optional(),
+  email_link: z.string().optional(),
+  url_link: z.string().optional(),
+  ftp_link: z.string().optional(),
+  other_link: z.string().optional()
+})
 
-export interface RepositorySummary extends RepositoryName {
-  sample_count: number,
-  facility_comment: string
-}
+// API endpoint ${apiBaseUrl}/repositories/name
+const RepositoryResults = z.object({
+  items: z.array(RepositoryNameSchema),
+  page: z.number(),
+  total_pages: z.number(),
+  total_items: z.number(), 
+  items_per_page: z.number()
+})
 
-export interface RepositoryDetail extends RepositorySummary {
-  inst_code?: string,
-  addr1?: string,
-  addr2?: string,
-  addr3?: string,
-  addr4?: string,
-  contact1: string,
-  contact2: string,
-  contact3: string,
-  email_link?: string,
-  url_link?: string,
-  ftp_link: string,
-  other_link?: string
-}
+// extract the inferred type
+export type RepositoryName = z.infer<typeof RepositoryNameSchema>
+export type RepositoryDetail = z.infer<typeof RepositoryDetailSchema>
 
 
 export async function getRepositories(): Promise<RepositoryName[]> {
@@ -38,16 +50,21 @@ export async function getRepositories(): Promise<RepositoryName[]> {
     throw new Error(response.statusText)
   }
   const payload = await response.json()
+  console.log({payload})
+  RepositoryResults.parse(payload)
   return payload.items as RepositoryName[]
 }
 
 export async function getRepository( id: number ): Promise<RepositoryDetail> {
   const response = await fetch(`${apiBaseUrl}/repositories/detail/${id}`)
-  if (response.status === 200) {
-    return response.json()
-  } else {
-    throw new Error(`${response.status}`)
+  if (! response.ok) {
+    throw new Error(response.statusText)
   }
+  const payload = await response.json()
+  console.log({payload})
+  // runtime validation of API response
+  RepositoryDetailSchema.parse(payload)
+  return payload as RepositoryDetail
 }
 
  
