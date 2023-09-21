@@ -11,7 +11,7 @@ export function searchParamsToFilters(searchParams: URLSearchParams): URLSearchP
     'igsn',
     'min_depth',
     'max_depth',
-    'cruise_year',
+    'start_date_begins_with',
     'weathering',
     'metamorphism',
     'mineralogy',
