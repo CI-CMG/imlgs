@@ -56,8 +56,8 @@ export function buildLayerDefinitionExpression(searchParams:URLSearchParams) {
       defs.push(`CRUISE = '${searchParams.get('cruise')}'`) 
     }
     // TODO start_date or startDate? pattern match or ">=" on string?
-    if (searchParams.has('date') && searchParams.get('date')) { 
-      defs.push(`BEGIN_DATE like '${searchParams.get('date')}%'`) 
+    if (searchParams.has('start_date_begins_with') && searchParams.get('start_date_begins_with')) { 
+      defs.push(`BEGIN_DATE like '${searchParams.get('start_date_begins_with')}%'`) 
     }
     if (searchParams.get('min_depth') && searchParams.get('min_depth')) { 
       defs.push(`WATER_DEPTH >= ${searchParams.get('min_depth')}`) 
@@ -232,7 +232,7 @@ function executeIdentify(event:__esri.ViewClickEvent) {
       const results:IdentifyResult[] = response.results
       return results.map(function(result) {
       const feature = result.feature
-      // console.log({feature})
+      console.log({feature})
       // hack to work around JSAPI extraneous precision in some cases
       feature.attributes.LAT = parseFloat(feature.attributes.LAT.toFixed(5))
       feature.attributes.LON = parseFloat(feature.attributes.LON.toFixed(5))
