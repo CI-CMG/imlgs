@@ -92,7 +92,7 @@ export default function FilterPanel(props:Props) {
     setInputElementFromSearchParameter('igsn-text', url.searchParams.get("igsn") )
     setInputElementFromSearchParameter('min_depth-text', url.searchParams.get("min_depth") )
     setInputElementFromSearchParameter('max_depth-text', url.searchParams.get("max_depth") )
-    setInputElementFromSearchParameter('cruise_year-text', url.searchParams.get("cruise_year") )
+    setInputElementFromSearchParameter('start_date_begins_with-text', url.searchParams.get("start_date_begins_with") )
     setInputElementFromSearchParameter('weathering-select', url.searchParams.get("weathering") )
     setInputElementFromSearchParameter('metamorphism-select', url.searchParams.get("metamorphism") )
     setInputElementFromSearchParameter('mineralogy-select', url.searchParams.get("mineralogy") )
@@ -351,19 +351,19 @@ export default function FilterPanel(props:Props) {
             name="igsn"
             maxLength={9}
             minLength={9}
-            size={12}
+            size={15}
             autoComplete='off'
             onKeyDown={event => checkForEnterKey(event) }
             onBlur={onBlurHandler}
           />
           </div>
           <div>
-            <label htmlFor="cruise_year-text" style={{'paddingRight':'5px', 'fontSize': 'small'}}>Cruise Year</label>
+            <label htmlFor="start_date_begins_with-text" style={{'paddingRight':'5px', 'fontSize': 'small'}}>Date</label>
             <input
-              id="cruise_year-text"
-              aria-label="cruise year"
+              id="start_date_begins_with-text"
+              aria-label="start date"
               type="search"
-              name="cruise_year"
+              name="start_date_begins_with"
               maxLength={4}
               minLength={4}
               size={6}
