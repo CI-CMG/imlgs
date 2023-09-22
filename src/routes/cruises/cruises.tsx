@@ -4,14 +4,14 @@ import { fetchCruiseNames } from "../../queries"
 import CruiseList from "../../components/cruise-list"
 import { searchParamsToFilters } from "../../utilities"
 import { useQuery } from "@tanstack/react-query"
-
+import InfiniteCruiseList from "../../components/infinite-cruise-list"
 import './cruises.css'
 
 const baseClass = 'Cruises'
 
 export default function Cruises() {
-  const { cruises } = useLoaderData() as Awaited<ReturnType<typeof cruisesLoader>>
-  console.log(`${cruises.length} cruises loaded`)
+  // const { cruises } = useLoaderData() as Awaited<ReturnType<typeof cruisesLoader>>
+  // console.log(`${cruises.length} cruises loaded`)
 
   // const url = new URL(window.location.href)
   // const filters = searchParamsToFilters(url.searchParams)
@@ -24,7 +24,8 @@ export default function Cruises() {
   return (
     <div className={`${baseClass}--wrapper`}>
       <div className={`${baseClass}--sidebar`}>
-        <CruiseList cruises={cruises}/>
+        {/* <CruiseList cruises={cruises}/> */}
+        <InfiniteCruiseList />
       </div>
       <div className={`${baseClass}--main`}>
         <Outlet/>
