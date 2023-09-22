@@ -50,7 +50,6 @@ export async function getRepositories(): Promise<RepositoryName[]> {
     throw new Error(response.statusText)
   }
   const payload = await response.json()
-  console.log({payload})
   RepositoryResults.parse(payload)
   return payload.items as RepositoryName[]
 }
@@ -61,7 +60,6 @@ export async function getRepository( id: number ): Promise<RepositoryDetail> {
     throw new Error(response.statusText)
   }
   const payload = await response.json()
-  console.log({payload})
   // runtime validation of API response
   RepositoryDetailSchema.parse(payload)
   return payload as RepositoryDetail

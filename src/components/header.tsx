@@ -5,7 +5,6 @@ import { searchParamsToFilters } from "../utilities"
 export default function Header() {
   const url = new URL(window.location.href)
   const filters = searchParamsToFilters(url.searchParams)
-  console.log('inside headers: ', filters)
   const activeStyle = {
     textDecoration: "none",
     color: "white",
