@@ -17,7 +17,7 @@ const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
 export default function InfiniteCruiseList() {
   const url = new URL(window.location.href)
   const filters = searchParamsToFilters(url.searchParams)
-  filters.set('items_per_page', '500')
+  filters.set('items_per_page', '10')
 
   // const results = useQuery({ 
   //   queryKey: ['cruises', filters.toString()],
@@ -26,8 +26,8 @@ export default function InfiniteCruiseList() {
   // console.log({results})
 
   const { ref, inView } = useInView();
-  const [totalPages, setTotalPages] = useState();
-  const [page, setPage] = useState();
+  // const [totalPages, setTotalPages] = useState();
+  // const [page, setPage] = useState();
 
   const {
     status,
@@ -46,25 +46,21 @@ export default function InfiniteCruiseList() {
         `${apiBaseUrl}/cruises/name?${myFilters.toString()}`
       );
       const payload = await res.json()
-      setPage(payload.page);
-      setTotalPages(payload.total_pages);
-      return payload.items
+      return payload
     },
     {
-      getNextPageParam: (lastPage, pages) => {
-        lastPage.nextId ?? undefined
-        if (lastPage.length === 0) {
+      getNextPageParam: (lastPage,) => {
+        if (lastPage.page > lastPage.total_pages) {
           return
         }
-        return pages.length + 1
+        return lastPage.page + 1
       },
     }
   )
 
   // TODO temporary work around for TypeScript warning
   const myError = error as Error
-  
-  
+
   useEffect(() => {
     if (inView) {
       fetchNextPage();
@@ -80,8 +76,8 @@ export default function InfiniteCruiseList() {
     ) : (
       <>
         {data.pages.map((page) => (
-          <React.Fragment key={page.nextId}>
-            {page.map((cruise:CruiseName) => (
+          <React.Fragment key={page.page}>
+            {page.items.map((cruise:CruiseName) => (
               <Link
               style={{ display: "block", margin: "1rem 0", color: "#282c34", textDecoration: "none" }}
               to={`/cruises/${cruise.id}`}
