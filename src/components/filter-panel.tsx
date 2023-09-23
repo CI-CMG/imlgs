@@ -16,13 +16,14 @@ import {
   fetchLakes, 
   fetchPlatforms, 
   fetchProvinces, 
-  fetchRepositoryNames,
+  // fetchRepositoryNames,
   fetchMetamorphism,
   fetchMineralogies,
   fetchWeathering,
   fetchLithologies,
   fetchTextures
 } from '../queries'
+import { RepositoryName, getRepositories } from '../routes/repositories/data'
 import { useQueryClient, useQuery, useQueries, UseQueryResult } from "@tanstack/react-query"
 import SamplesCount from './samples-count';
 
@@ -65,7 +66,7 @@ export default function FilterPanel(props:Props) {
   // in the same order the inputs they populate appear on the page
   const results = useQueries({
     queries: [ 
-      { queryKey: ['repositories', filters.toString()], queryFn: () => fetchRepositoryNames(filters) },
+      { queryKey: ['repositories', filters.toString()], queryFn: () => getRepositories(filters) },
       { queryKey: ['platforms', filters.toString()], queryFn: () => fetchPlatforms(filters) },
       { queryKey: ['devices', filters.toString()], queryFn: () => fetchDevices(filters) },
       { queryKey: ['cruises', filters.toString()], queryFn: () => fetchCruiseNames(filters) },
@@ -239,7 +240,7 @@ export default function FilterPanel(props:Props) {
           >
             <option value="">-- Repository --</option>
             {
-              results[0].data?.map(name => <option value={name} key={name}>{name}</option>)
+              results[0].data?.map(repository => <option value={repository.facility_code} key={repository.id}>{repository.facility}</option>)
             }
           </select>
           :
@@ -395,7 +396,7 @@ export default function FilterPanel(props:Props) {
               name="start_date_begins_with"
               maxLength={8}
               minLength={4}
-              size={12}
+              size={13}
               autoComplete='off'
               onKeyDown={event => checkForEnterKey(event) }
               onBlur={onBlurHandler}

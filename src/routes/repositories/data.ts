@@ -43,9 +43,28 @@ const RepositoryResults = z.object({
 export type RepositoryName = z.infer<typeof RepositoryNameSchema>
 export type RepositoryDetail = z.infer<typeof RepositoryDetailSchema>
 
+/*
+const fetchRepositoryNames = async (filters: URLSearchParams): Promise<string[]> => {
+  const myFilters = new URLSearchParams(filters)
+  myFilters.delete('repository')
+  console.log('repository filters: ', myFilters.toString())
+  const response = await fetch(`${apiBaseUrl}/repositories/name?items_per_page=2000&${myFilters.toString()}`)
+  if (response.status === 200) {
+    const payload: RepositoryNameResponse = await response.json()
+    return payload.items.map(item => item.facility_code)
+  } else {
+    throw new Error(`${response.status}`)
+  }
+}
+*/
 
-export async function getRepositories(): Promise<RepositoryName[]> {
-  const response = await fetch(`${apiBaseUrl}/repositories/name`)
+
+export async function getRepositories(filters: URLSearchParams): Promise<RepositoryName[]> {
+  const myFilters = new URLSearchParams(filters)
+  myFilters.delete('repository')
+  myFilters.set('items_per_page', '500')
+  console.log('repository filters: ', myFilters.toString())
+  const response = await fetch(`${apiBaseUrl}/repositories/name?${myFilters.toString()}`)
   if (! response.ok) {
     throw new Error(response.statusText)
   }
@@ -53,6 +72,7 @@ export async function getRepositories(): Promise<RepositoryName[]> {
   RepositoryResults.parse(payload)
   return payload.items as RepositoryName[]
 }
+
 
 export async function getRepository( id: number ): Promise<RepositoryDetail> {
   const response = await fetch(`${apiBaseUrl}/repositories/detail/${id}`)
@@ -107,6 +127,6 @@ export const loader =
 
 
   export async function repositoriesLoader() {
-    const repositories = await getRepositories();
+    const repositories = await getRepositories(new URLSearchParams());
     return { repositories }
   }
