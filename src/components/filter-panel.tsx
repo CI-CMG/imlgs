@@ -52,7 +52,7 @@ export default function FilterPanel(props:Props) {
   const navigation = useNavigation()
 
   const queryClient = useQueryClient()
-  console.log(queryClient.getDefaultOptions())
+  // console.log(queryClient.getDefaultOptions())
   
 
   const submit = useSubmit()
@@ -78,10 +78,10 @@ export default function FilterPanel(props:Props) {
       { queryKey: ['textures', filters.toString()], queryFn: () => fetchTextures(filters) },
     ]
   })
-  console.log({results})
+  // console.log({results})
 
   useEffect(() => {
-    console.log('inside useEffect to sync URL search params with form input elements')
+    // console.log('inside useEffect to sync URL search params with form input elements')
     // sync URL search parameters w/ form elements. Need to explicitly list each search parameter
     setInputElementFromSearchParameter('repository-select', url.searchParams.get("repository") )
     setInputElementFromSearchParameter('platform-select', url.searchParams.get("platform") )
@@ -100,7 +100,7 @@ export default function FilterPanel(props:Props) {
     setInputElementFromSearchParameter('texture-select', url.searchParams.get("texture") )
   }, [url.searchParams])
  
-
+/*
   useEffect(() => {
     console.log('inside useEffect to set initial Select option...')
     const selectNames = [
@@ -124,10 +124,10 @@ export default function FilterPanel(props:Props) {
       }
     })
   }, [results])
-
+*/
 
   function submitForm() {
-    console.log('inside submitForm...')
+    // console.log('inside submitForm...')
     const formData = new FormData()
     
     // build FormData from values of all input elements
@@ -153,7 +153,7 @@ export default function FilterPanel(props:Props) {
 
   // used for text input element
   function onBlurHandler(event:React.FocusEvent<HTMLInputElement>):void {
-    console.log('inside onBlurHandler with ', event)
+    // console.log('inside onBlurHandler with ', event)
     event.target.blur()
     // no need to submit form if input didn't change
     if (!event.target.value && !url.searchParams.get(event.target.name)) { return }
@@ -164,7 +164,7 @@ export default function FilterPanel(props:Props) {
 
   // used for select input elements
   function onChangeHandler(event: React.ChangeEvent<HTMLSelectElement>) {
-    console.log(`inside onChangeHandler: ${event.target.name} changed to ${event.target.value}...`)
+    // console.log(`inside onChangeHandler: ${event.target.name} changed to ${event.target.value}...`)
     submitForm()
   }
 
@@ -187,7 +187,7 @@ export default function FilterPanel(props:Props) {
     if (data && data.length > 0 && data.length < 500) {
       return (
       <select name="cruise" id='cruise-select' onChange={onChangeHandler} style={{'width':'80%'}}>
-        <option value="">-- cruise --</option>
+        <option value="">-- Cruise --</option>
         {
           data?.map((name, idx) => <option value={name} key={idx}>{name}</option>)
         }
@@ -200,7 +200,7 @@ export default function FilterPanel(props:Props) {
           disabled
           style={{'width':'80%'}} 
           title="No cruises with this combination of filters">
-        <option value="">-- cruise --</option>
+        <option value="">-- Cruise --</option>
       </select>
         // <p style={{'fontSize': 'x-small', 'textAlign':'center'}}>No cruises with this combination of filters.</p>
       )
@@ -212,7 +212,7 @@ export default function FilterPanel(props:Props) {
           disabled
           style={{'width':'80%'}} 
           title="Too many cruises to display. Please select an additional filter(s) first">
-        <option value="">-- cruise --</option>
+        <option value="">-- Cruise --</option>
       </select>
         // <p style={{'fontSize': 'x-small', 'textAlign':'center'}}>Too many cruises to display. Please select additional filter(s)</p>
       )
@@ -237,7 +237,7 @@ export default function FilterPanel(props:Props) {
             onChange={onChangeHandler} 
             style={{'width':'80%'}}
           >
-            <option value="">-- repository --</option>
+            <option value="">-- Repository --</option>
             {
               results[0].data?.map(name => <option value={name} key={name}>{name}</option>)
             }
@@ -250,15 +250,21 @@ export default function FilterPanel(props:Props) {
             disabled
             style={{'width':'80%'}}
           >
-            <option value="">-- repository --</option>
+            <option value="">-- Repository --</option>
           </select>
           }
         </div>
 
         <div style={{'paddingTop': '10px','textAlign': 'center'}}>
         { results[1].data && results[1].data?.length ? 
-          <select name="platform" id='platform-select' onChange={onChangeHandler} style={{'width':'80%'}}>
-            <option value="">-- platform --</option>
+          <select 
+            name="platform" 
+            id='platform-select'
+            title='filter samples by platform name'
+            onChange={onChangeHandler} 
+            style={{'width':'80%'}}
+          >
+            <option value="">-- Platform --</option>
             {
               results[1].data?.map(name => <option value={name} key={name}>{name}</option>)
             }
@@ -271,15 +277,21 @@ export default function FilterPanel(props:Props) {
             disabled
             style={{'width':'80%'}}
           >
-            <option value="">-- platform --</option>
+            <option value="">-- Platform --</option>
           </select>
         }          
         </div>
 
         <div style={{'paddingTop': '10px','textAlign': 'center'}}>
         { results[2].data && results[2].data?.length ? 
-          <select name="device" id='device-select' onChange={onChangeHandler} style={{'width':'80%'}}>
-            <option value="">-- device --</option>
+          <select 
+            name="device" 
+            id='device-select' 
+            title='filter samples by device type'
+            onChange={onChangeHandler} 
+            style={{'width':'80%'}}
+          >
+            <option value="">-- Device --</option>
             {
               results[2].data?.map(name => <option value={name} key={name}>{name}</option>)
             }
@@ -292,17 +304,25 @@ export default function FilterPanel(props:Props) {
             disabled
             style={{'width':'80%'}}
           >
-          <option value="">-- device --</option>
-        </select>
-      }   
+            <option value="">-- Device --</option>
+          </select>
+        }   
         </div>
+        
         <div style={{'paddingTop': '10px','textAlign': 'center'}}>
         { results[3].data ?  formatCruiseSelect(results[3].data) : '' }
         </div>
+        
         <div style={{'paddingTop': '10px','textAlign': 'center'}}>
         { results[4].data && results[4].data?.length ? 
-          <select name="lake" id='lake-select' onChange={onChangeHandler} style={{'width':'80%'}}>
-            <option value="">-- lake --</option>
+          <select 
+            name="lake" 
+            id='lake-select'
+            title='filter samples by lake name'
+            onChange={onChangeHandler}
+            style={{'width':'80%'}}
+            >
+            <option value="">-- Lake --</option>
             {
               results[4].data?.map(name => <option value={name} key={name}>{name}</option>)
             }
@@ -314,15 +334,21 @@ export default function FilterPanel(props:Props) {
             title='no lakes with this combination of filters'
             disabled
             style={{'width':'80%'}}>
-            <option value="">-- lake --</option>
+            <option value="">-- Lake --</option>
           </select>
         }   
         </div>
 
         <div style={{'paddingTop': '10px','textAlign': 'center'}}>
         { results[5].data && results[5].data?.length ? 
-          <select name="province" id='province-select' onChange={onChangeHandler} style={{'width':'80%'}}>
-            <option value="">-- province --</option>
+          <select 
+            name="province" 
+            id='province-select'
+            title='filter samples by physiographic province' 
+            onChange={onChangeHandler} 
+            style={{'width':'80%'}}
+          >
+            <option value="">-- Physiographic Province --</option>
             {
               results[5].data?.map(name => <option value={name} key={name}>{name}</option>)
             }          
@@ -335,7 +361,7 @@ export default function FilterPanel(props:Props) {
               disabled
               style={{'width':'80%'}}
             >
-              <option value="">-- province --</option>
+              <option value="">-- Physiographic Province --</option>
             </select>
         }   
         </div>
@@ -346,6 +372,7 @@ export default function FilterPanel(props:Props) {
           <label htmlFor="igsn-text" style={{'paddingRight':'5px', 'fontSize': 'small'}}>IGSN</label>
           <input
             id="igsn-text"
+            title='filter samples by IGSN'
             aria-label="IGSN"
             type="search"
             name="igsn"
@@ -361,12 +388,14 @@ export default function FilterPanel(props:Props) {
             <label htmlFor="start_date_begins_with-text" style={{'paddingRight':'5px', 'fontSize': 'small'}}>Date</label>
             <input
               id="start_date_begins_with-text"
+              title='filter samples by date string'
               aria-label="start date"
+              placeholder='YYYYMMDD'
               type="search"
               name="start_date_begins_with"
-              maxLength={4}
+              maxLength={8}
               minLength={4}
-              size={6}
+              size={12}
               autoComplete='off'
               onKeyDown={event => checkForEnterKey(event) }
               onBlur={onBlurHandler}
@@ -376,7 +405,7 @@ export default function FilterPanel(props:Props) {
 
         <div style={{'paddingLeft': '10px', 'paddingRight': '10px', 'marginTop': '10px'}}>
           <fieldset style={{'display': 'flex', 'alignItems': 'center', 'justifyContent': 'space-around'}}>
-            <legend style={{'fontSize': 'small'}}>Depth</legend>
+            <legend style={{'fontSize': 'small'}}>Water Depth (m)</legend>
             <input
               id="min_depth-text"
               aria-label="min depth"
@@ -406,7 +435,7 @@ export default function FilterPanel(props:Props) {
 
         <div style={{'paddingLeft': '10px', 'paddingRight': '10px', 'marginTop': '10px'}}>
           <fieldset>
-            <legend>Core Sample Attributes</legend>
+            <legend>Sample Attributes</legend>
             <select name="lithology" id='lithology-select' onChange={onChangeHandler} style={{'width':'80%'}}>
               <option value="">-- Lithology --</option>
               {
