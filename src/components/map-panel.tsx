@@ -232,7 +232,7 @@ function executeIdentify(event:__esri.ViewClickEvent) {
       const results:IdentifyResult[] = response.results
       return results.map(function(result) {
       const feature = result.feature
-      console.log({feature})
+      // console.log({feature})
       // hack to work around JSAPI extraneous precision in some cases
       feature.attributes.LAT = parseFloat(feature.attributes.LAT.toFixed(5))
       feature.attributes.LON = parseFloat(feature.attributes.LON.toFixed(5))
@@ -253,7 +253,7 @@ function executeIdentify(event:__esri.ViewClickEvent) {
   }).then(showPopup)
 
   function showPopup(response:Graphic[]) {
-    console.log({response})
+    // console.log({response})
     if(response.length > 0 && mapView.current) {
       mapView.current.popup.open({
         features: response,
@@ -313,7 +313,7 @@ function zoomTo(layerDefinitionExpression:string) {
 
 function updateAreaOfInterest(coords:Array<number>|undefined) {
   if (!coords) { return }
-  console.log('inside updateAreaOfInterest with ', coords)
+  // console.log('inside updateAreaOfInterest with ', coords)
   const mySearchParams = new URLSearchParams(searchParams)
   mySearchParams.set('bbox', coords.join(','))
   setSearchParams(mySearchParams)
