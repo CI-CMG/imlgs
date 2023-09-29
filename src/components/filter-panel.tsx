@@ -8,7 +8,8 @@ import {
   Form,
   redirect,
   useNavigation,
-  useSubmit
+  useSubmit,
+  useNavigate
 } from "react-router-dom"
 import { 
   fetchCruiseNames, 
@@ -49,6 +50,7 @@ export interface Props {
 export default function FilterPanel(props:Props) {
   console.log('rendering FilterPanel...')
   const {zoomToSelected, zoomToggleHandler} = props
+  const navigate = useNavigate();
   const baseClass = 'FilterPanel'
   const navigation = useNavigation()
 
@@ -187,7 +189,13 @@ export default function FilterPanel(props:Props) {
   function formatCruiseSelect(data: string[]) {
     if (data && data.length > 0 && data.length < 500) {
       return (
-      <select name="cruise" id='cruise-select' onChange={onChangeHandler} style={{'width':'80%'}}>
+      <select
+        name="cruise" 
+        id='cruise-select'
+        title='filter samples by cruise name'
+        onChange={onChangeHandler} 
+        style={{'width':'80%'}}
+      >
         <option value="">-- Cruise --</option>
         {
           data?.map((name, idx) => <option value={name} key={idx}>{name}</option>)
@@ -220,10 +228,15 @@ export default function FilterPanel(props:Props) {
     }
   }
 
+  function tableButtonHandler() {
+    navigate(`/samples/table?${filters.toString()}`)
+  }
 
   return (
     <div className={baseClass}>
-      <SamplesCount/>
+      <div className='center-content'>
+        <SamplesCount/>
+      </div>
 
       <Form
         id="search-form"
@@ -410,6 +423,7 @@ export default function FilterPanel(props:Props) {
             <input
               id="min_depth-text"
               aria-label="min depth"
+              title='filter samples taken from water >= this depth'
               placeholder="min"
               type="search"
               name="min_depth"
@@ -422,6 +436,7 @@ export default function FilterPanel(props:Props) {
             <input
               id="max_depth-text"
               aria-label="max depth"
+              title='filter samples taken from water <= this depth'
               placeholder="max"
               type="search"
               name="max_depth"
@@ -437,52 +452,84 @@ export default function FilterPanel(props:Props) {
         <div style={{'paddingLeft': '10px', 'paddingRight': '10px', 'marginTop': '10px'}}>
           <fieldset>
             <legend>Sample Attributes</legend>
-            <select name="lithology" id='lithology-select' onChange={onChangeHandler} style={{'width':'80%'}}>
+            <select
+              name="lithology"
+              title="filter samples by lithologic composition"
+              id='lithology-select' 
+              onChange={onChangeHandler} 
+              style={{'width':'80%'}}
+            >
               <option value="">-- Lithology --</option>
               {
                 results[9].data?.map(name => <option value={name} key={name}>{name}</option>)
               }     
             </select>
-            <select name="texture" id='texture-select' onChange={onChangeHandler} style={{'width':'80%'}}>
+            <select 
+              name="texture" 
+              title='filter samples by texture'
+              id='texture-select' 
+              onChange={onChangeHandler} 
+              style={{'width':'80%'}}
+            >
               <option value="">-- Texture --</option>
               {
                 results[10].data?.map(name => <option value={name} key={name}>{name}</option>)
               }     
             </select>
-            <select name="mineralogy" id='mineralogy-select' onChange={onChangeHandler} style={{'width':'80%'}}>
+            <select 
+              name="mineralogy" 
+              title="filter samples by rock mineralogy"
+              id='mineralogy-select' 
+              onChange={onChangeHandler} 
+              style={{'width':'80%'}}
+            >
               <option value="">-- Mineralogy --</option>
               {
                 results[8].data?.map(name => <option value={name} key={name}>{name}</option>)
               }          
             </select>
             { results[6].data && results[6].data?.length ?
-              <select name="weathering" id='weathering-select' onChange={onChangeHandler} style={{'width':'80%'}} title="weathering code">
+              <select 
+                name="weathering" 
+                id='weathering-select' 
+                onChange={onChangeHandler} 
+                style={{'width':'80%'}} 
+                title="filter samples by rock weathering">
                 <option value="">-- Weathering --</option>
               {
                 results[6].data?.map(name => <option value={name} key={name}>{name}</option>)
               }          
               </select>
             :
-            <select name="weathering" id='weathering-select' onChange={onChangeHandler} style={{'width':'80%'}}
+            <select 
+              name="weathering" 
+              id='weathering-select' 
+              onChange={onChangeHandler} 
+              style={{'width':'80%'}}
               title='no weathering codes with this combination of filters' disabled           
             >
               <option value="">-- Weathering --</option>
 
             </select>
           }
-            <select name="metamorphism" id='metamorphism-select' onChange={onChangeHandler} style={{'width':'80%'}}>
+            <select 
+              name="metamorphism" 
+              title="filter samples by rock metamorphism"
+              id='metamorphism-select' 
+              onChange={onChangeHandler} 
+              style={{'width':'80%'}}
+            >
               <option value="">-- Metamorphism --</option>
               {
                 results[7].data?.map(name => <option value={name} key={name}>{name}</option>)
               }          
-
             </select>
 
           </fieldset>
         </div>
         
         </Form>
-        <div style={{'marginTop':'10px'}}>
+        <div className='center-content' style={{'marginTop':'10px'}}>
           <label>
             Zoom to Selected
             <input type="checkbox" id="zoom-checkbox" name="zoomToSelected" checked={zoomToSelected}  
@@ -490,9 +537,11 @@ export default function FilterPanel(props:Props) {
           </label> 
         </div>
 
-        <div style={{'display': 'flex', 'alignItems': 'center', 'justifyContent': 'space-around', 'marginTop': '15px'}}>
-          <button id='resetButton' type='button' className='styled' onClick={resetButtonHandler}>Reset</button>
+        <div className='center-content' style={{'marginTop': '25px'}}>
+          <button id='resetButton' type='button'  title="reset the filters to default values" onClick={resetButtonHandler}>Reset</button>
+          <button id='tableButton' type='button' title="open a tabular view of the data" onClick={tableButtonHandler}>Table View</button>
         </div>
+
     </div>
   )
 }

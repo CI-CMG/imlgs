@@ -3,18 +3,28 @@
   height: 100%;
 }
 
-#resetButton {
-  border: 0;
+.center-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.debug-border {
+  border: 1px solid black
+}
+
+#resetButton, #tableButton {
+  border: 1 solid black;
   line-height: 2.5;
   padding: 0 20px;
-  margin-bottom: 20px;
+  /* margin-top: 20px; */
   font-size: 1rem;
-  text-align: center;
+  /* text-align: center; */
   color: #fff;
-  text-shadow: 1px 1px 1px #000;
+  /* text-shadow: 1px 1px 1px #000; */
   border-radius: 10px;
   /* background-color: rgba(220, 0, 0, 1); */
   background-color: var(--noaa-background-color);
-  background-image: linear-gradient(to top left, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2) 30%, rgba(0, 0, 0, 0));
-  box-shadow: inset 2px 2px 3px rgba(255, 255, 255, 0.6), inset -2px -2px 3px rgba(0, 0, 0, 0.6);
+  /* background-image: linear-gradient(to top left, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2) 30%, rgba(0, 0, 0, 0)); */
+  /* box-shadow: inset 2px 2px 3px rgba(255, 255, 255, 0.6), inset -2px -2px 3px rgba(0, 0, 0, 0.6); */
 }
