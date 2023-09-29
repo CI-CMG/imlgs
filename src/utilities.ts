@@ -16,7 +16,10 @@ export function searchParamsToFilters(searchParams: URLSearchParams): URLSearchP
     'metamorphism',
     'mineralogy',
     'lithology',
-    'texture'
+    'texture',
+    'page',
+    'imlgs',
+    'order'
   ]
   supportedFilterNames.forEach(name => {
     // value should never get null or empty string but extra statement is to keep TypeScript satisfied
