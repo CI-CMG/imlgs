@@ -1,0 +1,18 @@
+.SamplesTable {
+  width:90%;
+  margin: 0 auto;
+}
+
+.SamplesTable--datatable, table, th, td {
+  border: 1px black solid;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-collapse: collapse;
+}
+
+.SamplesTable--button {
+  background-color: #0275d8;
+  color: whitesmoke;
+}
+tr:nth-child(even) {background: #CCC}
+tr:nth-child(odd) {background: #FFF}
