@@ -6,7 +6,7 @@ import { z } from "zod"
 
 const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
 
-const RepositoryNameSchema = z.object({
+export const RepositoryNameSchema = z.object({
   id: z.number(),
   facility: z.string(),
   facility_code: z.string()
