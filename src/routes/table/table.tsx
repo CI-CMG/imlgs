@@ -1,41 +1,38 @@
 import './table.css'
+import { useState } from 'react'
 import { useLoaderData, useSearchParams, Link } from "react-router-dom"
-import { Sample, loader as samplesLoader } from './data'
-import { getRepositoryNameByCode as getRepository } from '../repositories/data'
+import { loader as samplesLoader } from './data'
 import { searchParamsToFilters } from '../../utilities'
 const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
 
 
 export default function SamplesTable() {
+  console.log('re-rendering SamplesTable...')
   const baseClass = 'SamplesTable'
   // const queryClient = useQueryClient()
   // console.log(queryClient.getDefaultOptions())
   const [searchParams, setSearchParams] = useSearchParams()
+  const [pageNumber, setPageNumber] = useState(1)
 
   const loaderData = useLoaderData() as Awaited<ReturnType<ReturnType<typeof samplesLoader>>>
-  // console.log({loaderData})
 
   const currentPage = loaderData.page
   const samples = loaderData.items
   const totalItems = loaderData.total_items
   const totalPages = loaderData.total_pages
-  const itemsPerPage = loaderData.items_per_page
 
-
-  async function formatRepositoryLink(item: Sample) {
-    const repository = await getRepository(item.facility_code)
-
-    return (
-    <Link to={{pathname:`/repositories/${repository.id}`}}>{repository.facility_code}</Link>
-    )
+  function incrementPage() {
+    setPageNumber((pageNumber) => pageNumber + 1)
   }
 
+  function decrementPage() {
+    setPageNumber((pageNumber) => pageNumber - 1)
+  }
 
   function exportCSV() {
     // strip out any search params not allowable for filtering
     const filters = searchParamsToFilters(searchParams)
     const queryURL = `${apiBaseUrl}/samples/csv?${filters.toString()}`
-    console.log('exporting samples using URL ', queryURL)
     window.open(queryURL)
   }
 
@@ -58,12 +55,13 @@ export default function SamplesTable() {
 
 
   function sortHandler(event: React.ChangeEvent<HTMLSelectElement>) {
+    const sortOrder = 'asc'
     const newSearchParams = new URLSearchParams(searchParams)
     if (event.target.selectedIndex === 0) {
       // use default sort order as determined by the API
       newSearchParams.delete('order')
     } else {
-      newSearchParams.set('order', event.target.value)
+      newSearchParams.set('order', `${event.target.value}:${sortOrder}`)
     }
     setSearchParams(newSearchParams)
   }
@@ -87,19 +85,19 @@ export default function SamplesTable() {
           <span style={{marginLeft: '15px'}}>page {currentPage} of {totalPages} ({totalItems} total records)</span>
           <select style={{marginLeft: '100px'}} onChange={sortHandler}>
             <option>-- Sort By --</option>
-            <option>Repository</option>
-                <option value='platform'>Ship/Platform</option>
-                <option value='cruise'>Cruise</option>
-                <option value='imlgs'>IMLGS</option>
-                <option value='device'>Device</option>
-                <option value='water_depth'>Water Depth (m)</option>
-                <option value='start_date'>Collection Date</option>
-                <option value='igsn'>IGSN</option>
+            <option value='facility_code'>Repository</option>
+            <option value='platform'>Ship/Platform</option>
+            <option value='cruise'>Cruise</option>
+            <option value='imlgs'>IMLGS</option>
+            <option value='device'>Device</option>
+            <option value='water_depth'>Water Depth (m)</option>
+            <option value='start_date'>Collection Date</option>
+            <option value='igsn'>IGSN</option>
           </select>
         </div>
       </nav>
 
-      <main className={baseClass} style={{ padding: "1rem 0" }}>
+      <div className={baseClass} style={{ padding: "1rem 0" }}>
         {(samples && samples.length === 0) ? <h4>no data</h4>: ''}
         {samples.length ? 
           <table className={`${baseClass}--datatable`}>
@@ -120,14 +118,14 @@ export default function SamplesTable() {
             </tr>
           </thead>
           <tbody>{
-            samples.map(item => (
+            loaderData.items.map(item => (
               <tr key={item.imlgs}>
+                {/* TODO why is item.facility undefined? */}
               <td>{item.facility ? 
                 <Link to={{pathname:`/repositories/${item.facility.id}`}}>{item.facility.facility_code}</Link> 
               : 
                 item.facility_code
               }
-
               </td>
               <td>{item.platform}</td>
               <td>{item.cruise}</td>
@@ -147,8 +145,9 @@ export default function SamplesTable() {
             </table>
             : ''
         }
-      </main>
-        
+      </div>
+      
+        {/* <button type='button' onClick={incrementPage}>increment page</button> */}
   </div>
   )
 }

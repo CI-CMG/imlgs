@@ -7,6 +7,8 @@ import { getRepositoryNameByCode as getRepositoryByCode, RepositoryNameSchema } 
 import { z } from "zod"
 const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
 
+const ITEMS_PER_PAGE = 250
+
 const SampleSchema = z.object({
   imlgs: z.string(),
   facility_code: z.string(),
@@ -23,6 +25,7 @@ const SampleSchema = z.object({
   leg: z.string().optional(),
   cored_length: z.number().optional(),
   facility: z.optional(RepositoryNameSchema)
+  // facility: RepositoryNameSchema
 });
 
 
@@ -42,8 +45,8 @@ export type SampleResults = z.infer<typeof ResponseSchema>
 
 export async function getSampleResults(filters: URLSearchParams): Promise<SampleResults> {
   const myFilters = new URLSearchParams(filters)
-  myFilters.set('items_per_page', '500')
-  // console.log('inside getSamples. filters = ', myFilters.toString())
+  myFilters.set('items_per_page', ITEMS_PER_PAGE.toString())
+  console.log('inside getSampleResults. filters = ', myFilters.toString())
   const response = await fetch(`${apiBaseUrl}/samples/summary?${myFilters.toString()}`)
   if (! response.ok) {
     throw new Error(response.statusText)
@@ -53,9 +56,8 @@ export async function getSampleResults(filters: URLSearchParams): Promise<Sample
   payload.items.forEach(async (item) => {
     item.facility = await getRepositoryByCode(item.facility_code)
   })
-  // console.log({payload})
-  ResponseSchema.parse(payload)
-  return payload
+  // return ResponseSchema.parse(payload)
+  return payload as SampleResults
 }
 
 
@@ -79,8 +81,6 @@ export const loader =
       // const url = new URL(window.location.href)
       const url = new URL(params.request.url)
       const filters = searchParamsToFilters(url.searchParams)
-      console.log('inside samples loader with ', params.request.url)
-      console.log(window.location.href)
       // const { filters } = params.params
       const query = samplesQuery(filters)
 
