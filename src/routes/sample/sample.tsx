@@ -2,6 +2,8 @@ import './sample.css'
 import { useLoaderData, useParams, Link } from "react-router-dom"
 import { loader, Sample, sampleDetailQuery, Link as SampleLink, Interval } from "./data"
 import { useQuery } from "@tanstack/react-query"
+const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
+
 
 
 function buildDetailsRow(fieldName: string, label: string, value: string) {
@@ -156,8 +158,15 @@ export default function SampleDetail() {
   const { data: sampleDetail }: {data: Sample} = useQuery({
     ...sampleDetailQuery(id), 
     initialData})
+  // console.log(sampleDetail)
 
-  console.log(sampleDetail)
+
+  function exportCSV() {
+    const queryURL = `${apiBaseUrl}/intervals/csv?imlgs=${id}`
+    window.open(queryURL)
+  }
+  
+
   return (
     <main className={baseClass} style={{ padding: "1rem 0" }}>
       <h2>Data and Information for Sample {sampleDetail.sample}</h2>
@@ -172,10 +181,24 @@ export default function SampleDetail() {
         <br/>
         {sampleDetail.links ? formatLinks(sampleDetail.links) : '' }
         {sampleDetail.cruise.links ? formatCruiseLinks(sampleDetail.cruise.links, sampleDetail.cruise.cruise): ''}
+
+        {sampleDetail.intervals.length ?
+          <button 
+            className={`${baseClass}--exportButton`} 
+            style={{marginLeft: '25px', marginTop: '25px', marginBottom:'25px'}}  
+            onClick={exportCSV}
+          >
+            Export Interval Data
+          </button>        
+        : ''}
       </div>
+      
       <div id="intervals">
         {sampleDetail.intervals.length ? sampleDetail.intervals.map(interval => formatInterval(interval)) : ''}
       </div>
+
+        <span>see the <a href={'https://www.ngdc.noaa.gov/mgg/curator/curatorcoding.html'}>IMLGS controlled vocabulary</a> for more information</span>
+
     </main>
   )
 }
