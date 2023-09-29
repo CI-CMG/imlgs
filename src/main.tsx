@@ -11,6 +11,7 @@ import Cruise from './routes/cruises/cruise'
 import Samples from './routes/samples/samples'
 import SampleDetail from './routes/sample/sample'
 import { loader as sampleLoader } from './routes/sample/data'
+import { loader as samplesLoader } from './routes/table/data'
 import SamplesTable from './routes/table/table'
 import {
   createBrowserRouter,
@@ -45,7 +46,8 @@ const router = createBrowserRouter([
       },
       {
         path: "samples/table",
-        element: <SamplesTable/>
+        element: <SamplesTable/>,
+        loader: samplesLoader(queryClient)
       },
       {
         path: "samples/:id",
