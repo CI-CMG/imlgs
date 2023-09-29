@@ -5,7 +5,8 @@
       "sidebar details";
   width: 100vw;
   /* need to accommodate height of header, footer */
-  height: calc(100vh - 125px);
+  /* height: calc(100vh - 125px); */
+  height: var(--body-height);
   background-color: var(--body-background-color);
 }
 
