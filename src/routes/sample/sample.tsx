@@ -23,7 +23,8 @@ function buildIntervalRow(label:string, value:string) {
 }
 
 
-function formatInterval(interval: Interval) {      
+function formatInterval(interval: Interval) {
+  console.log('inside formatInterval with ', interval)
   const tableRows: Array<JSX.Element> = []
   let title = interval.interval ? `Interval ${interval.interval}`: ''
   if (interval.depth_top != null && interval.depth_bot != null) {
@@ -45,7 +46,7 @@ function formatInterval(interval: Interval) {
   if (interval.rock_min !== undefined) { tableRows.push(buildIntervalRow('Rock Mineralogy', interval.rock_min)) }
   if (interval.weath_meta !== undefined) { tableRows.push(buildIntervalRow('Rock Weathering and Metamorphism', interval.weath_meta)) }
   if (interval.remark !== undefined) { tableRows.push(buildIntervalRow('Rock Glass Remarks and MN/Fe Oxide Coating', interval.remark)) }
-  if (interval.ages !== undefined) { tableRows.push(buildIntervalRow('Geologic Ages', interval.ages.join(', '))) }
+  if (interval.ages !== undefined && interval.ages.length) { tableRows.push(buildIntervalRow('Geologic Ages', interval.ages.join(', '))) }
   if (interval.absolute_age_top !== undefined) { tableRows.push(buildIntervalRow('Absolute Age Top', interval.absolute_age_top)) }
   if (interval.absolute_age_bot !== undefined) { tableRows.push(buildIntervalRow('Absolute Age Bottom', interval.absolute_age_bot)) }
   if (interval.munsell_code !== undefined) { tableRows.push(buildIntervalRow('Color (Munsell Code)', interval.munsell_code)) }
@@ -158,7 +159,7 @@ export default function SampleDetail() {
   const { data: sampleDetail }: {data: Sample} = useQuery({
     ...sampleDetailQuery(id), 
     initialData})
-  // console.log(sampleDetail)
+  console.log(sampleDetail)
 
 
   function exportCSV() {
