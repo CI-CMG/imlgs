@@ -42,7 +42,7 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
   let minDepth = getSearchParamValue('min_depth')
   let maxDepth = getSearchParamValue('max_depth')
   let igsn = getSearchParamValue('igsn')
-  let province = getSearchParamValue('igsn')
+  let province = getSearchParamValue('province')
   let sampleId = getSearchParamValue('sampleid')
 
   const minDepthInput = useRef(null)
@@ -94,6 +94,7 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
   
   let cruises = (results[4].data?.length) ? results[4].data : []
   if (cruises.length == 1) { cruise = cruises[0].cruise }
+  console.log({cruises})
 
   let provinces = (results[5].data?.length) ? results[5].data : []
   if (provinces.length == 1) { province = provinces[0] }
@@ -162,7 +163,7 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
 
 
   const handleDateChange = (event:React.FocusEvent<HTMLInputElement>) => {
-    console.log('date changed to ', event.target.value)
+    if (event.target.value === '') { return }
     if (event.target.value.length >= 4 && event.target.value.length <= 8) {
       let newSearchParams = new URLSearchParams(searchParams)
       newSearchParams.set('date', event.target.value)
@@ -174,12 +175,14 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
   }
 
   const handleMinDepthChange = (event:React.FocusEvent<HTMLInputElement>) => {
+    if (event.target.value === '') { return }
     let newSearchParams = new URLSearchParams(searchParams)
     newSearchParams.set('min_depth', event.target.value)
     setSearchParams(newSearchParams);
   }
 
   const handleMaxDepthChange = (event:React.FocusEvent<HTMLInputElement>) => {
+    if (event.target.value === '') { return }
     let newSearchParams = new URLSearchParams(searchParams)
     newSearchParams.set('max_depth', event.target.value)
     setSearchParams(newSearchParams);
@@ -187,7 +190,7 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
   }
 
   const handleIgsnChange = (event: React.FocusEvent<HTMLInputElement>) => {
-    console.log('inside handleIgsnChange with ', event.target.value)
+    if (event.target.value === '') { return }
     // if igsn found in samples set IGSN parameter
     // else if igsn found in intervals set IMLGS parameter
     let newSearchParams = new URLSearchParams(searchParams)
@@ -196,7 +199,7 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
   }
 
   const handleSampleIdChange = (event: React.FocusEvent<HTMLInputElement>) => {
-    console.log('inside handleSampleIdChange with ', event.target.value)
+    if (event.target.value === '') { return }
     let newSearchParams = new URLSearchParams(searchParams)
     newSearchParams.set('sampleid', event.target.value)
     setSearchParams(newSearchParams)
@@ -219,7 +222,7 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
   return (
     <div ref={filterPanel}>
         
-        {queriesComplete ? 
+        {/* {queriesComplete ?  */}
           <>
           <FormControl fullWidth variant='standard' sx={{paddingBottom: '15px'}}>
             <InputLabel id="repository-select-label">Repository</InputLabel>
@@ -272,6 +275,7 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
             </Select>
           </FormControl>
 
+          { cruises && cruises.length && cruises.length < 500 ?
           <FormControl fullWidth variant='standard' sx={{paddingBottom: '15px'}}>
             <InputLabel id="cruise-select-label">Cruise</InputLabel>
             <Select
@@ -288,9 +292,10 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
             ))}
             </Select>
           </FormControl>
+          : '' }
 
           </>
-          : ''}
+          {/* : ''} */}
         {lakes && lakes.length ? 
           <FormControl fullWidth variant='standard' sx={{paddingBottom: '15px'}}>
           <InputLabel id="lake-select-label">Lake</InputLabel>
@@ -350,7 +355,7 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
         sx={{marginBottom: '5px', width:"60px"}} />
       </div>
 
-      <div>
+      {/* <div>
       <TextField 
         id="igsn-text" label="IGSN" variant="standard" inputRef={igsnInput}
         onBlur={handleIgsnChange} defaultValue={igsn} onKeyDown={checkForReturnKey}
@@ -364,7 +369,7 @@ export default function FilterSamples({zoomToSelected, zoomToggleHandler}) {
         onBlur={handleSampleIdChange} defaultValue={sampleId} onKeyDown={checkForReturnKey}
         sx={{width:'120px', paddingBottom:"5px"}} size="small"
       />
-      </div>
+      </div> */}
 
       <div style={{display: "flex", justifyContent: "center", marginTop: "25px", width:"100%"}}>
           <Button variant="contained" onClick={handleResetFilterBtn}>Reset Filters</Button>

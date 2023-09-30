@@ -88,7 +88,7 @@ function createSearchParamsString(validFilterKeys:string[], filters:Filter[], de
 
 async function fetchRepositories(queryData:QueryFnData): Promise<Repository[]> {
     const [, filters]:[string, Filter[]] = queryData.queryKey
-    const validKeys = ['platform', 'lake', 'cruise', 'device', 'date', 'bbox', 'min_depth', 'max_depth']
+    const validKeys = ['platform', 'lake', 'cruise', 'device', 'date', 'bbox', 'min_depth', 'max_depth', 'province']
     const searchParamsString = createSearchParamsString(validKeys, filters)
     const response = await fetch(`${apiBaseUrl}/repositories/name${searchParamsString}`)
     if (! response.ok) {
@@ -166,20 +166,23 @@ async function fetchSampleCount(queryData:QueryFnData):Promise<number> {
 
 
 async function fetchCruises(queryData:QueryFnData): Promise<Cruise[]> {
+    console.log('inside fetchCruises...')
     const [, filters]:[string, Filter[]] = queryData.queryKey
-    const validKeys = ['repository', 'lake', 'platform', 'device', 'date', 'bbox', 'min_depth', 'max_depth']
+    const validKeys = ['repository', 'lake', 'platform', 'device', 'date', 'bbox', 'min_depth', 'max_depth', 'province']
     const searchParamsString = createSearchParamsString(validKeys, filters, ['items_per_page=2000'])
+    console.log({searchParamsString})
     const response = await fetch(`${apiBaseUrl}/cruises${searchParamsString}`)
     if (! response.ok) {
         throw new Error(response.statusText)
     }
     const payload = await response.json()
+    
     return payload.items as Cruise[]}
 
 
 async function fetchCruiseNames(queryData:QueryFnData): Promise<Cruise[]> {
     const [, filters]:[string, Filter[]] = queryData.queryKey
-    const validKeys = ['repository', 'lake', 'platform', 'device', 'date', 'bbox', 'min_depth', 'max_depth']
+    const validKeys = ['repository', 'lake', 'platform', 'device', 'date', 'bbox', 'min_depth', 'max_depth', 'province']
     const searchParamsString = createSearchParamsString(validKeys, filters, ['items_per_page=2000'])
     const response = await fetch(`${apiBaseUrl}/cruises/name${searchParamsString}`)
     if (! response.ok) {
