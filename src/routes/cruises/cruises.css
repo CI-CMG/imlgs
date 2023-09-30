@@ -1,0 +1,38 @@
+.Cruises--wrapper {
+  display: grid;
+  grid-template-columns: 300px auto;
+  grid-template-areas:
+      "sidebar details";
+  width: 100vw;
+  /* need to accommodate height of header, footer */
+  /* height: calc(100vh - 125px); */
+  height: var(--body-height);
+  background-color: var(--body-background-color);
+}
+
+.Cruises--sidebar {
+  grid-area: sidebar;
+  overflow: auto;
+  padding: 1rem;
+  /* color: var(--noaa-background-color); */
+  text-decoration: none;
+  background-color: var(--body-background-color);
+}
+
+
+.Cruises--datatable {
+  width: 100%;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+.Cruises--datatable td {
+  border: 1px solid black;
+}
+
+.Cruises--navlink {
+  display: block;
+  margin: 1rem 0;
+  color: #282c34;
+  text-decoration: none;
+}

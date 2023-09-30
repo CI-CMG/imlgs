@@ -1,0 +1,44 @@
+.SampleDetail {
+  width: 50vw;
+  margin: 0 auto;
+  background-color: 'whitesmoke';
+}
+
+tr:nth-child(even) {background: #CCC};
+tr:nth-child(odd) {background: #FFF};
+th { font-weight: bold;}
+
+.SampleDetail--table,th,td {
+  border: 1px black solid;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-collapse: collapse;
+  /* tr:nth-child(even) {background: #CCC}; */
+}
+/* .SampleDetail--intervalsTable tr:nth-child(even) {background: #CCC}; */
+/* .SampleDetail--intervalsTable tr:nth-child(odd) {background: #FFF}; */
+
+.SampleDetail--intervalsTable {
+  border: 1px solid black;
+  margin-bottom: 15px;
+}
+
+.SampleDetail--rowLabel {
+  font-weight: bold;
+}
+
+.SampleDetail--intervalTitle {
+  font-style: italic;
+  font-weight: bold;
+}
+
+.SampleDetail--exportButton {
+  border: 1 solid black;
+  line-height: 2.5;
+  padding: 0 20px;
+  font-size: 1rem;
+  color: #fff;
+  border-radius: 10px;
+  background-color: var(--noaa-background-color);
+}
+

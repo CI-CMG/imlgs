@@ -25,7 +25,7 @@ const fillSymbol = {
 // const ExtentToolbar = forwardRef (({mapView, setSelectedExtent}, extentToolbar) => {
 
 function ExtentToolbar({mapView, setSelectedExtent}) {
-    console.log('rendering ExtentToolbar mapView: ', mapView )
+    // console.log('rendering ExtentToolbar mapView: ', mapView )
     const drawExtentTool = useRef<HTMLDivElement|null>(null);
     const clearExtentTool = useRef<HTMLDivElement|null>(null);
     const extentToolbar = useRef<HTMLDivElement|null>(null);

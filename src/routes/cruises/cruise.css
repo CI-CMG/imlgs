@@ -1,0 +1,19 @@
+.CruiseDetail--contactInfoDiv {
+  width: 50%;
+  margin: 0 auto;
+}
+
+.CruiseDetail--contactInfoTitle {
+  width: 100%;
+  margin: 25px auto;
+  text-align: center;
+}
+
+.CruiseDetail--errorMessage {
+  margin: 0 auto;
+}
+
+.CruiseDetail {
+  background-color: whitesmoke;
+  grid-area: details;
+}
