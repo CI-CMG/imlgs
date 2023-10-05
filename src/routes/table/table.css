@@ -14,5 +14,5 @@
   background-color: #0275d8;
   color: whitesmoke;
 }
-tr:nth-child(even) {background: #CCC}
-tr:nth-child(odd) {background: #FFF}
+tr:nth-child(even) {background: #CCC};
+tr:nth-child(odd) {background: #FFF};

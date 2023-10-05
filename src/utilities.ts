@@ -21,6 +21,8 @@ export function searchParamsToFilters(searchParams: URLSearchParams): URLSearchP
     'imlgs',
     'order'
   ]
+  // consistency in order of parameters important since it determines the output from the URLSearchParameters#toString 
+  // method which is used in queryKey
   supportedFilterNames.forEach(name => {
     // value should never get null or empty string but extra statement is to keep TypeScript satisfied
     const value = (searchParams.has(name) && searchParams.get(name)) ? searchParams.get(name) : ''
