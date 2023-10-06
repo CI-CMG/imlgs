@@ -31,6 +31,7 @@ const queryClient = new QueryClient({
   },
 })
 
+const routerBasename = import.meta.env.VITE_routerBasename
 const router = createBrowserRouter([
   {
     path: "/",
@@ -92,7 +93,8 @@ const router = createBrowserRouter([
       }
     ]
   }
-])
+], { basename: routerBasename }
+)
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
