@@ -46,17 +46,12 @@ export type SampleResults = z.infer<typeof ResponseSchema>
 export async function getSampleResults(filters: URLSearchParams): Promise<SampleResults> {
   const myFilters = new URLSearchParams(filters)
   myFilters.set('items_per_page', ITEMS_PER_PAGE.toString())
-  console.log('inside getSampleResults. filters = ', myFilters.toString())
+  // console.log('inside getSampleResults. filters = ', myFilters.toString())
   const response = await fetch(`${apiBaseUrl}/samples/summary?${myFilters.toString()}`)
   if (! response.ok) {
     throw new Error(response.statusText)
   }
   const payload = await response.json() as SampleResults
-  // augment response with Repository
-  payload.items.forEach(async (item) => {
-    item.facility = await getRepositoryByCode(item.facility_code)
-  })
-  // return ResponseSchema.parse(payload)
   return payload as SampleResults
 }
 
