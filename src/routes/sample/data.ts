@@ -22,7 +22,7 @@ interface Facility {
   id: number,
   facility: string,
   facility_code: string,
-  doi?: string
+  other_link?: string
 }
 
 export interface Interval {
@@ -105,14 +105,15 @@ export async function getSampleById( id: string ): Promise<Sample> {
   console.log('inside getSampleById')
   let response = await fetch(`${apiBaseUrl}/samples/detail/${id}`)
   if (response.status !== 200) { throw new Error(response.status.toString()) }
-  const sampleDetail = await response.json()
-  response = await fetch(`${apiBaseUrl}/repositories/detail/${sampleDetail.facility.id}`)
-  if (response.status !== 200) { throw new Error(response.status.toString()) }
-  const repositoryDetail = await response.json()
-  if (repositoryDetail.other_link) {
-    sampleDetail.facility.doi = repositoryDetail.other_link
-  }
-  return sampleDetail
+  return response.json()
+  // const sampleDetail = await response.json()
+  // response = await fetch(`${apiBaseUrl}/repositories/detail/${sampleDetail.facility.id}`)
+  // if (response.status !== 200) { throw new Error(response.status.toString()) }
+  // const repositoryDetail = await response.json()
+  // if (repositoryDetail.other_link) {
+  //   sampleDetail.facility.doi = repositoryDetail.other_link
+  // }
+  // return sampleDetail
 }
 
 

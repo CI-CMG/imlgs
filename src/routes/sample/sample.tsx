@@ -69,6 +69,7 @@ function formatInterval(interval: Interval) {
 
 
 function formatSampleDetail(sampleDetail:Sample) {
+  console.log({sampleDetail})
   // shallow clone. Avoid modifying the state variable which is passed in
   const sample = Object.assign({}, sampleDetail)
 
@@ -112,11 +113,11 @@ function formatSampleDetail(sampleDetail:Sample) {
   if (sample.cored_diam !== undefined) { tableRows.push(buildDetailsRow('cored_diam', 'Core Diameter(cm)', sample.cored_diam.toString()))}
   if (sample.sample_comments !== undefined) { tableRows.push(buildDetailsRow('sample_comments', 'Sample Comments', sample.sample_comments))}
   if (sample.igsn !== undefined) { tableRows.push(buildDetailsRow('igsn', 'IGSN', sample.igsn))}
-  if (sample.facility.doi) {
+  if (sample.facility.other_link) {
     tableRows.push(
     <tr key="other_link">
     <td className='SampleDetail--rowLabel'>Repository Archive Overview</td>
-    <td><a target="_blank" href={sample.facility.doi}>{sample.facility.doi}</a></td>
+    <td><a target="_blank" href={sample.facility.other_link}>{sample.facility.other_link}</a></td>
     </tr>
   )}
 
