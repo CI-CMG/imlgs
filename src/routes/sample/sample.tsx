@@ -56,12 +56,14 @@ function formatInterval(interval: Interval) {
   if (interval.igsn !== undefined) { tableRows.push(buildIntervalRow('IGSN', interval.igsn)) }
   if (interval.photo_link !== undefined) { tableRows.push(buildIntervalRow('Photo Link', interval.photo_link)) }
   if (interval.weight !== undefined) { tableRows.push(buildIntervalRow('Bulk Weight (kg)', interval.weight.toString())) }
-
+  if (tableRows.length === 1) {
+    tableRows.push(<span>no further information available</span>)
+  }
   return (
     <table className={'SampleDetail--intervalsTable'} key={interval.interval}>
         <thead></thead>
         <tbody>
-          {tableRows.map((row, idx) => <tr key={idx}><td>{row}</td></tr> ) }
+          {tableRows.map((row, idx) => <tr key={idx}><td>{row}</td></tr>)}
         </tbody>
     </table>
   )
