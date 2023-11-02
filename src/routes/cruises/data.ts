@@ -63,13 +63,6 @@ export async function getCruise( id: number ): Promise<CruiseDetail> {
     throw new Error(`${response.status}`)
   }
   const payload = await response.json() as CruiseDetail
-  // augment CruiseDetail with more complete Repository information
-  // const facilities = new Array<RepositoryName>
-  // payload.facility_codes?.forEach(async code => {
-  //   const repository: RepositoryName = await getRepositoryNameByCode(code)
-  //   facilities.push(repository)
-  // })
-  // payload.facilities = facilities
   return payload
 }
 
