@@ -27,7 +27,7 @@ interface Facility {
 
 export interface Interval {
   id: number,
-  facility_code: string,
+  facility: Facility,
   platform: string,
   cruise: string,
   sample?: string,
@@ -103,7 +103,7 @@ export interface Sample {
 
 export async function getSampleById( id: string ): Promise<Sample> {
   console.log('inside getSampleById')
-  let response = await fetch(`${apiBaseUrl}/samples/detail/${id}`)
+  const response = await fetch(`${apiBaseUrl}/samples/detail/${id}`)
   if (response.status !== 200) { throw new Error(response.status.toString()) }
   return response.json()
   // const sampleDetail = await response.json()
