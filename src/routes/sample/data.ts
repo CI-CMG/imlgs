@@ -106,14 +106,6 @@ export async function getSampleById( id: string ): Promise<Sample> {
   const response = await fetch(`${apiBaseUrl}/samples/detail/${id}`)
   if (response.status !== 200) { throw new Error(response.status.toString()) }
   return response.json()
-  // const sampleDetail = await response.json()
-  // response = await fetch(`${apiBaseUrl}/repositories/detail/${sampleDetail.facility.id}`)
-  // if (response.status !== 200) { throw new Error(response.status.toString()) }
-  // const repositoryDetail = await response.json()
-  // if (repositoryDetail.other_link) {
-  //   sampleDetail.facility.doi = repositoryDetail.other_link
-  // }
-  // return sampleDetail
 }
 
 
