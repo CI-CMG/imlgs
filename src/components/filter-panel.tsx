@@ -22,6 +22,9 @@ import {
   fetchMineralogies,
   fetchWeathering,
   fetchLithologies,
+  fetchRockLithologies,
+  fetchCompositions,
+  fetchRemarks,
   fetchTextures
 } from '../queries'
 import { RepositoryName, getRepositories } from '../routes/repositories/data'
@@ -68,20 +71,29 @@ export default function FilterPanel(props:Props) {
   // in the same order the inputs they populate appear on the page
   const results = useQueries({
     queries: [ 
-      { queryKey: ['repositories', filters.toString()], queryFn: () => getRepositories(filters) },
-      { queryKey: ['platforms', filters.toString()], queryFn: () => fetchPlatforms(filters) },
-      { queryKey: ['devices', filters.toString()], queryFn: () => fetchDevices(filters) },
-      { queryKey: ['cruises', filters.toString()], queryFn: () => fetchCruiseNames(filters) },
-      { queryKey: ['lakes', filters.toString()], queryFn: () => fetchLakes(filters) },
-      { queryKey: ['provinces', filters.toString()], queryFn: () => fetchProvinces(filters) },
-      { queryKey: ['weathering', filters.toString()], queryFn: () => fetchWeathering(filters) },
-      { queryKey: ['metamorphism', filters.toString()], queryFn: () => fetchMetamorphism(filters) },
-      { queryKey: ['mineralogies', filters.toString()], queryFn: () => fetchMineralogies(filters) },
-      { queryKey: ['lithologies', filters.toString()], queryFn: () => fetchLithologies(filters) },
-      { queryKey: ['textures', filters.toString()], queryFn: () => fetchTextures(filters) },
+      { queryKey: ['repositories', filters.toString()], queryFn: () => getRepositories(filters) },          // 0
+      { queryKey: ['platforms', filters.toString()], queryFn: () => fetchPlatforms(filters) },              // 1
+      { queryKey: ['devices', filters.toString()], queryFn: () => fetchDevices(filters) },                  // 2
+      { queryKey: ['cruises', filters.toString()], queryFn: () => fetchCruiseNames(filters) },              // 3
+      { queryKey: ['lakes', filters.toString()], queryFn: () => fetchLakes(filters) },                      // 4
+      { queryKey: ['provinces', filters.toString()], queryFn: () => fetchProvinces(filters) },              // 5
+      { queryKey: ['weathering', filters.toString()], queryFn: () => fetchWeathering(filters) },            // 6
+      { queryKey: ['metamorphism', filters.toString()], queryFn: () => fetchMetamorphism(filters) },        // 7
+      { queryKey: ['mineralogies', filters.toString()], queryFn: () => fetchMineralogies(filters) },        // 8
+      { queryKey: ['lithologies', filters.toString()], queryFn: () => fetchLithologies(filters) },          // 9
+      { queryKey: ['textures', filters.toString()], queryFn: () => fetchTextures(filters) },                // 10
+      { queryKey: ['rock_lithologies', filters.toString()], queryFn: () => fetchRockLithologies(filters) }, // 11
+      { queryKey: ['remarks', filters.toString()], queryFn: () => fetchRemarks(filters) },                  // 12
+      { queryKey: ['compositions', filters.toString()], queryFn: () => fetchCompositions(filters) },        // 13
     ]
   })
   // console.log({results})
+  // track which selects have >0 options and should be enabled
+  const enabledSelects = results.map(result => {
+    return result.data ? result.data.length > 0 : false
+  })
+
+  console.log({enabledSelects})
 
   useEffect(() => {
     // console.log('inside useEffect to sync URL search params with form input elements')
@@ -101,6 +113,9 @@ export default function FilterPanel(props:Props) {
     setInputElementFromSearchParameter('mineralogy-select', url.searchParams.get("mineralogy") )
     setInputElementFromSearchParameter('lithology-select', url.searchParams.get("lithology") )
     setInputElementFromSearchParameter('texture-select', url.searchParams.get("texture") )
+    setInputElementFromSearchParameter('rock_lithology-select', url.searchParams.get("rock_lithology") )
+    setInputElementFromSearchParameter('composition-select', url.searchParams.get("composition") )
+    setInputElementFromSearchParameter('remark-select', url.searchParams.get("remark") )
   }, [url.searchParams])
  
 /*
@@ -243,11 +258,11 @@ export default function FilterPanel(props:Props) {
         role="search"
       >
         <div style={{'paddingTop': '10px','textAlign': 'center'}}>
-          { results[0].data && results[0].data.length ? 
           <select
             name="repository"
-            title="filter samples by repository"
-            id='repository-select' 
+            id='repository-select'
+            title={enabledSelects[0] ? "filter samples by repository" : "no repositories with this combination of filters"}
+            disabled={!enabledSelects[0]}
             onChange={onChangeHandler} 
             style={{'width':'80%'}}
           >
@@ -256,25 +271,14 @@ export default function FilterPanel(props:Props) {
               results[0].data?.map(repository => <option value={repository.facility_code} key={repository.id}>{repository.facility}</option>)
             }
           </select>
-          :
-          <select
-            name="repository"
-            title="No repositories with this combination of filters"
-            id='repository-select' 
-            disabled
-            style={{'width':'80%'}}
-          >
-            <option value="">-- Repository --</option>
-          </select>
-          }
         </div>
 
         <div style={{'paddingTop': '10px','textAlign': 'center'}}>
-        { results[1].data && results[1].data?.length ? 
           <select 
             name="platform" 
             id='platform-select'
-            title='filter samples by platform name'
+            title={enabledSelects[1] ? "filter samples by platform name" : "no platforms with this combination of filters"}
+            disabled={!enabledSelects[1]}
             onChange={onChangeHandler} 
             style={{'width':'80%'}}
           >
@@ -283,25 +287,14 @@ export default function FilterPanel(props:Props) {
               results[1].data?.map(name => <option value={name} key={name}>{name}</option>)
             }
           </select>
-          :
-          <select 
-            name="platform" 
-            id='platform-select'
-            title="no platforms with this combination of filters"
-            disabled
-            style={{'width':'80%'}}
-          >
-            <option value="">-- Platform --</option>
-          </select>
-        }          
         </div>
 
         <div style={{'paddingTop': '10px','textAlign': 'center'}}>
-        { results[2].data && results[2].data?.length ? 
           <select 
             name="device" 
-            id='device-select' 
-            title='filter samples by device type'
+            id='device-select'
+            title={enabledSelects[2] ? "filter samples by device type" : "no devices with this combination of filters"}
+            disabled={!enabledSelects[2]}
             onChange={onChangeHandler} 
             style={{'width':'80%'}}
           >
@@ -310,17 +303,6 @@ export default function FilterPanel(props:Props) {
               results[2].data?.map(name => <option value={name} key={name}>{name}</option>)
             }
           </select>
-          :
-          <select 
-            name="device" 
-            id='device-select'
-            title="no devices with this combination of filters"
-            disabled
-            style={{'width':'80%'}}
-          >
-            <option value="">-- Device --</option>
-          </select>
-        }   
         </div>
         
         <div style={{'paddingTop': '10px','textAlign': 'center'}}>
@@ -328,11 +310,11 @@ export default function FilterPanel(props:Props) {
         </div>
         
         <div style={{'paddingTop': '10px','textAlign': 'center'}}>
-        { results[4].data && results[4].data?.length ? 
           <select 
             name="lake" 
             id='lake-select'
-            title='filter samples by lake name'
+            title={enabledSelects[4] ? "filter samples by lake" : "no lakes with this combination of filters"}
+            disabled={!enabledSelects[4]}
             onChange={onChangeHandler}
             style={{'width':'80%'}}
             >
@@ -341,24 +323,14 @@ export default function FilterPanel(props:Props) {
               results[4].data?.map(name => <option value={name} key={name}>{name}</option>)
             }
           </select>
-          :
-          <select 
-            name="lake" 
-            id='lake-select'
-            title='no lakes with this combination of filters'
-            disabled
-            style={{'width':'80%'}}>
-            <option value="">-- Lake --</option>
-          </select>
-        }   
         </div>
 
         <div style={{'paddingTop': '10px','textAlign': 'center'}}>
-        { results[5].data && results[5].data?.length ? 
           <select 
             name="province" 
             id='province-select'
-            title='filter samples by physiographic province' 
+            title={enabledSelects[5] ? "filter samples by physiographic province" : "no physiographic provinces with this combination of filters"}
+            disabled={!enabledSelects[5]}
             onChange={onChangeHandler} 
             style={{'width':'80%'}}
           >
@@ -366,18 +338,7 @@ export default function FilterPanel(props:Props) {
             {
               results[5].data?.map(name => <option value={name} key={name}>{name}</option>)
             }          
-            </select>
-            :
-            <select 
-              name="province" 
-              id='province-select'
-              title='no physiographic provinces with this combination of filters'
-              disabled
-              style={{'width':'80%'}}
-            >
-              <option value="">-- Physiographic Province --</option>
-            </select>
-        }   
+          </select>
         </div>
 
         
@@ -454,7 +415,8 @@ export default function FilterPanel(props:Props) {
             <legend>Sample Attributes</legend>
             <select
               name="lithology"
-              title="filter samples by lithologic composition"
+              title={enabledSelects[9] ? "filter samples by lithologic composition" : "no lithologic composition values with this combination of filters"}
+              disabled={!enabledSelects[9]}
               id='lithology-select' 
               onChange={onChangeHandler} 
               style={{'width':'80%'}}
@@ -466,8 +428,9 @@ export default function FilterPanel(props:Props) {
             </select>
             <select 
               name="texture" 
-              title='filter samples by texture'
-              id='texture-select' 
+              title={enabledSelects[10] ? "filter samples by texture" : "no texture values with this combination of filters"}
+              id='texture-select'
+              disabled={!enabledSelects[10]}
               onChange={onChangeHandler} 
               style={{'width':'80%'}}
             >
@@ -478,7 +441,8 @@ export default function FilterPanel(props:Props) {
             </select>
             <select 
               name="mineralogy" 
-              title="filter samples by rock mineralogy"
+              title={enabledSelects[8] ? "filter samples by rock mineralogy" : "no mineralogy values with this combination of filters"}
+              disabled={!enabledSelects[8]}
               id='mineralogy-select' 
               onChange={onChangeHandler} 
               style={{'width':'80%'}}
@@ -488,33 +452,23 @@ export default function FilterPanel(props:Props) {
                 results[8].data?.map(name => <option value={name} key={name}>{name}</option>)
               }          
             </select>
-            { results[6].data && results[6].data?.length ?
-              <select 
-                name="weathering" 
-                id='weathering-select' 
-                onChange={onChangeHandler} 
-                style={{'width':'80%'}} 
-                title="filter samples by rock weathering">
-                <option value="">-- Weathering --</option>
+            <select 
+              name="weathering" 
+              id='weathering-select'
+              title={enabledSelects[6] ? "filter samples by rock weathering" : "no weathering values with this combination of filters"}
+              disabled={!enabledSelects[6]}
+              onChange={onChangeHandler} 
+              style={{'width':'80%'}} 
+            >
+              <option value="">-- Weathering --</option>
               {
                 results[6].data?.map(name => <option value={name} key={name}>{name}</option>)
               }          
-              </select>
-            :
-            <select 
-              name="weathering" 
-              id='weathering-select' 
-              onChange={onChangeHandler} 
-              style={{'width':'80%'}}
-              title='no weathering codes with this combination of filters' disabled           
-            >
-              <option value="">-- Weathering --</option>
-
             </select>
-          }
             <select 
-              name="metamorphism" 
-              title="filter samples by rock metamorphism"
+              name="metamorphism"
+              title={enabledSelects[7] ? "filter samples by rock metamorphism" : "no rock metamorphism values with this combination of filters"}
+              disabled={!enabledSelects[7]}
               id='metamorphism-select' 
               onChange={onChangeHandler} 
               style={{'width':'80%'}}
@@ -524,7 +478,45 @@ export default function FilterPanel(props:Props) {
                 results[7].data?.map(name => <option value={name} key={name}>{name}</option>)
               }          
             </select>
-
+            <select 
+              name="composition" 
+              id='composition-select'
+              title={enabledSelects[13] ? "filter samples by composition" : "no composition values with this combination of filters"}
+              disabled={!enabledSelects[13]}
+              onChange={onChangeHandler} 
+              style={{'width':'80%'}} 
+            >
+              <option value="">-- Composition --</option>
+              {
+                results[13].data?.map(name => <option value={name} key={name}>{name}</option>)
+              }          
+            </select>
+            <select 
+              name="rock_lithology" 
+              id='rock_lithology-select'
+              title={enabledSelects[11] ? "filter samples by rock weathering" : "no rock weathering values with this combination of filters"}
+              disabled={!enabledSelects[11]}
+              onChange={onChangeHandler} 
+              style={{'width':'80%'}} 
+            >
+              <option value="">-- Rock Lithology --</option>
+              {
+                results[11].data?.map(name => <option value={name} key={name}>{name}</option>)
+              }          
+            </select>
+            <select 
+              name="remark" 
+              id='remark-select'
+              title={enabledSelects[12] ? "filter samples by rock metamorphism" : "no rock metamorphism values with this combination of filters"}
+              disabled={!enabledSelects[12]}
+              onChange={onChangeHandler} 
+              style={{'width':'80%'}} 
+            >
+              <option value="">-- Remarks --</option>
+              {
+                results[12].data?.map(name => <option value={name} key={name}>{name}</option>)
+              }          
+            </select>
           </fieldset>
         </div>
         
