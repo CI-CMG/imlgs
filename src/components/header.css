@@ -1,7 +1,33 @@
 .Header {
+  width: 100vw;
+  height: 100vh;
   background-color: var(--noaa-background-color);
   padding-bottom: 25px;
   grid-area: header;
+}
+
+.Header-container {
+  display: grid;
+  grid-template-columns: 275px auto 65px;
+  color: white;
+  height: 100vh;
+}
+
+
+#left {
+  padding-left: 10px;
+  padding-top: 5px;
+}
+
+#center {
+  text-align: center;
+  /* TODO replace this hardcoded value w/ vertical centering */
+  padding-top: 25px;
+}
+
+#right {
+  padding-right: 10px;
+  padding-top: 5px;
 }
 
 .Header--titleDiv {
@@ -10,24 +36,19 @@
 
 }
 .Header--title {
-  color: white;
-  font-size: large;
-  padding-left: 120px;
+  font-size: x-large;
+  
 }
 
 .Header--nceiLogo {
   height: 50px;
-  margin-left: 10px;
-  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .Header--nsfLogo {
   width: 50px;
   height: 50px;
   float: right;
-  margin-right: 10px;
-  margin-top: 20px;
-  /* border: 0; */
 }
 
 .Nav {
