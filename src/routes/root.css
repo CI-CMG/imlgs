@@ -16,6 +16,5 @@
       "footer";
   width: 100vw;
   height: 100vh;
-  /* height: calc(100vh - 125px); */
   background-color: whitesmoke;
 }

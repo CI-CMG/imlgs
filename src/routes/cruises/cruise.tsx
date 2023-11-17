@@ -54,11 +54,13 @@ export default function Cruise () {
             </ul>
             : ''
           }
-          <hr style={{width:"100%"}} />
+          <hr style={{width:"90%"}} />
+          <div style={{'textAlign': 'center'}}>
           Show samples from this cruise on the &nbsp;
           <Link to={{pathname:'/samples', search: `cruise=${cruiseDetail.cruise}`}}>map</Link>
           &nbsp; or in a &nbsp; 
           <Link to={{pathname:'/samples/table', search: `cruise=${cruiseDetail.cruise}`}}>table</Link>
+          </div>
         </div>
       : ''
       }

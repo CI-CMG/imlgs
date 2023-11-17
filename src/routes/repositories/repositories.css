@@ -19,6 +19,9 @@
   background-color: var(--body-background-color);
 }
 
+.Repositories--main {
+  border-left: 1px solid var(--noaa-background-color);
+}
 
 .Repositories--datatable {
   width: 100%;

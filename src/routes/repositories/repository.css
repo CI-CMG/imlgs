@@ -14,6 +14,8 @@
 }
 
 .RepositoryDetail {
-  background-color: whitesmoke;
   grid-area: details;
+  height: var(--body-height);
+  overflow: auto;
+  /* border-left: 1px solid var(--noaa-background-color); */
 }

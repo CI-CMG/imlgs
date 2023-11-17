@@ -10,71 +10,62 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 
 export default function BasicMenu() {
-    console.log('rendering BasicMenu...')
-    const options = [
-        {label: 'About the IMLGS', href: 'https://ngdc.noaa.gov/mgg/curator/'},
-        {label: 'Developer Documentation (API)', href: 'https://www.ngdc.noaa.gov/geosamples-api/swagger-ui/index.html?configUrl=/geosamples-api/swagger-config.json'}
-    ]
+  const options = [
+    {label: 'About the IMLGS', href: 'https://ngdc.noaa.gov/mgg/curator/'},
+    {label: 'Developer Documentation (API)', href: 'https://www.ngdc.noaa.gov/geosamples-api/swagger-ui/index.html?configUrl=/geosamples-api/swagger-config.json'}
+  ]
   
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const open = Boolean(anchorEl);
-
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+  
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
 
   const handleClose = () => {
-    setAnchorEl(null);
-  };
+    setAnchorEl(null)
+  }
 
-  const handleMenuItemClick = (href) => {
-    setAnchorEl(null);
-    window.location.assign(href);
-  };
-
+  const handleMenuItemClick = (href:string) => {
+    setAnchorEl(null)
+    // replace current window
+    window.location.assign(href)
+    // open in new tab
+    // window.open(href, '_blank')
+  }
 
   return (
-    <div style={{}}>
+    <React.Fragment>
       <Tooltip title="Navigation Menu">  
-      {/* <Button
-        id="basic-button"
-        aria-controls={open ? 'basic-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        onClick={handleClick}
-      >
-        Dashboard
-      </Button> */}
-
-      <IconButton
-            id="basic-button"
-            onClick={handleClick}
-            size="small"
-            sx={{ ml: 1 }}
-            aria-controls={open ? 'basic-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
-          >
-            <MenuIcon fontSize="large" htmlColor='white'/>
+        <IconButton
+          id="basic-button"
+          onClick={handleClick}
+          size="small"
+          aria-controls={open ? 'basic-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? 'true' : undefined}
+        >
+          {/* <Avatar sx={{ width: 32, height: 32 }}>M</Avatar> */}
+          <MenuIcon fontSize="large" htmlColor='white'/>
         </IconButton>
-      </Tooltip>
+    </Tooltip>
       
       <Menu
         id="basic-menu"
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
+        onClick={handleClose}
         MenuListProps={{
-          'aria-labelledby': 'basic-button',
+          'aria-labelledby': 'basic-button'
         }}
       >
           {options.map(option => (
-          <MenuItem key={option.label} onClick={(event) => handleMenuItemClick(option.href)}>
+          <MenuItem key={option.label} onClick={() => handleMenuItemClick(option.href)}>
             {option.label}
           </MenuItem>
         ))}
       </Menu>
-    </div>
+    </React.Fragment>
   );
 }

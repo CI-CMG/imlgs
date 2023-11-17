@@ -13,12 +13,15 @@
 .Cruises--sidebar {
   grid-area: sidebar;
   overflow: auto;
-  padding: 1rem;
-  /* color: var(--noaa-background-color); */
+  padding-left: 1rem;
+  height: var(--body-height);
   text-decoration: none;
   background-color: var(--body-background-color);
 }
 
+.Cruises--main {
+  border-left: solid 1px var(--noaa-background-color);
+}
 
 .Cruises--datatable {
   width: 100%;

@@ -33,7 +33,7 @@ export default function Repositories() {
 
 export function Index() {
   return (
-    <p>
+    <p style={{'paddingLeft': '1rem'}}>
       Please select a Repository to get its details
     </p>
   );

@@ -37,7 +37,7 @@ export default function Cruises() {
 
 export function Index() {
   return (
-    <p>
+    <p style={{'paddingLeft': '1rem'}}>
       Please select a Cruise to get its details
     </p>
   );
