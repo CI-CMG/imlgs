@@ -28,7 +28,7 @@ export default function Header() {
         <div id="breadcrumbs">
           <NavLink to="/samples" style={({isActive}) => isActive ? activeStyle : inactiveStyle}>Samples</NavLink> | {" "}
           <NavLink to={`/cruises?${filters.toString()}`} style={({isActive}) => isActive ? activeStyle : inactiveStyle}>Cruises</NavLink>  | {" "}
-          <NavLink to="/repositories" style={({isActive}) => isActive ? activeStyle : inactiveStyle}>Respositories</NavLink>
+          <NavLink to="/repositories" style={({isActive}) => isActive ? activeStyle : inactiveStyle}>Repositories</NavLink>
         </div>
       </div>
       <div id="center" style={{paddingTop: '25px'}}>
