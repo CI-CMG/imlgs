@@ -325,7 +325,7 @@ export default function FilterPanel(props:Props) {
           </select>
         </div>
 
-        <div style={{'paddingTop': '10px','textAlign': 'center'}}>
+        {/* <div style={{'paddingTop': '10px','textAlign': 'center'}}>
           <select 
             name="province" 
             id='province-select'
@@ -339,7 +339,7 @@ export default function FilterPanel(props:Props) {
               results[5].data?.map(name => <option value={name} key={name}>{name}</option>)
             }          
           </select>
-        </div>
+        </div> */}
 
         
         <div style={{'display': 'flex', 'alignItems': 'center', 'justifyContent': 'space-around', 'paddingTop': '10px'}}>
@@ -441,13 +441,13 @@ export default function FilterPanel(props:Props) {
             </select>
             <select 
               name="mineralogy" 
-              title={enabledSelects[8] ? "filter samples by rock mineralogy" : "no mineralogy values with this combination of filters"}
+              title={enabledSelects[8] ? "filter samples by rock mineralogy" : "no rock mineralogy values with this combination of filters"}
               disabled={!enabledSelects[8]}
               id='mineralogy-select' 
               onChange={onChangeHandler} 
               style={{'width':'80%'}}
             >
-              <option value="">-- Mineralogy --</option>
+              <option value="">-- Rock Mineralogy --</option>
               {
                 results[8].data?.map(name => <option value={name} key={name}>{name}</option>)
               }          
@@ -460,7 +460,7 @@ export default function FilterPanel(props:Props) {
               onChange={onChangeHandler} 
               style={{'width':'80%'}} 
             >
-              <option value="">-- Weathering --</option>
+              <option value="">-- Rock Weathering --</option>
               {
                 results[6].data?.map(name => <option value={name} key={name}>{name}</option>)
               }          
@@ -473,7 +473,7 @@ export default function FilterPanel(props:Props) {
               onChange={onChangeHandler} 
               style={{'width':'80%'}}
             >
-              <option value="">-- Metamorphism --</option>
+              <option value="">-- Rock Metamorphism --</option>
               {
                 results[7].data?.map(name => <option value={name} key={name}>{name}</option>)
               }          
@@ -494,7 +494,7 @@ export default function FilterPanel(props:Props) {
             <select 
               name="rock_lithology" 
               id='rock_lithology-select'
-              title={enabledSelects[11] ? "filter samples by rock weathering" : "no rock weathering values with this combination of filters"}
+              title={enabledSelects[11] ? "filter samples by rock lithology" : "no rock lithology values with this combination of filters"}
               disabled={!enabledSelects[11]}
               onChange={onChangeHandler} 
               style={{'width':'80%'}} 
@@ -507,12 +507,12 @@ export default function FilterPanel(props:Props) {
             <select 
               name="remark" 
               id='remark-select'
-              title={enabledSelects[12] ? "filter samples by rock metamorphism" : "no rock metamorphism values with this combination of filters"}
+              title={enabledSelects[12] ? "filter samples by rock glass remarks" : "no rock glass remarks with this combination of filters"}
               disabled={!enabledSelects[12]}
               onChange={onChangeHandler} 
               style={{'width':'80%'}} 
             >
-              <option value="">-- Remarks --</option>
+              <option value="">-- Rock Glass Remarks & Mn/Fe Oxide --</option>
               {
                 results[12].data?.map(name => <option value={name} key={name}>{name}</option>)
               }          

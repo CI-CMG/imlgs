@@ -65,9 +65,9 @@ export function buildLayerDefinitionExpression(searchParams:URLSearchParams) {
     if (searchParams.get('max_depth') && searchParams.get('max_depth')) { 
       defs.push(`WATER_DEPTH <= ${searchParams.get('max_depth')}`) 
     }
-    if (searchParams.get('province') && searchParams.get('province')) { 
-      defs.push(`PROVINCE = '${searchParams.get('province')}'`) 
-    }
+    // if (searchParams.get('province') && searchParams.get('province')) { 
+    //   defs.push(`PROVINCE = '${searchParams.get('province')}'`) 
+    // }
     if (searchParams.get('weathering') && searchParams.get('weathering')) { 
       defs.push(`WEATHERING='weathering - ${searchParams.get('weathering')}'`) 
     }
@@ -82,6 +82,12 @@ export function buildLayerDefinitionExpression(searchParams:URLSearchParams) {
     }
     if (searchParams.get('lithology') && searchParams.get('lithology')) { 
       defs.push(`LITHOLOGY like '%${searchParams.get('lithology')}%'`) 
+    }
+    if (searchParams.get('rock_lithology') && searchParams.get('rock_lithology')) { 
+      defs.push(`ROCK_LITHOLOGY like '%${searchParams.get('rock_lithology')}%'`) 
+    }
+    if (searchParams.get('remark') && searchParams.get('remark')) { 
+      defs.push(`REMARK like '%${searchParams.get('remark')}%'`) 
     }
   }
   return defs.length ? defs.join(' and ') : ''

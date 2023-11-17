@@ -7,7 +7,7 @@ export function searchParamsToFilters(searchParams: URLSearchParams): URLSearchP
     'device',
     'cruise',
     'lake',
-    'province',
+    // 'province',
     'igsn',
     'min_depth',
     'max_depth',
@@ -17,6 +17,8 @@ export function searchParamsToFilters(searchParams: URLSearchParams): URLSearchP
     'mineralogy',
     'lithology',
     'texture',
+    'rock_lithology',
+    'remark',
     'page',
     'imlgs',
     'order'
