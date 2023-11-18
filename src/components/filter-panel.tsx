@@ -66,7 +66,7 @@ export default function FilterPanel(props:Props) {
 
   const url = new URL(window.location.href)
   const filters = searchParamsToFilters(url.searchParams)
-  console.log('all filters: ', filters.toString())
+  // console.log('all filters: ', filters.toString())
   
   // execute queries used to populate Select components. By convention, list these
   // in the same order the inputs they populate appear on the page
