@@ -24,7 +24,7 @@ import MapPanel from '../../components/map-panel'
 
 
 export default function Samples() {
-  console.log('rendering Samples...')
+  // console.log('rendering Samples...')
   // const navigation = useNavigation()
   // const submit = useSubmit()
   const [zoomToSelected, setZoomToSelected] = useState<boolean>(true)

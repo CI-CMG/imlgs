@@ -6,11 +6,11 @@ const fetchPlatforms = async (filters: URLSearchParams): Promise<string[]> => {
   // create clone and remove the self-referential search param 
   const myFilters = new URLSearchParams(filters)
   myFilters.delete('platform')
-  console.log('platform filters: ', myFilters.toString())
+  // console.log('platform filters: ', myFilters.toString())
   const response = await fetch(`${apiBaseUrl}/platforms?items_per_page=2000&${myFilters.toString()}`)
   if (response.status === 200) {
     const payload = await response.json()
-    console.log(`${payload.items.length} platforms`)
+    // console.log(`${payload.items.length} platforms`)
     return payload.items as string[]
   } else {
     throw new Error(`${response.status}`)
@@ -21,7 +21,7 @@ const fetchPlatforms = async (filters: URLSearchParams): Promise<string[]> => {
 const fetchProvinces = async (filters: URLSearchParams): Promise<string[]> => {
   const myFilters = new URLSearchParams(filters)
   myFilters.delete('province')
-  console.log('province filters: ', myFilters.toString())
+  // console.log('province filters: ', myFilters.toString())
   const response = await fetch(`${apiBaseUrl}/physiographic_provinces?items_per_page=2000&${myFilters.toString()}`)
   if (response.status === 200) {
     const payload = await response.json()
@@ -35,7 +35,7 @@ const fetchProvinces = async (filters: URLSearchParams): Promise<string[]> => {
 const fetchRepositoryNames = async (filters: URLSearchParams): Promise<string[]> => {
   const myFilters = new URLSearchParams(filters)
   myFilters.delete('repository')
-  console.log('repository filters: ', myFilters.toString())
+  // console.log('repository filters: ', myFilters.toString())
   const response = await fetch(`${apiBaseUrl}/repositories/name?items_per_page=2000&${myFilters.toString()}`)
   if (response.status === 200) {
     const payload: RepositoryNameResponse = await response.json()
@@ -48,7 +48,7 @@ const fetchRepositoryNames = async (filters: URLSearchParams): Promise<string[]>
 const fetchCruiseNames = async (filters: URLSearchParams): Promise<string[]> => {
  const myFilters = new URLSearchParams(filters)
  myFilters.delete('cruise')  
- console.log('cruise filters: ', myFilters.toString())
+//  console.log('cruise filters: ', myFilters.toString())
  const response = await fetch(`${apiBaseUrl}/cruises/name?items_per_page=2000&${myFilters.toString()}`)
   if (response.status === 200) {
     const payload: CruiseNameResponse = await response.json()
@@ -63,7 +63,7 @@ const fetchCruiseNames = async (filters: URLSearchParams): Promise<string[]> => 
 const fetchLakes = async (filters: URLSearchParams): Promise<string[]> => {
   const myFilters = new URLSearchParams(filters)
   myFilters.delete('lake')
-  console.log('lake filters: ', myFilters.toString())
+  // console.log('lake filters: ', myFilters.toString())
   const response = await fetch(`${apiBaseUrl}/lakes?items_per_page=2000&${myFilters.toString()}`)
   if (response.status === 200) {
     const paylod = await response.json()
@@ -77,7 +77,7 @@ const fetchLakes = async (filters: URLSearchParams): Promise<string[]> => {
 const fetchDevices = async (filters: URLSearchParams): Promise<string[]> => {
   const myFilters = new URLSearchParams(filters)
   myFilters.delete('device')
-  console.log('platform filters: ', myFilters.toString())
+  // console.log('platform filters: ', myFilters.toString())
   const response = await fetch(`${apiBaseUrl}/devices?items_per_page=2000&${myFilters.toString()}`)
   if (response.status === 200) {
     const paylod = await response.json()
@@ -90,7 +90,7 @@ const fetchDevices = async (filters: URLSearchParams): Promise<string[]> => {
 const fetchMineralogies = async (filters: URLSearchParams): Promise<string[]> => {
   const myFilters = new URLSearchParams(filters)
   myFilters.delete('mineralogy')
-  console.log('platform filters: ', myFilters.toString())
+  // console.log('platform filters: ', myFilters.toString())
   const response = await fetch(`${apiBaseUrl}/mineralogies?items_per_page=2000&${myFilters.toString()}`)
   if (response.status === 200) {
     const paylod = await response.json()
@@ -103,7 +103,7 @@ const fetchMineralogies = async (filters: URLSearchParams): Promise<string[]> =>
 const fetchMetamorphism = async (filters: URLSearchParams): Promise<string[]> => {
   const myFilters = new URLSearchParams(filters)
   myFilters.delete('metamorphism')
-  console.log('platform filters: ', myFilters.toString())
+  // console.log('platform filters: ', myFilters.toString())
   const response = await fetch(`${apiBaseUrl}/metamorphism?items_per_page=2000&${myFilters.toString()}`)
   if (response.status === 200) {
     const paylod = await response.json()
@@ -116,7 +116,7 @@ const fetchMetamorphism = async (filters: URLSearchParams): Promise<string[]> =>
 const fetchWeathering = async (filters: URLSearchParams): Promise<string[]> => {
   const myFilters = new URLSearchParams(filters)
   myFilters.delete('weathering')
-  console.log('platform filters: ', myFilters.toString())
+  // console.log('platform filters: ', myFilters.toString())
   const response = await fetch(`${apiBaseUrl}/weathering?items_per_page=2000&${myFilters.toString()}`)
   if (response.status === 200) {
     const paylod = await response.json()
@@ -139,7 +139,7 @@ async function fetchTotalSampleCount(): Promise<number> {
 const fetchLithologies = async (filters: URLSearchParams): Promise<string[]> => {
   const myFilters = new URLSearchParams(filters)
   myFilters.delete('lithology')
-  console.log('platform filters: ', myFilters.toString())
+  // console.log('platform filters: ', myFilters.toString())
   const response = await fetch(`${apiBaseUrl}/lithologies?items_per_page=2000&${myFilters.toString()}`)
   if (response.status === 200) {
     const paylod = await response.json()
@@ -152,7 +152,7 @@ const fetchLithologies = async (filters: URLSearchParams): Promise<string[]> => 
 const fetchRockLithologies = async (filters: URLSearchParams): Promise<string[]> => {
   const myFilters = new URLSearchParams(filters)
   myFilters.delete('rock_lithology')
-  console.log('platform filters: ', myFilters.toString())
+  // console.log('platform filters: ', myFilters.toString())
   const response = await fetch(`${apiBaseUrl}/rock_lithologies?items_per_page=2000&${myFilters.toString()}`)
   if (response.status === 200) {
     const paylod = await response.json()
@@ -165,7 +165,7 @@ const fetchRockLithologies = async (filters: URLSearchParams): Promise<string[]>
 const fetchRemarks = async (filters: URLSearchParams): Promise<string[]> => {
   const myFilters = new URLSearchParams(filters)
   myFilters.delete('remark')
-  console.log('platform filters: ', myFilters.toString())
+  // console.log('platform filters: ', myFilters.toString())
   const response = await fetch(`${apiBaseUrl}/remarks?items_per_page=2000&${myFilters.toString()}`)
   if (response.status === 200) {
     const paylod = await response.json()
@@ -178,7 +178,7 @@ const fetchRemarks = async (filters: URLSearchParams): Promise<string[]> => {
 const fetchCompositions = async (filters: URLSearchParams): Promise<string[]> => {
   const myFilters = new URLSearchParams(filters)
   myFilters.delete('composition')
-  console.log('platform filters: ', myFilters.toString())
+  // console.log('platform filters: ', myFilters.toString())
   const response = await fetch(`${apiBaseUrl}/compositions?items_per_page=2000&${myFilters.toString()}`)
   if (response.status === 200) {
     const paylod = await response.json()
@@ -191,7 +191,7 @@ const fetchCompositions = async (filters: URLSearchParams): Promise<string[]> =>
 const fetchTextures = async (filters: URLSearchParams): Promise<string[]> => {
   const myFilters = new URLSearchParams(filters)
   myFilters.delete('texture')
-  console.log('platform filters: ', myFilters.toString())
+  // console.log('platform filters: ', myFilters.toString())
   const response = await fetch(`${apiBaseUrl}/textures?items_per_page=2000&${myFilters.toString()}`)
   if (response.status === 200) {
     const paylod = await response.json()

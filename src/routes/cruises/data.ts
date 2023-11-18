@@ -35,7 +35,7 @@ export async function getCruises(): Promise<CruiseName[]> {
   const url = new URL(window.location.href)
   const filters = searchParamsToFilters(url.searchParams)
   filters.set('items_per_page', '1000')
-  console.log('inside getCruises: all filters: ', filters.toString())
+  // console.log('inside getCruises: all filters: ', filters.toString())
 
   const results = [];
   let totalPages = 1

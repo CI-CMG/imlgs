@@ -13,11 +13,11 @@ import { searchParamsToFilters } from "../utilities"
 
 
 export default function SamplesCount() {
-    console.log('rendering SamplesCount...')
+    // console.log('rendering SamplesCount...')
     const baseClass = 'SamplesCount'
     const url = new URL(window.location.href)
     const filters = searchParamsToFilters(url.searchParams)
-    console.log('SampleCount: ', filters.toString())
+    // console.log('SampleCount: ', filters.toString())
   
     const { data:totalCount } = useQuery(["totalSampleCount"], fetchTotalSampleCount, {
         staleTime: Infinity

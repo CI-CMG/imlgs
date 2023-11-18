@@ -63,7 +63,7 @@ export async function getRepositories(filters: URLSearchParams): Promise<Reposit
   const myFilters = new URLSearchParams(filters)
   myFilters.delete('repository')
   myFilters.set('items_per_page', '500')
-  console.log('repository filters: ', myFilters.toString())
+  // console.log('repository filters: ', myFilters.toString())
   const response = await fetch(`${apiBaseUrl}/repositories/name?${myFilters.toString()}`)
   if (! response.ok) {
     throw new Error(response.statusText)

@@ -98,14 +98,14 @@ const defaultCenter = new Point({longitude: -98.5833, latitude: 39.8333})
 const defaultZoom = 4
 
 export default function MapPanel({zoomToSelected}: {zoomToSelected:boolean}) {
-  console.log('rendering MapPanel...')
+  // console.log('rendering MapPanel...')
   
   const baseClass = 'MapPanel'
   const [searchParams, setSearchParams] = useSearchParams()
   const layerDefinitionExpression = buildLayerDefinitionExpression(searchParams)
   
-  console.log('inside MapPanel with ', searchParams.toString())
-  console.log('Map is getting layer def of ', layerDefinitionExpression)
+  // console.log('inside MapPanel with ', searchParams.toString())
+  // console.log('Map is getting layer def of ', layerDefinitionExpression)
   
   // useRef to access to values shared between useEffect blocks that shouldn't change w/ each render
   // TODO: Better to use variables outside component?
