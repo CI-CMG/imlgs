@@ -17,12 +17,12 @@ const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
 export default function InfiniteCruiseList() {
   const url = new URL(window.location.href)
   const filters = searchParamsToFilters(url.searchParams)
-  filters.set('items_per_page', '10')
+  filters.set('items_per_page', '500')
 
   // const results = useQuery({ 
   //   queryKey: ['cruises', filters.toString()],
   //   queryFn: () => fetchCruiseNames(filters) 
-  // })
+  // }) 
   // console.log({results})
 
   const { ref, inView } = useInView();
@@ -98,7 +98,7 @@ export default function InfiniteCruiseList() {
             {isFetchingNextPage
               ? 'Loading more...'
               : hasNextPage
-              ? 'Load Newer'
+              ? 'Load More'
               : 'Nothing more to load'}
           </button>
         </div>
