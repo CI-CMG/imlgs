@@ -21,7 +21,8 @@ export function searchParamsToFilters(searchParams: URLSearchParams): URLSearchP
     'remark',
     'page',
     'imlgs',
-    'order'
+    'order',
+    'bbox'
   ]
   // consistency in order of parameters important since it determines the output from the URLSearchParameters#toString 
   // method which is used in queryKey

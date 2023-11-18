@@ -318,10 +318,13 @@ function zoomTo(layerDefinitionExpression:string) {
 
 
 function updateAreaOfInterest(coords:Array<number>|undefined) {
-  if (!coords) { return }
   // console.log('inside updateAreaOfInterest with ', coords)
   const mySearchParams = new URLSearchParams(searchParams)
-  mySearchParams.set('bbox', coords.join(','))
+  if (coords?.length) {
+    mySearchParams.set('bbox', coords ? coords.join(','): '')
+  } else {
+    mySearchParams.delete('bbox')
+  }
   setSearchParams(mySearchParams)
 }
 
