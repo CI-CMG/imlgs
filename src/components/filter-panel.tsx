@@ -40,6 +40,7 @@ function setInputElementFromSearchParameter(id: string, value: string|null) {
   // WARNING: depends on element name == element id
   const inputElement = document.getElementById(id) as HTMLInputElement
   if (!inputElement) { return }
+  // const elementValue = (value && notEmpty.test(value))? value : ''
   inputElement.value = (value && notEmpty.test(value))? value : '' 
 }
 
@@ -51,7 +52,7 @@ export interface Props {
 
 
 export default function FilterPanel(props:Props) {
-  console.log('rendering FilterPanel...')
+  // console.log('rendering FilterPanel...')
   const {zoomToSelected, zoomToggleHandler} = props
   const navigate = useNavigate();
   const baseClass = 'FilterPanel'
@@ -65,7 +66,7 @@ export default function FilterPanel(props:Props) {
 
   const url = new URL(window.location.href)
   const filters = searchParamsToFilters(url.searchParams)
-  console.log('all filters: ', filters.toString())
+  // console.log('all filters: ', filters.toString())
   
   // execute queries used to populate Select components. By convention, list these
   // in the same order the inputs they populate appear on the page
@@ -88,12 +89,17 @@ export default function FilterPanel(props:Props) {
     ]
   })
   // console.log({results})
+
+  // special handling for cruise
+  if (url.searchParams.get("cruise")) {
+    console.log('special handling for cruise ', url.searchParams.get("cruise") )
+    results[3].data = [url.searchParams.get("cruise") as string]
+  }
+
   // track which selects have >0 options and should be enabled
   const enabledSelects = results.map(result => {
     return result.data ? result.data.length > 0 : false
   })
-
-  console.log({enabledSelects})
 
   useEffect(() => {
     // console.log('inside useEffect to sync URL search params with form input elements')
@@ -118,21 +124,24 @@ export default function FilterPanel(props:Props) {
     setInputElementFromSearchParameter('remark-select', url.searchParams.get("remark") )
   }, [url.searchParams])
  
-/*
+
   useEffect(() => {
-    console.log('inside useEffect to set initial Select option...')
+    // console.log('inside useEffect to set initial Select option...')
     const selectNames = [
       'repository-select', 
       'platform-select', 
       'device-select', 
       'cruise-select', 
       'lake-select', 
-      'province-select',
+      // 'province-select',
       'weathering-select',
       'mineralology-select',
       'metamorphism-select',
       'lithology-select',
-      'texture-select'
+      'texture-select',
+      'rock_lithology-select',
+      'composition-select',
+      'remark-select'
     ]
       
       selectNames.forEach(name => {
@@ -142,7 +151,7 @@ export default function FilterPanel(props:Props) {
       }
     })
   }, [results])
-*/
+
 
   function submitForm() {
     // console.log('inside submitForm...')
@@ -171,7 +180,6 @@ export default function FilterPanel(props:Props) {
 
   // used for text input element
   function onBlurHandler(event:React.FocusEvent<HTMLInputElement>):void {
-    // console.log('inside onBlurHandler with ', event)
     event.target.blur()
     // no need to submit form if input didn't change
     if (!event.target.value && !url.searchParams.get(event.target.name)) { return }
