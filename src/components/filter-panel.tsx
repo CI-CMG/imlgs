@@ -252,7 +252,8 @@ export default function FilterPanel(props:Props) {
   }
 
   function tableButtonHandler() {
-    navigate(`/samples/table?${filters.toString()}`)
+    // navigate(`/samples/table?${filters.toString()}`)
+    window.open(`/samples/table?${filters.toString()}`, '_blank')
   }
 
   return (
