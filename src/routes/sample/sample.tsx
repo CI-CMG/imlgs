@@ -172,7 +172,8 @@ export default function SampleDetail() {
   
 
   return (
-    <main className={baseClass} style={{ padding: "1rem 0" }}>
+    <>
+    <main className={baseClass} style={{ marginTop: '24px'}}>
       <h2>Data and Information for Sample {sampleDetail.sample}</h2>
       <div id="sampleDetails">
         <table className={`${baseClass}--table`}>
@@ -204,5 +205,6 @@ export default function SampleDetail() {
         <span>see the <a href={'https://www.ngdc.noaa.gov/mgg/curator/curatorcoding.html'}>IMLGS controlled vocabulary</a> for more information</span>
 
     </main>
+    </>
   )
 }

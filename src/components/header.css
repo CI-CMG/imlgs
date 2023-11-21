@@ -1,31 +1,32 @@
 .Header {
   width: 100vw;
-  height: 100vh;
+  height: var(--header-height);
+  /* height: 100vh; */
   background-color: var(--noaa-background-color);
   padding-bottom: 25px;
   grid-area: header;
 }
 
-.Header-container {
+.Header--container {
   display: grid;
   grid-template-columns: 280px auto 65px;
   color: white;
-  height: 100vh;
+  /* height: var(--header-height) */
 }
 
 
-#left {
+.Header--left {
   padding-left: 10px;
   padding-top: 5px;
 }
 
-#center {
+.Header--center {
   text-align: center;
   /* TODO replace this hardcoded value w/ vertical centering */
   padding-top: 25px;
 }
 
-#right {
+.Header--right {
   padding-right: 10px;
   padding-top: 5px;
 }
