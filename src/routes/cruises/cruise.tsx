@@ -41,6 +41,7 @@ export default function Cruise () {
       {cruiseDetail ?
         <div className={`${baseClass}--info`}>
           <ul>
+              <li>System ID: {cruiseDetail.id}</li>
               <li>Repository: {formatFacilities(cruiseDetail)}</li>
               <li>Ship/Platform: {cruiseDetail.platforms?.join(', ')}</li>
               {(cruiseDetail.year) ? <li>Year: {cruiseDetail.year}</li>: ''}
