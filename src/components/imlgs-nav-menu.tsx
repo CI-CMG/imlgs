@@ -1,12 +1,13 @@
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
-import Avatar from '@mui/material/Avatar';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import MenuIcon from '@mui/icons-material/Menu';
+import * as React from 'react'
+import Button from '@mui/material/Button'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import Tooltip from '@mui/material/Tooltip'
+import IconButton from '@mui/material/IconButton'
+import MenuIcon from '@mui/icons-material/Menu'
+import Box from '@mui/material/Box'
+import Container from '@mui/material/Container'
+import { ClickAwayListener } from '@mui/base/ClickAwayListener'
 
 
 export default function BasicMenu() {
@@ -36,7 +37,9 @@ export default function BasicMenu() {
 
   return (
     <React.Fragment>
-      <Tooltip title="Navigation Menu">  
+      <div>
+      {/* <ClickAwayListener onClickAway={handleClose}> */}
+      <Tooltip title="Navigation Menu"> 
         <IconButton
           id="basic-button"
           onClick={handleClick}
@@ -45,10 +48,10 @@ export default function BasicMenu() {
           aria-haspopup="true"
           aria-expanded={open ? 'true' : undefined}
         >
-          {/* <Avatar sx={{ width: 32, height: 32 }}>M</Avatar> */}
           <MenuIcon fontSize="large" htmlColor='white'/>
         </IconButton>
     </Tooltip>
+        {/* </ClickAwayListener> */}
       
       <Menu
         id="basic-menu"
@@ -59,6 +62,28 @@ export default function BasicMenu() {
         MenuListProps={{
           'aria-labelledby': 'basic-button'
         }}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: 'visible',
+            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+            mt: 1.5,
+            '&:before': {
+              content: '""',
+              display: 'block',
+              position: 'absolute',
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: 'background.paper',
+              transform: 'translateY(-50%) rotate(45deg)',
+              zIndex: 0,
+            },
+          },
+        }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
           {options.map(option => (
           <MenuItem key={option.label} onClick={() => handleMenuItemClick(option.href)}>
@@ -66,6 +91,7 @@ export default function BasicMenu() {
           </MenuItem>
         ))}
       </Menu>
+      </div>
     </React.Fragment>
   );
 }
