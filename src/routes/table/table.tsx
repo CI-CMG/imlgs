@@ -68,7 +68,7 @@ export default function SamplesTable() {
 
 
   return(
-    <div>
+    <div style={{marginTop: '24px'}}>
       <nav>
         <div style={{paddingTop:'5px', paddingBottom:'5px'}}>
           <button type="button" className={`${baseClass}--button`} style={{marginLeft: '15px', marginRight:'50px'}} 

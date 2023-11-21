@@ -1,6 +1,8 @@
 .SamplesTable {
   width:90%;
   margin: 0 auto;
+  height: var(--body-height);
+  overflow: auto;
 }
 
 .SamplesTable--datatable, table, th, td {
