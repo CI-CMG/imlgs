@@ -1,0 +1,23 @@
+.LayoutTest--wrapper {
+    display: grid;
+    grid-template-columns: 300px auto;
+    grid-template-areas:
+        "sidebar details";
+    width: 100vw;
+    height: var(--body-height);
+    background-color: var(--body-background-color);
+  }
+  
+  .LayoutTest--sidebar {
+    grid-area: sidebar;
+    overflow: auto;
+    padding-left: 1rem;
+    height: var(--body-height);
+    text-decoration: none;
+    background-color: var(--body-background-color);
+  }
+  
+  .LayoutTest--main {
+    border-left: solid 1px var(--noaa-background-color);
+  }
+  

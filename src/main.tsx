@@ -13,6 +13,10 @@ import SampleDetail from './routes/sample/sample'
 import { loader as sampleLoader } from './routes/sample/data'
 import { loader as samplesLoader } from './routes/table/data'
 import SamplesTable from './routes/table/table'
+import LayoutTest from './routes/test/LayoutTest'
+import { Index as TestIndex } from './routes/test/LayoutTest'
+import TestDetail from './routes/test/TestDetail'
+import TestSimple from './routes/test/TestSimple'
 import {
   createBrowserRouter,
   RouterProvider,
@@ -80,6 +84,21 @@ const router = createBrowserRouter([
             loader: cruiseLoader(queryClient),
           },
         ]
+      },
+      {
+        path: "test",
+        element: <LayoutTest/>,
+        children: [
+          { index: true, element: <TestIndex /> },
+          {
+            path: ":id",
+            element: <TestDetail/>
+          }
+        ]
+      },
+      {
+        path: "test2",
+        element: <TestSimple/>,
       },
       {
         // different way to default to /samples which changes the URL

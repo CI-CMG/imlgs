@@ -5,6 +5,15 @@
   overflow: auto;
 }
 
+.SamplesTable--container {
+  margin-top: 32px;
+}
+
+.SamplesTable--navbar {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
 .SamplesTable--datatable, table, th, td {
   border: 1px black solid;
   padding-left: 5px;

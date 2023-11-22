@@ -7,7 +7,7 @@ const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
 
 
 export default function SamplesTable() {
-  console.log('re-rendering SamplesTable...')
+  // console.log('re-rendering SamplesTable...')
   const baseClass = 'SamplesTable'
   // const queryClient = useQueryClient()
   // console.log(queryClient.getDefaultOptions())
@@ -68,9 +68,9 @@ export default function SamplesTable() {
 
 
   return(
-    <div style={{marginTop: '24px'}}>
-      <nav>
-        <div style={{paddingTop:'5px', paddingBottom:'5px'}}>
+    <div className='SamplesTable--container'>
+      <nav className='SamplesTable--navbar'>
+        <div>
           <button type="button" className={`${baseClass}--button`} style={{marginLeft: '15px', marginRight:'50px'}} 
             onClick={exportCSV} title='export table contents to CSV file'
           >Export Data</button>

@@ -1,9 +1,7 @@
 .Header {
   width: 100vw;
   height: var(--header-height);
-  /* height: 100vh; */
   background-color: var(--noaa-background-color);
-  padding-bottom: 25px;
   grid-area: header;
 }
 
@@ -11,7 +9,6 @@
   display: grid;
   grid-template-columns: 280px auto 65px;
   color: white;
-  /* height: var(--header-height) */
 }
 
 
