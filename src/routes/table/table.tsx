@@ -1,10 +1,20 @@
 import './table.css'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLoaderData, useSearchParams, Link } from "react-router-dom"
 import { loader as samplesLoader } from './data'
 import { searchParamsToFilters } from '../../utilities'
 const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
 
+const validSortItems = [
+  'facility_code',
+  'platform',
+  'cruise',
+  'imlgs',
+  'device',
+  'water_depth',
+  'start_date',
+  'igsn'
+]
 
 export default function SamplesTable() {
   // console.log('re-rendering SamplesTable...')
@@ -20,6 +30,16 @@ export default function SamplesTable() {
   const samples = loaderData.items
   const totalItems = loaderData.total_items
   const totalPages = loaderData.total_pages
+
+  useEffect(() => {
+    // 'order' may have multiple values and order of terms matters. 
+    // use the first sort param to set select option
+    // TODO why is string type assertion necessary for TS?
+    const sortParam = (searchParams.get('order') ? searchParams.get('order')?.split(':')[0] as string : 'facility_code')
+    if (! validSortItems.includes(sortParam)) { return }
+    const selectElement = document.getElementById('sortItemSelect') as HTMLInputElement
+    selectElement.value = sortParam
+  }, [searchParams])
 
   function incrementPage() {
     setPageNumber((pageNumber) => pageNumber + 1)
@@ -57,11 +77,12 @@ export default function SamplesTable() {
   function sortHandler(event: React.ChangeEvent<HTMLSelectElement>) {
     const sortOrder = 'asc'
     const newSearchParams = new URLSearchParams(searchParams)
-    if (event.target.selectedIndex === 0) {
-      // use default sort order as determined by the API
-      newSearchParams.delete('order')
-    } else {
-      newSearchParams.set('order', `${event.target.value}:${sortOrder}`)
+    newSearchParams.set('order', `${event.target.value}:${sortOrder}`)
+    // facility_code (default) has multiple sort items
+    if (event.target.value === 'facility_code') {
+      newSearchParams.append('order', 'platform')
+      newSearchParams.append('order', 'cruise')
+      newSearchParams.append('order', 'sample')
     }
     setSearchParams(newSearchParams)
   }
@@ -83,8 +104,8 @@ export default function SamplesTable() {
             &gt;
           </button>
           <span style={{marginLeft: '15px'}}>page {currentPage} of {totalPages} ({totalItems} total records)</span>
-          <select style={{marginLeft: '100px'}} onChange={sortHandler}>
-            <option>-- Sort By --</option>
+          <select id="sortItemSelect" style={{fontSize: 'large', marginLeft: '100px'}} onChange={sortHandler}>
+            {/* <option>-- Sort By --</option> */}
             <option value='facility_code'>Repository</option>
             <option value='platform'>Ship/Platform</option>
             <option value='cruise'>Cruise</option>

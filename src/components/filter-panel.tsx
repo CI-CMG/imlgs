@@ -252,8 +252,14 @@ export default function FilterPanel(props:Props) {
   }
 
   function tableButtonHandler() {
+    console.log({filters})
+    const tableSearchParams = new URLSearchParams(filters)
+    tableSearchParams.set('order', 'facility_code:asc')
+    tableSearchParams.append('order', 'platform:asc')
+    tableSearchParams.append('order', 'cruise:asc')
+    tableSearchParams.append('order', 'sample:asc')
     // navigate(`/samples/table?${filters.toString()}`)
-    window.open(`/samples/table?${filters.toString()}`, '_blank')
+    window.open(`/samples/table?${tableSearchParams.toString()}`, '_blank')
   }
 
   return (
