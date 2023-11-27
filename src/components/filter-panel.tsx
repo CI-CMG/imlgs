@@ -30,6 +30,7 @@ import {
 import { RepositoryName, getRepositories } from '../routes/repositories/data'
 import { useQueryClient, useQuery, useQueries, UseQueryResult } from "@tanstack/react-query"
 import SamplesCount from './samples-count';
+const routerBasename = import.meta.env.VITE_routerBasename
 
 const notEmpty= /^\S+/
 
@@ -252,14 +253,13 @@ export default function FilterPanel(props:Props) {
   }
 
   function tableButtonHandler() {
-    console.log({filters})
     const tableSearchParams = new URLSearchParams(filters)
     tableSearchParams.set('order', 'facility_code:asc')
     tableSearchParams.append('order', 'platform:asc')
     tableSearchParams.append('order', 'cruise:asc')
     tableSearchParams.append('order', 'sample:asc')
     // navigate(`/samples/table?${filters.toString()}`)
-    window.open(`/samples/table?${tableSearchParams.toString()}`, '_blank')
+    window.open(`${routerBasename}/samples/table?${tableSearchParams.toString()}`, '_blank')
   }
 
   return (
