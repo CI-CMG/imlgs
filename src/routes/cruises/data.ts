@@ -14,12 +14,16 @@ export interface CruiseName {
   legs?: Array<string>
 }
 
+interface Platform {
+  id: number,
+  platform: string
+}
 
 export interface CruiseDetail extends CruiseName {
   facility_codes: Array<string>,
-  platforms?: Array<string>,
+  platforms: Array<Platform>,
   links?: Array<CruiseLink>,
-  facilities?: Array<RepositoryName>
+  facilities: Array<RepositoryName>
 }
 
 
