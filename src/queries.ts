@@ -162,6 +162,32 @@ const fetchRockLithologies = async (filters: URLSearchParams): Promise<string[]>
   }
 }
 
+const fetchLithologicCompositions = async (filters: URLSearchParams): Promise<string[]> => {
+  const myFilters = new URLSearchParams(filters)
+  myFilters.delete('lithologic_composition')
+  // console.log('platform filters: ', myFilters.toString())
+  const response = await fetch(`${apiBaseUrl}/lithologic_compositions?items_per_page=2000&${myFilters.toString()}`)
+  if (response.status === 200) {
+    const paylod = await response.json()
+    return paylod.items as string[]
+  } else {
+    throw new Error(`${response.status}`)
+  }
+}
+
+const fetchGeologicAges = async (filters: URLSearchParams): Promise<string[]> => {
+  const myFilters = new URLSearchParams(filters)
+  myFilters.delete('geologic_age')
+  // console.log('platform filters: ', myFilters.toString())
+  const response = await fetch(`${apiBaseUrl}/geologic_ages?items_per_page=2000&${myFilters.toString()}`)
+  if (response.status === 200) {
+    const paylod = await response.json()
+    return paylod.items as string[]
+  } else {
+    throw new Error(`${response.status}`)
+  }
+}
+
 const fetchRemarks = async (filters: URLSearchParams): Promise<string[]> => {
   const myFilters = new URLSearchParams(filters)
   myFilters.delete('remark')
@@ -279,10 +305,12 @@ const fetchTextures = async (filters: URLSearchParams): Promise<string[]> => {
     fetchRepositoryNames, 
     fetchMineralogies,
     fetchMetamorphism,
-    fetchLithologies,
+    fetchLithologicCompositions,
+    // fetchLithologies,
     fetchTextures,
     fetchWeathering,
-    fetchCompositions,
+    // fetchCompositions,
+    fetchGeologicAges,
     fetchRockLithologies,
     fetchRemarks,
     fetchTotalSampleCount,

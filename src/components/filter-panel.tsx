@@ -21,9 +21,11 @@ import {
   fetchMetamorphism,
   fetchMineralogies,
   fetchWeathering,
-  fetchLithologies,
+  // fetchLithologies,
   fetchRockLithologies,
-  fetchCompositions,
+  // fetchCompositions,
+  fetchLithologicCompositions,
+  fetchGeologicAges,
   fetchRemarks,
   fetchTextures
 } from '../queries'
@@ -82,11 +84,12 @@ export default function FilterPanel(props:Props) {
       { queryKey: ['weathering', filters.toString()], queryFn: () => fetchWeathering(filters) },            // 6
       { queryKey: ['metamorphism', filters.toString()], queryFn: () => fetchMetamorphism(filters) },        // 7
       { queryKey: ['mineralogies', filters.toString()], queryFn: () => fetchMineralogies(filters) },        // 8
-      { queryKey: ['lithologies', filters.toString()], queryFn: () => fetchLithologies(filters) },          // 9
+      { queryKey: ['lithologic_compositions', filters.toString()], queryFn: () => fetchLithologicCompositions(filters) }, // 9
       { queryKey: ['textures', filters.toString()], queryFn: () => fetchTextures(filters) },                // 10
       { queryKey: ['rock_lithologies', filters.toString()], queryFn: () => fetchRockLithologies(filters) }, // 11
       { queryKey: ['remarks', filters.toString()], queryFn: () => fetchRemarks(filters) },                  // 12
-      { queryKey: ['compositions', filters.toString()], queryFn: () => fetchCompositions(filters) },        // 13
+      { queryKey: ['geologic_ages', filters.toString()], queryFn: () => fetchGeologicAges(filters) }       // 13
+      // { queryKey: ['compositions', filters.toString()], queryFn: () => fetchCompositions(filters) },        // 13
     ]
   })
   // console.log({results})
@@ -118,7 +121,7 @@ export default function FilterPanel(props:Props) {
     setInputElementFromSearchParameter('weathering-select', url.searchParams.get("weathering") )
     setInputElementFromSearchParameter('metamorphism-select', url.searchParams.get("metamorphism") )
     setInputElementFromSearchParameter('mineralogy-select', url.searchParams.get("mineralogy") )
-    setInputElementFromSearchParameter('lithology-select', url.searchParams.get("lithology") )
+    setInputElementFromSearchParameter('lithologic_composition-select', url.searchParams.get("lithologic_composition") )
     setInputElementFromSearchParameter('texture-select', url.searchParams.get("texture") )
     setInputElementFromSearchParameter('rock_lithology-select', url.searchParams.get("rock_lithology") )
     setInputElementFromSearchParameter('composition-select', url.searchParams.get("composition") )
@@ -138,7 +141,7 @@ export default function FilterPanel(props:Props) {
       'weathering-select',
       'mineralology-select',
       'metamorphism-select',
-      'lithology-select',
+      'lithologic_composition-select',
       'texture-select',
       'rock_lithology-select',
       'composition-select',
@@ -430,14 +433,14 @@ export default function FilterPanel(props:Props) {
           <fieldset>
             <legend>Sample Attributes</legend>
             <select
-              name="lithology"
+              name="lithologic_composition"
               title={enabledSelects[9] ? "filter samples by lithologic composition" : "no lithologic composition values with this combination of filters"}
               disabled={!enabledSelects[9]}
-              id='lithology-select' 
+              id='lithologic_composition-select' 
               onChange={onChangeHandler} 
               style={{'width':'80%'}}
             >
-              <option value="">-- Lithology --</option>
+              <option value="">-- Lithologic Composition --</option>
               {
                 results[9].data?.map(name => <option value={name} key={name}>{name}</option>)
               }     
@@ -495,14 +498,14 @@ export default function FilterPanel(props:Props) {
               }          
             </select>
             <select 
-              name="composition" 
-              id='composition-select'
-              title={enabledSelects[13] ? "filter samples by composition" : "no composition values with this combination of filters"}
+              name="geologic_age" 
+              id='geologic_age-select'
+              title={enabledSelects[13] ? "filter samples by geologic age" : "no geologic age values with this combination of filters"}
               disabled={!enabledSelects[13]}
-              onChange={onChangeHandler} 
+              onChange={onChangeHandler}
               style={{'width':'80%'}} 
             >
-              <option value="">-- Composition --</option>
+              <option value="">-- Geologic Age --</option>
               {
                 results[13].data?.map(name => <option value={name} key={name}>{name}</option>)
               }          
