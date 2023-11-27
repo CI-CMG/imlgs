@@ -259,7 +259,8 @@ export default function FilterPanel(props:Props) {
     tableSearchParams.append('order', 'cruise:asc')
     tableSearchParams.append('order', 'sample:asc')
     // navigate(`/samples/table?${filters.toString()}`)
-    window.open(`${routerBasename}/samples/table?${tableSearchParams.toString()}`, '_blank')
+    const urlPath = routerBasename ? routerBasename : '/'
+    window.open(`${urlPath}samples/table?${tableSearchParams.toString()}`, '_blank')
   }
 
   return (
