@@ -33,7 +33,8 @@ export default function Cruise () {
   const baseClass = 'CruiseDetail'
   
   console.log('cruise detail: ', cruiseDetail)
-  
+  const platformNames = cruiseDetail.platforms?.map(item => item.platform )
+
   return (
       <div className={baseClass}>
         <h2 className={`${baseClass}--title`} style={{paddingLeft: "50px", paddingBottom: "50px"}}>Cruise: {cruiseDetail.cruise}</h2>
@@ -43,7 +44,7 @@ export default function Cruise () {
           <ul>
               <li>System ID: {cruiseDetail.id}</li>
               <li>Repository: {formatFacilities(cruiseDetail)}</li>
-              <li>Ship/Platform: {cruiseDetail.platforms?.join(', ')}</li>
+              <li>Ship/Platform: {platformNames.join(', ')}</li>
               {(cruiseDetail.year) ? <li>Year: {cruiseDetail.year}</li>: ''}
               {(cruiseDetail.legs?.length) ? <li>Leg: {cruiseDetail.legs?.join(', ')}</li>: ''}
           </ul>
