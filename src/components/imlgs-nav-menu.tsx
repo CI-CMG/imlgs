@@ -12,7 +12,7 @@ import { ClickAwayListener } from '@mui/base/ClickAwayListener'
 
 export default function BasicMenu() {
   const options = [
-    {label: 'About the IMLGS', href: 'https://ngdc.noaa.gov/mgg/curator/'},
+    {label: 'About the IMLGS', href: 'https://www.ncei.noaa.gov/products/index-marine-lacustrine-samples'},
     {label: 'Developer Documentation (API)', href: 'https://www.ngdc.noaa.gov/geosamples-api/swagger-ui/index.html?configUrl=/geosamples-api/swagger-config.json'}
   ]
   
