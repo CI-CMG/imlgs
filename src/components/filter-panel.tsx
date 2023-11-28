@@ -126,6 +126,7 @@ export default function FilterPanel(props:Props) {
     setInputElementFromSearchParameter('rock_lithology-select', url.searchParams.get("rock_lithology") )
     setInputElementFromSearchParameter('composition-select', url.searchParams.get("composition") )
     setInputElementFromSearchParameter('remark-select', url.searchParams.get("remark") )
+    setInputElementFromSearchParameter('geologic_age-select', url.searchParams.get("age") )
   }, [url.searchParams])
  
 
