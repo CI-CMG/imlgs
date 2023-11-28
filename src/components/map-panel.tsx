@@ -89,6 +89,9 @@ export function buildLayerDefinitionExpression(searchParams:URLSearchParams) {
     if (searchParams.get('remark') && searchParams.get('remark')) { 
       defs.push(`REMARK like '%${searchParams.get('remark')}%'`) 
     }
+    if (searchParams.get('age') && searchParams.get('age')) { 
+      defs.push(`AGE = '${searchParams.get('age')}'`) 
+    }
   }
   return defs.length ? defs.join(' and ') : ''
 }

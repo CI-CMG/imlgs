@@ -19,7 +19,7 @@ export function searchParamsToFilters(searchParams: URLSearchParams): URLSearchP
     // 'lithology',
     'texture',
     'rock_lithology',
-    'geologic_age',
+    'age',
     'remark',
     'page',
     'imlgs',
