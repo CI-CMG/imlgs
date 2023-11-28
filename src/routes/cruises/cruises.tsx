@@ -10,8 +10,8 @@ import './cruises.css'
 const baseClass = 'Cruises'
 
 export default function Cruises() {
-  // const { cruises } = useLoaderData() as Awaited<ReturnType<typeof cruisesLoader>>
-  // console.log(`${cruises.length} cruises loaded`)
+  const cruisesCount = useLoaderData() as Awaited<number>
+  // console.log(`${cruisesCount} cruises loaded`)
 
   // const url = new URL(window.location.href)
   // const filters = searchParamsToFilters(url.searchParams)
@@ -24,6 +24,10 @@ export default function Cruises() {
   return (
     <div className={`${baseClass}--wrapper`}>
       <div className={`${baseClass}--sidebar`}>
+        { cruisesCount ?
+          <span style={{fontWeight: 'bold'}}>{cruisesCount} cruises matching criteria</span>
+          : ''
+        }
         {/* <CruiseList cruises={cruises}/> */}
         <InfiniteCruiseList />
       </div>

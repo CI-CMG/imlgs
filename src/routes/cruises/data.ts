@@ -61,6 +61,19 @@ export async function getCruises(): Promise<CruiseName[]> {
   return results as CruiseName[]
 }
 
+export async function getCruisesCount(): Promise<number> {
+  const url = new URL(window.location.href)
+  const filters = searchParamsToFilters(url.searchParams)
+
+  const response = await fetch(`${apiBaseUrl}/cruises/count?${filters.toString()}`)
+  if (! response.ok) {
+    throw new Error(response.statusText)
+  }
+  const payload = await response.json()
+  console.log({payload})
+  return payload.count
+}
+
 export async function getCruise( id: number ): Promise<CruiseDetail> {
   const response = await fetch(`${apiBaseUrl}/cruises/detail/${id}`)
   if (response.status !== 200) {
@@ -98,6 +111,6 @@ export const loader =
 
 
   export async function cruisesLoader() {
-    const cruises = await getCruises();
-    return { cruises }
+    const cruisesCount = await getCruisesCount();
+    return cruisesCount
   }
