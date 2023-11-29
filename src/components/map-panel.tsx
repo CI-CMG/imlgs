@@ -294,7 +294,7 @@ function zoomTo(layerDefinitionExpression:string) {
     fetch(myRequest)
       .then(response => response.json())
       .then((data) => {
-        if(isNaN(data.extent.xmin) || isNaN(data.extent.xmax)|| isNaN(data.extent.ymin) || isNaN(data.extent.ymax)) {
+        if(isNaN(data.extent?.xmin) || isNaN(data.extent?.xmax)|| isNaN(data.extent?.ymin) || isNaN(data.extent?.ymax)) {
           console.warn('Cannot zoom to empty extent')
           return
         }
