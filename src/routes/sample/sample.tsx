@@ -13,8 +13,12 @@ function buildDetailsRow(fieldName: string, label: string, value: string) {
 
 //format string of YYYYMMDD to YYYY-MM-DD
 function formatDate(dateString: string) {
-  const chars = dateString.split('')
-  return(`${chars.slice(0,4).join('')}-${chars.slice(4,6).join('')}-${chars.slice(6,8).join('')}`)
+  if (dateString.length < 8) {
+    // report only year for partial date
+    return(dateString.slice(0,4))
+  } else {
+    return(`${dateString.slice(0,4)}-${dateString.slice(4,6)}-${dateString.slice(6,8)}`)
+  }
 }
 
 
