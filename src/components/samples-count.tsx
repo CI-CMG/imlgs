@@ -19,22 +19,30 @@ export default function SamplesCount() {
     const filters = searchParamsToFilters(url.searchParams)
     // console.log('SampleCount: ', filters.toString())
   
-    const { data:totalCount } = useQuery(["totalSampleCount"], fetchTotalSampleCount, {
-        staleTime: Infinity
-    });
-    
-    // rename the destructured variable
-    const { data: filteredCount} = useQuery(
-        ["sampleCount", filters.toString()], 
-        async () => fetchSampleCount(filters)
-    );
-    
+    const results = useQueries({
+        queries: [ 
+            { queryKey: ['totalSampleCount'], queryFn: () => fetchTotalSampleCount(), staleTime: Infinity },        
+            { queryKey: ['filteredCount', filters.toString()], queryFn: () => fetchSampleCount(filters) }
+        ]
+    })    
+
+
+    function getMessage() {
+        if (results.every(it => it.isSuccess)) {
+            return(`${results[1].data?.toLocaleString()} out of ${results[0].data?.toLocaleString()} samples`)
+        }
+        // if (results[0].isSuccess) {
+        //     return (`${results[0].data?.toLocaleString()} samples`)
+        // }
+        if (results.some(it => it.isError)) {
+            return (`error retrieving data - please try again`)
+        }
+        return ('Loading...')
+    }
+
     return (
         <div>
-            <h3>{(totalCount && filteredCount !== undefined) ? 
-          `${filteredCount.toLocaleString()} out of ${totalCount.toLocaleString()} samples` 
-          : 'Loading...'}
-        </h3>
+            <h3>{getMessage()}</h3>
         </div>
     )
 }
