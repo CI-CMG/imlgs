@@ -81,7 +81,7 @@ export function buildLayerDefinitionExpression(searchParams:URLSearchParams) {
       defs.push(`TEXTURE like '%${searchParams.get('texture')}%'`) 
     }
     if (searchParams.get('lithologic_composition') && searchParams.get('lithologic_composition')) { 
-      defs.push(`LITH_COMP like '%${searchParams.get('lithologic_composition')}%'`) 
+      defs.push(`LITHOLOGIC_COMPOSITION like '%${searchParams.get('lithologic_composition')}%'`) 
     }
     if (searchParams.get('rock_lithology') && searchParams.get('rock_lithology')) { 
       defs.push(`ROCK_LITHOLOGY like '%${searchParams.get('rock_lithology')}%'`) 
