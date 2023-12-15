@@ -1,7 +1,18 @@
 import './samples.css'
 import { useState } from "react"
+import { 
+  Outlet, 
+  NavLink,
+  useLoaderData,
+  Form,
+  redirect,
+  useNavigation,
+  useSubmit,
+  useNavigate
+} from "react-router-dom"
 import FilterPanel from '../../components/filter-panel'
 import MapPanel from '../../components/map-panel'
+import Header from '../../components/header'
 
 
 // const notEmpty= /^\S+/
@@ -24,12 +35,15 @@ import MapPanel from '../../components/map-panel'
 
 
 export default function Samples() {
-  // console.log('rendering Samples...')
+  console.log('rendering Samples...')
   // const navigation = useNavigation()
   // const submit = useSubmit()
   const [zoomToSelected, setZoomToSelected] = useState<boolean>(true)
+  // const [filters, setFilters] = useState<FormData>()
 
   const baseClass = 'Samples'
+
+  const submit = useSubmit()
 
   // const url = new URL(window.location.href)
   // console.log('searchParams: ', url.searchParams.toString())
@@ -50,13 +64,22 @@ export default function Samples() {
   //     "q"
   //   )
 
+  function setFilters(formData: FormData) {
+    console.log('inside submitForm with ', formData)
+    submit(formData)
+  }
+
+
   return (
+    <>
+    <Header/>
     <div className={`${baseClass}--wrapper`}>
       <div className={`${baseClass}--sidebar`}>
 
         <FilterPanel 
           zoomToSelected={zoomToSelected} 
           zoomToggleHandler={boolean => setZoomToSelected(boolean)}
+          setFilters={setFilters}
         />
         {/* <DepthRange/> */}
       </div>
@@ -64,6 +87,7 @@ export default function Samples() {
         <MapPanel zoomToSelected={zoomToSelected}/>
       </main>
     </div>
+    </>
     )
 
 
