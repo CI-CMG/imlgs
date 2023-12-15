@@ -75,7 +75,8 @@ const router = createBrowserRouter([
       {
         path: "cruises",
         element: <Cruises/>,
-        loader: cruisesLoader,
+        // loader: cruisesLoader(queryClient),
+        // loader: cruisesLoader,
         children: [
           { index: true, element: <CruisesIndex /> },
           {
