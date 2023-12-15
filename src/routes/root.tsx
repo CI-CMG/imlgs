@@ -11,7 +11,7 @@ import './root.css'
 export default function Root() {
   return (
     <div className="Root--wrapper">
-      <Header />
+      {/* <Header /> */}
       <Outlet/>
       <Footer />
     </div>
