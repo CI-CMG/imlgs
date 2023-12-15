@@ -50,13 +50,14 @@ function setInputElementFromSearchParameter(id: string, value: string|null) {
 
 export interface Props {
   zoomToSelected: boolean,
-  zoomToggleHandler: (checked:boolean) => void
+  zoomToggleHandler: (checked:boolean) => void,
+  setFilters: (searchParams:FormData) => void
 }
 
 
 export default function FilterPanel(props:Props) {
   // console.log('rendering FilterPanel...')
-  const {zoomToSelected, zoomToggleHandler} = props
+  const {zoomToSelected, zoomToggleHandler, setFilters} = props
   const navigate = useNavigate();
   const baseClass = 'FilterPanel'
   const navigation = useNavigation()
@@ -78,7 +79,7 @@ export default function FilterPanel(props:Props) {
       { queryKey: ['repositories', filters.toString()], queryFn: () => getRepositories(filters) },          // 0
       { queryKey: ['platforms', filters.toString()], queryFn: () => fetchPlatforms(filters) },              // 1
       { queryKey: ['devices', filters.toString()], queryFn: () => fetchDevices(filters) },                  // 2
-      { queryKey: ['cruises', filters.toString()], queryFn: () => fetchCruiseNames(filters) },              // 3
+      { queryKey: ['cruise names', filters.toString()], queryFn: () => fetchCruiseNames(filters) },              // 3
       { queryKey: ['lakes', filters.toString()], queryFn: () => fetchLakes(filters) },                      // 4
       { queryKey: ['provinces', filters.toString()], queryFn: () => fetchProvinces(filters) },              // 5
       { queryKey: ['weathering', filters.toString()], queryFn: () => fetchWeathering(filters) },            // 6
@@ -105,6 +106,7 @@ export default function FilterPanel(props:Props) {
     return result.data ? result.data.length > 0 : false
   })
 
+  
   useEffect(() => {
     // console.log('inside useEffect to sync URL search params with form input elements')
     // sync URL search parameters w/ form elements. Need to explicitly list each search parameter
@@ -129,7 +131,7 @@ export default function FilterPanel(props:Props) {
     setInputElementFromSearchParameter('geologic_age-select', url.searchParams.get("age") )
   }, [url.searchParams])
  
-
+/*
   useEffect(() => {
     // console.log('inside useEffect to set initial Select option...')
     const selectNames = [
@@ -156,7 +158,7 @@ export default function FilterPanel(props:Props) {
       }
     })
   }, [results])
-
+*/
 
   function submitForm() {
     // console.log('inside submitForm...')
@@ -171,7 +173,8 @@ export default function FilterPanel(props:Props) {
       // TODO check for whitespace only?
       if (inputElem.value !== '') { formData.append(inputElem.name, inputElem.value)}
     }
-    submit(formData)
+    setFilters(formData)
+    // submit(formData)
   }
 
 
