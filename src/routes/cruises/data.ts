@@ -34,12 +34,14 @@ export interface CruiseLink {
   type: string
 }
 
+export interface CruiseCount {
+  count: number
+}
 
-export async function getCruises(): Promise<CruiseName[]> {
-  const url = new URL(window.location.href)
-  const filters = searchParamsToFilters(url.searchParams)
+// returns a list of all cruises matching filters, regardless of total number
+export async function getCruises(defaultFilters: URLSearchParams): Promise<CruiseName[]> {
+  const filters = new URLSearchParams(defaultFilters)
   filters.set('items_per_page', '1000')
-  // console.log('inside getCruises: all filters: ', filters.toString())
 
   const results = [];
   let totalPages = 1
@@ -61,16 +63,27 @@ export async function getCruises(): Promise<CruiseName[]> {
   return results as CruiseName[]
 }
 
-export async function getCruisesCount(): Promise<number> {
-  const url = new URL(window.location.href)
-  const filters = searchParamsToFilters(url.searchParams)
 
+// get cruises matching filters but limited to one page of results
+export async function getFirstPageOfCruises(defaultFilters: URLSearchParams):Promise<CruiseName[]> {
+  const filters = new URLSearchParams(defaultFilters)
+  filters.set('items_per_page', '500')
+  const response = await fetch(`${apiBaseUrl}/cruises/name?${filters.toString()}`)
+  if (! response.ok) {
+    throw new Error(response.statusText)
+  }
+  const payload = await response.json()
+  return payload.items
+}
+
+
+export async function getCruisesCount(filters:URLSearchParams): Promise<number> {
+  console.log('inside getCruisesCount with ', filters.toString())
   const response = await fetch(`${apiBaseUrl}/cruises/count?${filters.toString()}`)
   if (! response.ok) {
     throw new Error(response.statusText)
   }
   const payload = await response.json()
-  console.log({payload})
   return payload.count
 }
 
@@ -89,6 +102,10 @@ export const cruiseDetailQuery = (cruiseId:number) => ({
   queryFn: async () => getCruise(cruiseId)
 })
 
+export const cruiseCountQuery = (filters:URLSearchParams) => ({
+  queryKey: ['cruises', 'count', filters.toString()],
+  queryFn: async () => getCruisesCount(filters)
+})
 
 export const loader = 
   (queryClient:QueryClient) =>
@@ -110,7 +127,18 @@ export const loader =
   }
 
 
+  // export const cruisesLoader = 
+  //   (queryClient:QueryClient) =>
+  //     async () => {
+  //       const url = new URL(window.location.href)
+  //       const filters = searchParamsToFilters(url.searchParams)
+  //       const query = cruiseCountQuery(filters)
+  //       return ((await queryClient.ensureQueryData(query)))
+  //     }
+  
   export async function cruisesLoader() {
-    const cruisesCount = await getCruisesCount();
+    const url = new URL(window.location.href)
+    const filters = searchParamsToFilters(url.searchParams)
+    const cruisesCount = await getCruisesCount(filters)
     return cruisesCount
   }

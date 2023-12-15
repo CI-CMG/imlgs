@@ -32,7 +32,7 @@ export default function Cruise () {
     initialData})
   const baseClass = 'CruiseDetail'
   
-  console.log('cruise detail: ', cruiseDetail)
+  // console.log('cruise detail: ', cruiseDetail)
   const platformNames = cruiseDetail.platforms?.map(item => item.platform )
 
   return (
