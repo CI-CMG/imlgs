@@ -1,11 +1,13 @@
 import './header.css'
-import { NavLink } from "react-router-dom"
+import { NavLink, useSearchParams } from "react-router-dom"
 import { searchParamsToFilters } from "../utilities"
 import BasicMenu from './imlgs-nav-menu'
 
 export default function Header() {
+  // console.log('rendering Header...')
   const url = new URL(window.location.href)
   const filters = searchParamsToFilters(url.searchParams)
+
   const activeStyle = {
     textDecoration: "none",
     color: "white",
@@ -18,6 +20,11 @@ export default function Header() {
     color:"white"
   }
 
+  function constructNavLink(base:string) {
+    const searchParamsString = filters.size ? `?${filters.toString()}` : ''
+    return `/${base}${searchParamsString}`
+  }
+
   return (
     <div className='Header'>
       <div className='Header--container'>
@@ -26,9 +33,9 @@ export default function Header() {
           <img className="Header--nceiLogo" src="https://maps.ngdc.noaa.gov/images/imlgs/map-banner.png" alt="National Centers for Environmental Information, National Oceanic and Atmospheric Administration"/>
         </a>
         <div id="breadcrumbs">
-          <NavLink to="/samples" style={({isActive}) => isActive ? activeStyle : inactiveStyle}>Samples</NavLink> | {" "}
-          <NavLink to={`/cruises?${filters.toString()}`} style={({isActive}) => isActive ? activeStyle : inactiveStyle}>Cruises</NavLink>  | {" "}
-          <NavLink to="/repositories" style={({isActive}) => isActive ? activeStyle : inactiveStyle}>Repositories</NavLink>
+          <NavLink to={constructNavLink('samples')} style={({isActive}) => isActive ? activeStyle : inactiveStyle}>Samples</NavLink> | {" "}
+          <NavLink to={constructNavLink('cruises')} style={({isActive}) => isActive ? activeStyle : inactiveStyle}>Cruises</NavLink>  | {" "}
+          <NavLink to={constructNavLink('repositories')} style={({isActive}) => isActive ? activeStyle : inactiveStyle}>Repositories</NavLink>
         </div>
       </div>
       <div className='Header--center' style={{paddingTop: '25px'}}>
