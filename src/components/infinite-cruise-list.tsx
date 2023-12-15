@@ -13,12 +13,14 @@ import {
 } from '@tanstack/react-query'
 const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
 
+interface Props {
+  filters: URLSearchParams
+} 
 
-export default function InfiniteCruiseList() {
-  const url = new URL(window.location.href)
-  const filters = searchParamsToFilters(url.searchParams)
-  filters.set('items_per_page', '500')
-
+export default function InfiniteCruiseList({filters}:Props) {
+  const myFilters = new URLSearchParams(filters)
+  myFilters.set('items_per_page', '500')
+  // console.log('inside InfiniteCruiseList with ',filters.toString())
   // const results = useQuery({ 
   //   queryKey: ['cruises', filters.toString()],
   //   queryFn: () => fetchCruiseNames(filters) 
@@ -38,9 +40,9 @@ export default function InfiniteCruiseList() {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery(
-    ['infinite cruises'],
+    ['infinite cruises', myFilters.toString()],
     async ({ pageParam = 1 }) => {
-      const myFilters = new URLSearchParams(filters)
+     
       myFilters.set('page', pageParam)
       const res = await fetch(
         `${apiBaseUrl}/cruises/name?${myFilters.toString()}`
@@ -80,7 +82,7 @@ export default function InfiniteCruiseList() {
             {page.items.map((cruise:CruiseName) => (
               <Link
               style={{ display: "block", margin: "1rem 0", color: "#282c34", textDecoration: "none" }}
-              to={`/cruises/${cruise.id}`}
+              to={`/cruises/${cruise.id}?${filters.toString()}`}
               key={cruise.id}
             >
               {cruise.cruise}
