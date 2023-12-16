@@ -7,11 +7,13 @@ const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
 
 
 function formatFacilities(data: CruiseDetail) {
-  const facilities = data.facilities?.map(facility => {
-    // work around inconsistency in API
+  const facilities = data.facilities?.map((facility) => {
     return <Link key={facility.id} to={{pathname:`/repositories/${facility.id}`}}>{facility.facility_code}</Link>
-
-  });
+  })
+  // TODO works only with 1 or 2 facilities
+  if (facilities.length > 1) {
+    facilities.splice(1,0,<span key={'0'}>, </span>)
+  }
   return facilities
 }
 
