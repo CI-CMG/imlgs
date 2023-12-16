@@ -1,5 +1,6 @@
 import { Link, Outlet, useLoaderData } from "react-router-dom"
-import { repositoriesLoader } from "./data";
+import { repositoriesLoader } from "./data"
+import Header from "../../components/header"
 
 import './repositories.css'
 
@@ -10,6 +11,8 @@ export default function Repositories() {
   console.log(`${repositories.length} repositories loaded`)
 
   return (
+    <>
+    <Header/>
     <div className={`${baseClass}--wrapper`}>
       <div className={`${baseClass}--sidebar`}>
         {repositories ? 
@@ -27,6 +30,8 @@ export default function Repositories() {
         <Outlet/>
       </div>
     </div>
+    </>
+  
   )
   
 }
