@@ -34,7 +34,7 @@ export default function Cruise () {
     initialData})
   const baseClass = 'CruiseDetail'
   
-  // console.log('cruise detail: ', cruiseDetail)
+  console.log('cruise detail: ', cruiseDetail)
   const platformNames = cruiseDetail.platforms?.map(item => item.platform )
 
   return (
@@ -61,9 +61,9 @@ export default function Cruise () {
           <hr style={{width:"90%"}} />
           <div style={{'textAlign': 'center'}}>
           Show samples from this cruise on the &nbsp;
-          <Link to={{pathname:'/samples', search: `cruise=${cruiseDetail.cruise}`}}>map</Link>
+          <Link to={{pathname:'/samples', search: `cruise_id=${cruiseDetail.id}`}}>map</Link>
           &nbsp; or in a &nbsp; 
-          <Link to={{pathname:'/samples/table', search: `cruise=${cruiseDetail.cruise}`}}>table</Link>
+          <Link to={{pathname:'/samples/table', search: `cruise_id=${cruiseDetail.id}`}}>table</Link>
           </div>
         </div>
       : ''

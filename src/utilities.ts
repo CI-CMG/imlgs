@@ -6,6 +6,7 @@ export function searchParamsToFilters(searchParams: URLSearchParams): URLSearchP
     'platform',
     'device',
     'cruise',
+    'cruise_id',
     'lake',
     // 'province',
     'igsn',
