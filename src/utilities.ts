@@ -35,3 +35,11 @@ export function searchParamsToFilters(searchParams: URLSearchParams): URLSearchP
   })
   return filterParams
 }
+
+export function searchParamsToFormData(searchParams: URLSearchParams): FormData {
+  const formData = new FormData()
+  for (const [name, value] of searchParams.entries()) {
+    formData.append(name, value)
+  }
+  return formData
+}

@@ -226,6 +226,18 @@ const fetchTextures = async (filters: URLSearchParams): Promise<string[]> => {
     throw new Error(`${response.status}`)
   }
 }
+
+const fetchSampleCount = async (filters: URLSearchParams): Promise<number> => {
+  // console.log('inside fetchSampleCount with ', filters)
+  const response = await fetch(`${apiBaseUrl}/samples/count?${filters.toString()}`)
+  if (response.status === 200) {
+    const paylod = await response.json()
+    return paylod.count as number
+  } else {
+    throw new Error(`${response.status}`)
+  }
+}
+
 /*
 const fetchLithologies = async (filters: URLSearchParams): Promise<string[]> => {
   // TODO hardcoded values pending API bug fix
@@ -286,15 +298,6 @@ const fetchTextures = async (filters: URLSearchParams): Promise<string[]> => {
 }
 */
   
-  const fetchSampleCount = async (filters: URLSearchParams): Promise<number> => {
-  const response = await fetch(`${apiBaseUrl}/samples/count?${filters.toString()}`)
-  if (response.status === 200) {
-    const paylod = await response.json()
-    return paylod.count as number
-  } else {
-    throw new Error(`${response.status}`)
-  }
-}
 
   export { 
     fetchCruiseNames, 
