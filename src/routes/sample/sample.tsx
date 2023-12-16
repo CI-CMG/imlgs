@@ -2,6 +2,7 @@ import './sample.css'
 import { useLoaderData, useParams, Link } from "react-router-dom"
 import { loader, Sample, sampleDetailQuery, Link as SampleLink, Interval } from "./data"
 import { useQuery } from "@tanstack/react-query"
+import Header from '../../components/header'
 const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
 
 
@@ -177,6 +178,7 @@ export default function SampleDetail() {
 
   return (
     <>
+    <Header/>
     <main className={baseClass} style={{ marginTop: '24px'}}>
       <h2>Data and Information for Sample {sampleDetail.sample}</h2>
       <div id="sampleDetails">
