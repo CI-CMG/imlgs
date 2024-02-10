@@ -7,7 +7,7 @@ RUN yum update -y && \
 # install built version of app
 COPY dist/ /var/www/html/viewers/imlgs/
 # install apache configuration to support React Router
-COPY imlgs.conf /etc/httpd/conf.d/imlgs.conf
+COPY imlgs.httpd.conf /etc/httpd/conf.d/imlgs.conf
 
 # Configure apache
 RUN echo 'mkdir -p /var/run/httpd' >> /root/run_apache.sh && \
