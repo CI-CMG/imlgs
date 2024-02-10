@@ -12,7 +12,7 @@ import {
   useNavigate
 } from "react-router-dom"
 import { 
-  fetchCruiseNames, 
+  // fetchCruiseNames, 
   fetchDevices, 
   fetchLakes, 
   fetchPlatforms, 
@@ -30,6 +30,7 @@ import {
   fetchTextures
 } from '../queries'
 import { RepositoryName, getRepositories } from '../routes/repositories/data'
+import { CruiseName, getFirstPageOfCruises } from '../routes/cruises/data'
 import { useQueryClient, useQuery, useQueries, UseQueryResult } from "@tanstack/react-query"
 import SamplesCount from './samples-count';
 const routerBasename = import.meta.env.VITE_routerBasename
@@ -79,7 +80,8 @@ export default function FilterPanel(props:Props) {
       { queryKey: ['repositories', filters.toString()], queryFn: () => getRepositories(filters) },          // 0
       { queryKey: ['platforms', filters.toString()], queryFn: () => fetchPlatforms(filters) },              // 1
       { queryKey: ['devices', filters.toString()], queryFn: () => fetchDevices(filters) },                  // 2
-      { queryKey: ['cruise names', filters.toString()], queryFn: () => fetchCruiseNames(filters) },              // 3
+      // { queryKey: ['cruise names', filters.toString()], queryFn: () => fetchCruiseNames(filters) },
+      { queryKey: ['cruise names', filters.toString()], queryFn: () => getFirstPageOfCruises(filters) },    // 3
       { queryKey: ['lakes', filters.toString()], queryFn: () => fetchLakes(filters) },                      // 4
       { queryKey: ['provinces', filters.toString()], queryFn: () => fetchProvinces(filters) },              // 5
       { queryKey: ['weathering', filters.toString()], queryFn: () => fetchWeathering(filters) },            // 6
@@ -96,10 +98,10 @@ export default function FilterPanel(props:Props) {
   // console.log({results})
 
   // special handling for cruise
-  if (url.searchParams.get("cruise")) {
-    console.log('special handling for cruise ', url.searchParams.get("cruise") )
-    results[3].data = [url.searchParams.get("cruise") as string]
-  }
+  // if (url.searchParams.get("cruise")) {
+  //   console.log('special handling for cruise ', url.searchParams.get("cruise") )
+  //   results[3].data = [url.searchParams.get("cruise") as string]
+  // }
 
   // track which selects have >0 options and should be enabled
   const enabledSelects = results.map(result => {
@@ -113,7 +115,7 @@ export default function FilterPanel(props:Props) {
     setInputElementFromSearchParameter('repository-select', url.searchParams.get("repository") )
     setInputElementFromSearchParameter('platform-select', url.searchParams.get("platform") )
     setInputElementFromSearchParameter('device-select', url.searchParams.get("device") )
-    setInputElementFromSearchParameter('cruise-select', url.searchParams.get("cruise") )
+    setInputElementFromSearchParameter('cruise-select', url.searchParams.get("cruise_id") )
     setInputElementFromSearchParameter('lake-select', url.searchParams.get("lake") )
     setInputElementFromSearchParameter('province-select', url.searchParams.get("province") )
     setInputElementFromSearchParameter('igsn-text', url.searchParams.get("igsn") )
@@ -217,11 +219,11 @@ export default function FilterPanel(props:Props) {
   }
 
 
-  function formatCruiseSelect(data: string[]) {
+  function formatCruiseSelect(data: CruiseName[]) {
     if (data && data.length > 0 && data.length < 500) {
       return (
       <select
-        name="cruise" 
+        name="cruise_id" 
         id='cruise-select'
         title='filter samples by cruise name'
         onChange={onChangeHandler} 
@@ -229,13 +231,13 @@ export default function FilterPanel(props:Props) {
       >
         <option value="">-- Cruise --</option>
         {
-          data?.map((name, idx) => <option value={name} key={idx}>{name}</option>)
+          data?.map((cruise) => <option value={cruise.id} key={cruise.id}>{cruise.cruise}</option>)
         }
       </select>)
     } else if (data?.length === 0) {
       return (
         <select
-          name="cruise" 
+          name="cruise_id" 
           id='cruise-select'
           disabled
           style={{'width':'80%'}} 
