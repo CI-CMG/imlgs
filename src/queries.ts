@@ -136,18 +136,18 @@ async function fetchTotalSampleCount(): Promise<number> {
   return parseInt(data.count)
 }
 
-const fetchLithologies = async (filters: URLSearchParams): Promise<string[]> => {
-  const myFilters = new URLSearchParams(filters)
-  myFilters.delete('lithology')
-  // console.log('platform filters: ', myFilters.toString())
-  const response = await fetch(`${apiBaseUrl}/lithologies?items_per_page=2000&${myFilters.toString()}`)
-  if (response.status === 200) {
-    const paylod = await response.json()
-    return paylod.items as string[]
-  } else {
-    throw new Error(`${response.status}`)
-  }
-}
+// const fetchLithologies = async (filters: URLSearchParams): Promise<string[]> => {
+//   const myFilters = new URLSearchParams(filters)
+//   myFilters.delete('lithology')
+//   // console.log('platform filters: ', myFilters.toString())
+//   const response = await fetch(`${apiBaseUrl}/lithologies?items_per_page=2000&${myFilters.toString()}`)
+//   if (response.status === 200) {
+//     const paylod = await response.json()
+//     return paylod.items as string[]
+//   } else {
+//     throw new Error(`${response.status}`)
+//   }
+// }
 
 const fetchRockLithologies = async (filters: URLSearchParams): Promise<string[]> => {
   const myFilters = new URLSearchParams(filters)
