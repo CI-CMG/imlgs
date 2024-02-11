@@ -35,7 +35,7 @@ import Header from '../../components/header'
 
 
 export default function Samples() {
-  console.log('rendering Samples...')
+  // console.log('rendering Samples...')
   // const navigation = useNavigation()
   // const submit = useSubmit()
   const [zoomToSelected, setZoomToSelected] = useState<boolean>(true)
@@ -65,7 +65,7 @@ export default function Samples() {
   //   )
 
   function setFilters(formData: FormData) {
-    console.log('inside submitForm with ', formData)
+    // console.log('inside submitForm with ', formData)
     submit(formData)
   }
 

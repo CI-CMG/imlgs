@@ -8,7 +8,7 @@ const baseClass = 'Repositories'
 
 export default function Repositories() {
   const { repositories } = useLoaderData() as Awaited<ReturnType<typeof repositoriesLoader>>
-  console.log(`${repositories.length} repositories loaded`)
+  // console.log(`${repositories.length} repositories loaded`)
 
   return (
     <>

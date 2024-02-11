@@ -29,7 +29,7 @@ function buildIntervalRow(label:string, value:string) {
 
 
 function formatInterval(interval: Interval) {
-  console.log('inside formatInterval with ', interval)
+  // console.log('inside formatInterval with ', interval)
   const tableRows: Array<JSX.Element> = []
   let title = interval.interval ? `Interval ${interval.interval}`: ''
   if (interval.depth_top != null && interval.depth_bot != null) {
@@ -76,7 +76,7 @@ function formatInterval(interval: Interval) {
 
 
 function formatSampleDetail(sampleDetail:Sample) {
-  console.log({sampleDetail})
+  // console.log({sampleDetail})
   // shallow clone. Avoid modifying the state variable which is passed in
   const sample = Object.assign({}, sampleDetail)
 
@@ -167,7 +167,7 @@ export default function SampleDetail() {
   const { data: sampleDetail }: {data: Sample} = useQuery({
     ...sampleDetailQuery(id), 
     initialData})
-  console.log(sampleDetail)
+  // console.log(sampleDetail)
 
 
   function exportCSV() {

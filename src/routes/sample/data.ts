@@ -102,7 +102,7 @@ export interface Sample {
 
 
 export async function getSampleById( id: string ): Promise<Sample> {
-  console.log('inside getSampleById')
+  // console.log('inside getSampleById')
   const response = await fetch(`${apiBaseUrl}/samples/detail/${id}`)
   if (response.status !== 200) { throw new Error(response.status.toString()) }
   return response.json()
@@ -118,7 +118,7 @@ export const sampleDetailQuery = (id:string) => ({
 export const loader = 
   (queryClient:QueryClient) =>
     async (params:LoaderFunctionArgs) => {
-    console.log('inside loader function...')
+    // console.log('inside loader function...')
     const { id } = params.params
 
     if (! id) {

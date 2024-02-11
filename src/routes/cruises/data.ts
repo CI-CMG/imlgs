@@ -78,7 +78,7 @@ export async function getFirstPageOfCruises(defaultFilters: URLSearchParams):Pro
 
 
 export async function getCruisesCount(filters:URLSearchParams): Promise<number> {
-  console.log('inside getCruisesCount with ', filters.toString())
+  // console.log('inside getCruisesCount with ', filters.toString())
   const response = await fetch(`${apiBaseUrl}/cruises/count?${filters.toString()}`)
   if (! response.ok) {
     throw new Error(response.statusText)
