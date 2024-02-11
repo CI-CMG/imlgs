@@ -93,7 +93,7 @@ export function buildLayerDefinitionExpression(searchParams:URLSearchParams) {
       defs.push(`AGE='${searchParams.get('age')}'`) 
     }
     if (searchParams.get('cruise_id') && searchParams.get('cruise_id')) { 
-      defs.push(`CRUISE_ID='${searchParams.get('cruise_id')}'`) 
+      defs.push(`CRUISE_ID=${searchParams.get('cruise_id')}`)
     }
   }
   return defs.length ? defs.join(' and ') : ''
