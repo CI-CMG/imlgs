@@ -104,14 +104,13 @@ const defaultCenter = new Point({longitude: -98.5833, latitude: 39.8333})
 const defaultZoom = 4
 
 export default function MapPanel({zoomToSelected}: {zoomToSelected:boolean}) {
-  // console.log('rendering MapPanel...')
-  
   const baseClass = 'MapPanel'
   const [searchParams, setSearchParams] = useSearchParams()
-  const layerDefinitionExpression = buildLayerDefinitionExpression(searchParams)
+  const layerDefinitionRef= useRef<string>()
+  layerDefinitionRef.current = buildLayerDefinitionExpression(searchParams)
   
   // console.log('inside MapPanel with ', searchParams.toString())
-  // console.log('Map is getting layer def of ', layerDefinitionExpression)
+  // console.log('Map is getting layer def of ', layerDefinitionRef.current)
   
   // useRef to access to values shared between useEffect blocks that shouldn't change w/ each render
   // TODO: Better to use variables outside component?
@@ -119,153 +118,128 @@ export default function MapPanel({zoomToSelected}: {zoomToSelected:boolean}) {
   const samplesLayer = useRef<MapImageLayer>()
   const mapView = useRef<MapView>()
   const extentToolbarContainer = useRef<HTMLDivElement|null>(null)
-
   const [layerView, setLayerView] = useState<MapView>()
+ 
+  if (samplesLayer.current) {
+    samplesLayer.current.sublayers.at(0).definitionExpression = layerDefinitionRef.current
+  }
+
+  // close any popups remaining from previous filter selections
+  if (mapView.current) {
+    mapView.current.closePopup()
+  }
 
   const identifyParams = new IdentifyParameters()
   identifyParams.tolerance = 3
   identifyParams.layerIds = [0]
   identifyParams.layerOption = "top"
-
-   // runs when component is mounted
-   useEffect(() => {
-    const map = new ArcGISMap({
-        basemap: "oceans"
-    })
-    
-    // wait until DOM node has been constructed
-    if (mapDiv.current) {
-        if (!mapView.current) {
-          const view = new MapView({
-            map: map,
-            container: mapDiv.current,
-            zoom: defaultZoom,
-            center: defaultCenter
-          })
-          mapView.current = view
-
-          const searchWidget = new Search({view: view})
-          const homeWidget = new Home({view: view})
-          const ccWidget = new CoordinateConversion({view: view})
-          const scaleBar = new ScaleBar({view: view})
-          scaleBar.style = 'ruler'
-          
-
-          view.when(function(){
-            if (extentToolbarContainer.current) { view.ui.add(extentToolbarContainer.current, "top-left") }
-            view.ui.add(searchWidget, {position: "top-right"})
-            view.ui.add(homeWidget, {position: "top-left"})
-            view.ui.add(ccWidget, {position: "bottom-left"})
-            view.ui.add(scaleBar, {position: "bottom-right"})
-            
-
-            setLayerView(view)
-            if (zoomToSelected && layerDefinitionExpression) {
-              zoomTo(layerDefinitionExpression)
-            }
-            view.on("click", executeIdentify)
-          })
-        } // end setup MapView
-       
-        if (!samplesLayer.current) {
-          // console.log('initial layer definition expression: ', layerDefinitionExpression)
-          const layer = new MapImageLayer({
-            url: mapserviceUrl,
-            sublayers: [
-                {id: 0, visible: true, definitionExpression: layerDefinitionExpression}
-            ]
-          })
-          samplesLayer.current = layer
-          map.add(layer)
-        } // end setup MapImageLayer
-
-      } else {
-        console.log("mapDiv not yet available")
-    }
-
-    return () => {
-      // run component cleanup
-    }
-}, []) // end one-time map setup
-
-
-// sync the URL search params with the map layer definition
-useEffect(() => {
-  // MapImageLayer and MapView not necessarily available by the time this first runs
-  if (! mapView.current || ! samplesLayer.current) {
-      console.warn('MapView and/or MapImageLayer are not yet ready')
-      return
-  }
-
-  // "All Samples" - WARNING: hardcoded to ArcGIS mapservice definition
-  const sublayer = samplesLayer.current.findSublayerById(0)
-  if (sublayer) {
-      sublayer.definitionExpression = layerDefinitionExpression
-  } else {
-      console.error('sublayer not found')
-  }
-
-  // don't change the MapView extent
-  if (! zoomToSelected) {
-    return
-  }
-
-  if (layerDefinitionExpression) {
-    zoomTo(layerDefinitionExpression)
+  
+  if (layerDefinitionRef.current && zoomToSelected) {
+    zoomTo(layerDefinitionRef.current)
   } else if (mapView.current) {
     mapView.current.center = defaultCenter
     mapView.current.zoom = defaultZoom
   }
-}, [layerDefinitionExpression, zoomToSelected])
+
+  // one-time map setup
+  useEffect(() => {
+    const map = new ArcGISMap({
+        basemap: "oceans"
+    })
+
+    if (!mapDiv.current) {
+      console.warn('DOM node for map is not ready')
+      return
+    }
+
+    if (!mapView.current) {
+      const view = new MapView({
+        map: map,
+        container: mapDiv.current,
+        zoom: defaultZoom,
+        center: defaultCenter
+      })
+      mapView.current = view
+
+      const searchWidget = new Search({view: view})
+      const homeWidget = new Home({view: view})
+      const ccWidget = new CoordinateConversion({view: view})
+      const scaleBar = new ScaleBar({view: view})
+      scaleBar.style = 'ruler'
+      
+      view.when(function(){
+        if (extentToolbarContainer.current) { view.ui.add(extentToolbarContainer.current, "top-left") }
+        view.ui.add(searchWidget, {position: "top-right"})
+        view.ui.add(homeWidget, {position: "top-left"})
+        view.ui.add(ccWidget, {position: "bottom-left"})
+        view.ui.add(scaleBar, {position: "bottom-right"})
+        
+        setLayerView(view)
+        if (zoomToSelected && layerDefinitionRef.current) {
+          zoomTo(layerDefinitionRef.current)
+        }
+        view.on("click", executeIdentify)
+      })
+    } // end setup MapView
+    
+    if (!samplesLayer.current) {
+      // apply any layer definition from initial component load
+      const layer = new MapImageLayer({
+        url: mapserviceUrl,
+        sublayers: [
+          {id: 0, visible: true, definitionExpression: layerDefinitionRef.current}
+        ]
+      })
+      samplesLayer.current = layer
+      map.add(layer)
+    } // end setup MapImageLayer
+
+  return () => {
+    // run component cleanup
+  }
+}, []) // end one-time map setup
 
 
 function executeIdentify(event:__esri.ViewClickEvent) {
   if (mapDiv.current) { mapDiv.current.style.cursor = "wait" }
 
-  if (!mapView.current) {
-      console.warn('MapView not ready')
+  if (!mapView.current || !samplesLayer.current) {
+      console.warn('Map is not ready')
       return
   }
   // Set the geometry to the location of the view click
-  identifyParams.width = mapView.current.width
-  identifyParams.height = mapView.current.height
   identifyParams.geometry = event.mapPoint
   identifyParams.mapExtent = mapView.current.extent
-  if (samplesLayer.current) {
-    identifyParams.sublayers = samplesLayer.current.sublayers.toArray()
-    // only be one sublayer defined for MapImageLayer
-    identifyParams.sublayers[0].definitionExpression = layerDefinitionExpression
-  }
-  // identifyParams.layerOption = "visible"
-  // document.getElementById("viewDiv").style.cursor = "wait"
+  identifyParams.sublayers = samplesLayer.current.sublayers.toArray()
+
   identify
     .identify(mapserviceUrl, identifyParams)
     .then(function (response) {
       const results:IdentifyResult[] = response.results
       return results.map(function(result) {
-      const feature = result.feature
-      // console.log({feature})
-      // hack to work around JSAPI extraneous precision in some cases
-      feature.attributes.LAT = parseFloat(feature.attributes.LAT.toFixed(5))
-      feature.attributes.LON = parseFloat(feature.attributes.LON.toFixed(5))
-      feature.attributes.WATER_DEPTH = (feature.attributes.WATER_DEPTH) ? feature.attributes.WATER_DEPTH.toLocaleString() : 'N/A'
-      // TODO can't get autocast to work w/ types
-      const popupTemplate = new PopupTemplate({
-      title: "Sample ID {SAMPLE}",
-      content: `<b>Repository:</b> {FACILITY_CODE}
-        <br><b>Location:</b> {LON}, {LAT}
-        <br><b>Year:</b> {YEAR}
-        <br><b>Water Depth:</b> {WATER_DEPTH}m
-        <br><b>Device:</b> {DEVICE}
-        <br><a href="${mapviewerUrl}/{IMLGS}">more detail</a>`
-      })
-      feature.popupTemplate = popupTemplate
-      return feature
+        const feature = result.feature
+        // hack to work around JSAPI extraneous precision in some cases
+        feature.attributes.LAT = parseFloat(feature.attributes.LAT.toFixed(5))
+        feature.attributes.LON = parseFloat(feature.attributes.LON.toFixed(5))
+        feature.attributes.WATER_DEPTH = (feature.attributes.WATER_DEPTH) ? feature.attributes.WATER_DEPTH.toLocaleString() : 'N/A'
+        
+        // TODO hyperlink is not formatting correctly
+        const popupTemplate = new PopupTemplate({
+          title: "Sample ID {SAMPLE}",
+          content: `<b>Repository:</b> {FACILITY_CODE}
+            <br><b>Location:</b> {LON}, {LAT}
+            <br><b>Year:</b> {YEAR}
+            <br><b>Water Depth:</b> {WATER_DEPTH}m
+            <br><b>Device:</b> {DEVICE}
+            <br><a href="${mapviewerUrl}/{IMLGS}">more detail</a>`
+        })
+        feature.popupTemplate = popupTemplate
+        return feature
     })
   }).then(showPopup)
 
+
   function showPopup(response:Graphic[]) {
-    // console.log({response})
     if(response.length > 0 && mapView.current) {
       mapView.current.popup.open({
         features: response,
@@ -278,8 +252,7 @@ function executeIdentify(event:__esri.ViewClickEvent) {
 
 
 function zoomTo(layerDefinitionExpression:string) {
-  if (! mapView.current) {
-    // console.warn('cannot zoomTo before MapView is ready')
+  if (!mapView.current) {
     return
   }
   const queryURL = mapserviceUrl+'/0/query'
@@ -324,7 +297,6 @@ function zoomTo(layerDefinitionExpression:string) {
 
 
 function updateAreaOfInterest(coords:Array<number>|undefined) {
-  // console.log('inside updateAreaOfInterest with ', coords)
   const mySearchParams = new URLSearchParams(searchParams)
   if (coords?.length) {
     mySearchParams.set('bbox', coords ? coords.join(','): '')
