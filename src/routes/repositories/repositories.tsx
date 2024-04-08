@@ -10,15 +10,6 @@ export default function Repositories() {
   const { repositories } = useLoaderData() as Awaited<ReturnType<typeof repositoriesLoader>>
   // console.log(`${repositories.length} repositories loaded`)
 
-  //case-insensitive sort by repository (facility) name
-  repositories.sort((a, b) => {
-    const facilityA = a.facility.toUpperCase()
-    const facilityB = b.facility.toUpperCase()
-    if (facilityA < facilityB) { return -1 }
-    if (facilityA > facilityB) { return 1 }
-    return 0     // names must be equal
-  })
-
   return (
     <>
     <Header/>

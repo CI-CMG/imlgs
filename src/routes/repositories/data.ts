@@ -59,6 +59,19 @@ const fetchRepositoryNames = async (filters: URLSearchParams): Promise<string[]>
 */
 
 
+//case-insensitive sort by repository (facility) name
+// WARNING: mutates the provided array
+function sortRepositoriesByName(repositories:RepositoryName[]) { 
+  repositories.sort((a, b) => {
+    const facilityA = a.facility.toUpperCase()
+    const facilityB = b.facility.toUpperCase()
+    if (facilityA < facilityB) { return -1 }
+    if (facilityA > facilityB) { return 1 }
+    return 0     // names must be equal
+  })
+}
+
+
 export async function getRepositories(filters: URLSearchParams): Promise<RepositoryName[]> {
   const myFilters = new URLSearchParams(filters)
   myFilters.delete('repository')
@@ -70,6 +83,7 @@ export async function getRepositories(filters: URLSearchParams): Promise<Reposit
   }
   const payload = await response.json()
   RepositoryResults.parse(payload)
+  sortRepositoriesByName(payload.items)
   return payload.items as RepositoryName[]
 }
 
