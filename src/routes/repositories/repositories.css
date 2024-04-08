@@ -1,6 +1,6 @@
 .Repositories--wrapper {
   display: grid;
-  grid-template-columns: 300px auto;
+  grid-template-columns: 450px auto;
   grid-template-areas:
       "sidebar details";
   width: 100vw;
