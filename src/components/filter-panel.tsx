@@ -50,9 +50,10 @@ function setInputElementFromSearchParameter(id: string, value: string|null) {
 
 
 export interface Props {
+  filters: URLSearchParams,
   zoomToSelected: boolean,
   zoomToggleHandler: (checked:boolean) => void,
-  setFilters: (searchParams:FormData) => void
+  setFilters: (searchParams:URLSearchParams) => void
 }
 
 
@@ -376,9 +377,9 @@ export default function FilterPanel(props:Props) {
             aria-label="IGSN"
             type="search"
             name="igsn"
-            maxLength={9}
+            maxLength={18}
             minLength={9}
-            size={15}
+            size={22}
             autoComplete='off'
             onKeyDown={event => checkForEnterKey(event) }
             onBlur={onBlurHandler}
