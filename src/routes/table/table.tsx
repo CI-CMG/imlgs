@@ -114,6 +114,9 @@ export default function SamplesTable() {
             <option value='water_depth'>Water Depth (m)</option>
             <option value='start_date'>Collection Date</option>
             <option value='igsn'>IGSN</option>
+            <option value='sample'>Sample ID</option>
+            <option value='lat'>Latitude</option>
+            <option value='lon'>Longitude</option>
           </select>
         </div>
       </nav>
