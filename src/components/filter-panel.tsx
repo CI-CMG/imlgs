@@ -368,8 +368,7 @@ export default function FilterPanel(props:Props) {
         </div> */}
 
         
-        <div style={{'display': 'flex', 'alignItems': 'center', 'justifyContent': 'space-around', 'paddingTop': '10px'}}>
-          <div>
+          <div style={{'paddingTop': '10px','paddingLeft': '35px'}}>
           <label htmlFor="igsn-text" style={{'paddingRight':'5px', 'fontSize': 'small'}}>IGSN</label>
           <input
             id="igsn-text"
@@ -377,15 +376,15 @@ export default function FilterPanel(props:Props) {
             aria-label="IGSN"
             type="search"
             name="igsn"
-            maxLength={18}
+            maxLength={32}
             minLength={9}
-            size={22}
+            size={35}
             autoComplete='off'
             onKeyDown={event => checkForEnterKey(event) }
             onBlur={onBlurHandler}
           />
           </div>
-          <div>
+          <div style={{'paddingTop': '10px', 'paddingLeft': '35px'}}>
             <label htmlFor="start_date_begins_with-text" style={{'paddingRight':'5px', 'fontSize': 'small'}}>Date</label>
             <input
               id="start_date_begins_with-text"
@@ -402,7 +401,6 @@ export default function FilterPanel(props:Props) {
               onBlur={onBlurHandler}
             />
           </div>
-        </div>
 
         <div style={{'paddingLeft': '10px', 'paddingRight': '10px', 'marginTop': '10px'}}>
           <fieldset style={{'display': 'flex', 'alignItems': 'center', 'justifyContent': 'space-around'}}>
