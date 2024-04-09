@@ -1,53 +1,25 @@
 import './filter-panel.css'
-import { useEffect, useRef, useState } from "react"
-import { searchParamsToFilters } from '../utilities'
+import { Form } from "react-router-dom"
 import { 
-  Outlet, 
-  NavLink,
-  useLoaderData,
-  Form,
-  redirect,
-  useNavigation,
-  useSubmit,
-  useNavigate
-} from "react-router-dom"
-import { 
-  // fetchCruiseNames, 
   fetchDevices, 
   fetchLakes, 
   fetchPlatforms, 
   fetchProvinces, 
-  // fetchRepositoryNames,
   fetchMetamorphism,
   fetchMineralogies,
   fetchWeathering,
-  // fetchLithologies,
   fetchRockLithologies,
-  // fetchCompositions,
   fetchLithologicCompositions,
   fetchGeologicAges,
   fetchRemarks,
   fetchTextures
 } from '../queries'
-import { RepositoryName, getRepositories } from '../routes/repositories/data'
+import { getRepositories } from '../routes/repositories/data'
 import { CruiseName, getFirstPageOfCruises } from '../routes/cruises/data'
-import { useQueryClient, useQuery, useQueries, UseQueryResult } from "@tanstack/react-query"
+import { useQueries } from "@tanstack/react-query"
 import SamplesCount from './samples-count';
+
 const routerBasename = import.meta.env.VITE_routerBasename
-
-const notEmpty= /^\S+/
-
-
-// perhaps create a series or related functions which check for different expected data types, e.g. string, integer, etc.
-function setInputElementFromSearchParameter(id: string, value: string|null) {
-  // TODO verify that found element is indeed a HTMLInputElement, e.g. check inputElement.tagName?
-  // WARNING: depends on element name == element id
-  const inputElement = document.getElementById(id) as HTMLInputElement
-  if (!inputElement) { return }
-  // const elementValue = (value && notEmpty.test(value))? value : ''
-  inputElement.value = (value && notEmpty.test(value))? value : '' 
-}
-
 
 export interface Props {
   filters: URLSearchParams,
@@ -58,30 +30,19 @@ export interface Props {
 
 
 export default function FilterPanel(props:Props) {
-  // console.log('rendering FilterPanel...')
-  const {zoomToSelected, zoomToggleHandler, setFilters} = props
-  const navigate = useNavigate();
+  const {zoomToSelected, zoomToggleHandler, setFilters, filters} = props
   const baseClass = 'FilterPanel'
-  const navigation = useNavigation()
 
-  const queryClient = useQueryClient()
-  // console.log(queryClient.getDefaultOptions())
+  // create a copy of filter parameters passed into component. This copy is
+  // updated by the onChange handlers and passed back to the parent
+  let searchParams = new URLSearchParams(filters)
   
-
-  const submit = useSubmit()
-
-  const url = new URL(window.location.href)
-  const filters = searchParamsToFilters(url.searchParams)
-  // console.log('all filters: ', filters.toString())
-  
-  // execute queries used to populate Select components. By convention, list these
-  // in the same order the inputs they populate appear on the page
+  // execute queries used to populate Select components
   const results = useQueries({
     queries: [ 
       { queryKey: ['repositories', filters.toString()], queryFn: () => getRepositories(filters) },          // 0
       { queryKey: ['platforms', filters.toString()], queryFn: () => fetchPlatforms(filters) },              // 1
       { queryKey: ['devices', filters.toString()], queryFn: () => fetchDevices(filters) },                  // 2
-      // { queryKey: ['cruise names', filters.toString()], queryFn: () => fetchCruiseNames(filters) },
       { queryKey: ['cruise names', filters.toString()], queryFn: () => getFirstPageOfCruises(filters) },    // 3
       { queryKey: ['lakes', filters.toString()], queryFn: () => fetchLakes(filters) },                      // 4
       { queryKey: ['provinces', filters.toString()], queryFn: () => fetchProvinces(filters) },              // 5
@@ -93,91 +54,18 @@ export default function FilterPanel(props:Props) {
       { queryKey: ['rock_lithologies', filters.toString()], queryFn: () => fetchRockLithologies(filters) }, // 11
       { queryKey: ['remarks', filters.toString()], queryFn: () => fetchRemarks(filters) },                  // 12
       { queryKey: ['geologic_ages', filters.toString()], queryFn: () => fetchGeologicAges(filters) }       // 13
-      // { queryKey: ['compositions', filters.toString()], queryFn: () => fetchCompositions(filters) },        // 13
     ]
   })
-  // console.log({results})
 
-  // special handling for cruise
-  // if (url.searchParams.get("cruise")) {
-  //   console.log('special handling for cruise ', url.searchParams.get("cruise") )
-  //   results[3].data = [url.searchParams.get("cruise") as string]
-  // }
-
-  // track which selects have >0 options and should be enabled
+  // track which selects have >0 options (i.e. query results) and should be enabled
   const enabledSelects = results.map(result => {
     return result.data ? result.data.length > 0 : false
   })
 
-  
-  useEffect(() => {
-    // console.log('inside useEffect to sync URL search params with form input elements')
-    // sync URL search parameters w/ form elements. Need to explicitly list each search parameter
-    setInputElementFromSearchParameter('repository-select', url.searchParams.get("repository") )
-    setInputElementFromSearchParameter('platform-select', url.searchParams.get("platform") )
-    setInputElementFromSearchParameter('device-select', url.searchParams.get("device") )
-    setInputElementFromSearchParameter('cruise-select', url.searchParams.get("cruise_id") )
-    setInputElementFromSearchParameter('lake-select', url.searchParams.get("lake") )
-    setInputElementFromSearchParameter('province-select', url.searchParams.get("province") )
-    setInputElementFromSearchParameter('igsn-text', url.searchParams.get("igsn") )
-    setInputElementFromSearchParameter('min_depth-text', url.searchParams.get("min_depth") )
-    setInputElementFromSearchParameter('max_depth-text', url.searchParams.get("max_depth") )
-    setInputElementFromSearchParameter('start_date_begins_with-text', url.searchParams.get("start_date_begins_with") )
-    setInputElementFromSearchParameter('weathering-select', url.searchParams.get("weathering") )
-    setInputElementFromSearchParameter('metamorphism-select', url.searchParams.get("metamorphism") )
-    setInputElementFromSearchParameter('mineralogy-select', url.searchParams.get("mineralogy") )
-    setInputElementFromSearchParameter('lithologic_composition-select', url.searchParams.get("lithologic_composition") )
-    setInputElementFromSearchParameter('texture-select', url.searchParams.get("texture") )
-    setInputElementFromSearchParameter('rock_lithology-select', url.searchParams.get("rock_lithology") )
-    setInputElementFromSearchParameter('composition-select', url.searchParams.get("composition") )
-    setInputElementFromSearchParameter('remark-select', url.searchParams.get("remark") )
-    setInputElementFromSearchParameter('geologic_age-select', url.searchParams.get("age") )
-  }, [url.searchParams])
- 
-/*
-  useEffect(() => {
-    // console.log('inside useEffect to set initial Select option...')
-    const selectNames = [
-      'repository-select', 
-      'platform-select', 
-      'device-select', 
-      'cruise-select', 
-      'lake-select', 
-      // 'province-select',
-      'weathering-select',
-      'mineralology-select',
-      'metamorphism-select',
-      'lithologic_composition-select',
-      'texture-select',
-      'rock_lithology-select',
-      'composition-select',
-      'remark-select'
-    ]
-      
-      selectNames.forEach(name => {
-      const element = document.getElementById(name) as HTMLSelectElement
-      if (element && element.options.length == 2) {
-        element.selectedIndex = 1
-      }
-    })
-  }, [results])
-*/
 
+  // doesn't actually directly submit Form but calls method on parent
   function submitForm() {
-    // console.log('inside submitForm...')
-    const formData = new FormData()
-    
-    // build FormData from values of all input elements
-    const searchForm = document?.getElementById("search-form") as HTMLFormElement
-    for (const element of searchForm.elements) {
-      const inputElem = element as HTMLFormElement
-      // why is FIELDSET in the HTMLFormControlsCollection?
-      if (inputElem.tagName === 'FIELDSET') { continue }
-      // TODO check for whitespace only?
-      if (inputElem.value !== '') { formData.append(inputElem.name, inputElem.value)}
-    }
-    setFilters(formData)
-    // submit(formData)
+    setFilters(searchParams)
   }
 
 
@@ -193,33 +81,30 @@ export default function FilterPanel(props:Props) {
   function onBlurHandler(event:React.FocusEvent<HTMLInputElement>):void {
     event.target.blur()
     // no need to submit form if input didn't change
-    if (!event.target.value && !url.searchParams.get(event.target.name)) { return }
-    if (event.target.value === url.searchParams.get(event.target.name)) { return }
+    if (!event.target.value && !searchParams.get(event.target.name)) { return }
+    if (event.target.value === searchParams.get(event.target.name)) { return }
     submitForm()
   }
 
 
   // used for select input elements
-  function onChangeHandler(event: React.ChangeEvent<HTMLSelectElement>) {
-    // console.log(`inside onChangeHandler: ${event.target.name} changed to ${event.target.value}...`)
+  function onChangeHandler(event: React.ChangeEvent<HTMLSelectElement|HTMLInputElement>) {
+    if (event.target.value) {
+      searchParams.set(event.target.name, event.target.value)
+    } else {
+      searchParams.delete(event.target.name)
+    }
     submitForm()
   }
 
 
   function resetButtonHandler(event: React.MouseEvent<HTMLButtonElement>) {
-    // console.log('reset button clicked: ', event)
-    const onlyInputs = document.querySelectorAll('#search-form input') as NodeListOf<HTMLInputElement>
-    onlyInputs.forEach(input => {
-      input.value = ''
-    })
-    const onlySelects = document.querySelectorAll('#search-form select') as NodeListOf<HTMLSelectElement>
-    onlySelects.forEach(input => {
-      input.value = ''
-    })
+    searchParams = new URLSearchParams()
     submitForm()
   }
 
 
+  // cruise select is different in that it can be disabled for too many or too few options
   function formatCruiseSelect(data: CruiseName[]) {
     if (data && data.length > 0 && data.length < 500) {
       return (
@@ -229,6 +114,7 @@ export default function FilterPanel(props:Props) {
         title='filter samples by cruise name'
         onChange={onChangeHandler} 
         style={{'width':'80%'}}
+        defaultValue={searchParams.has('cruise')? searchParams.get('cruise') as string: ''}
       >
         <option value="">-- Cruise --</option>
         {
@@ -245,7 +131,6 @@ export default function FilterPanel(props:Props) {
           title="No cruises with this combination of filters">
         <option value="">-- Cruise --</option>
       </select>
-        // <p style={{'fontSize': 'x-small', 'textAlign':'center'}}>No cruises with this combination of filters.</p>
       )
     } else if (data?.length >= 500) {
       return (
@@ -257,13 +142,14 @@ export default function FilterPanel(props:Props) {
           title="Too many cruises to display. Please select an additional filter(s) first">
         <option value="">-- Cruise --</option>
       </select>
-        // <p style={{'fontSize': 'x-small', 'textAlign':'center'}}>Too many cruises to display. Please select additional filter(s)</p>
       )
     }
   }
 
+
   function tableButtonHandler() {
     const tableSearchParams = new URLSearchParams(filters)
+    // default sort parameters
     tableSearchParams.set('order', 'facility_code:asc')
     tableSearchParams.append('order', 'platform:asc')
     tableSearchParams.append('order', 'cruise:asc')
@@ -279,11 +165,8 @@ export default function FilterPanel(props:Props) {
         <SamplesCount/>
       </div>
 
-      <Form
-        id="search-form"
-        role="search"
-      >
-        <div style={{'paddingTop': '10px','textAlign': 'center'}}>
+      <Form id="search-form" role="search">
+        <div className='selectContainer'>
           <select
             name="repository"
             id='repository-select'
@@ -291,6 +174,7 @@ export default function FilterPanel(props:Props) {
             disabled={!enabledSelects[0]}
             onChange={onChangeHandler} 
             style={{'width':'80%'}}
+            value={searchParams.has('repository')? searchParams.get('repository') as string: ''}
           >
             <option value="">-- Repository --</option>
             {
@@ -299,7 +183,7 @@ export default function FilterPanel(props:Props) {
           </select>
         </div>
 
-        <div style={{'paddingTop': '10px','textAlign': 'center'}}>
+        <div className='selectContainer'>
           <select 
             name="platform" 
             id='platform-select'
@@ -307,6 +191,7 @@ export default function FilterPanel(props:Props) {
             disabled={!enabledSelects[1]}
             onChange={onChangeHandler} 
             style={{'width':'80%'}}
+            value={searchParams.has('platform')? searchParams.get('platform') as string: ''}
           >
             <option value="">-- Platform --</option>
             {
@@ -315,7 +200,7 @@ export default function FilterPanel(props:Props) {
           </select>
         </div>
 
-        <div style={{'paddingTop': '10px','textAlign': 'center'}}>
+        <div className='selectContainer'>
           <select 
             name="device" 
             id='device-select'
@@ -323,6 +208,7 @@ export default function FilterPanel(props:Props) {
             disabled={!enabledSelects[2]}
             onChange={onChangeHandler} 
             style={{'width':'80%'}}
+            value={searchParams.has('device')? searchParams.get('device') as string: ''}
           >
             <option value="">-- Device --</option>
             {
@@ -331,18 +217,19 @@ export default function FilterPanel(props:Props) {
           </select>
         </div>
         
-        <div style={{'paddingTop': '10px','textAlign': 'center'}}>
+        <div className='selectContainer'>
         { results[3].data ?  formatCruiseSelect(results[3].data) : '' }
         </div>
         
-        <div style={{'paddingTop': '10px','textAlign': 'center'}}>
+        <div className='selectContainer'>
           <select 
-            name="lake" 
+            name="lake"
             id='lake-select'
             title={enabledSelects[4] ? "filter samples by lake" : "no lakes with this combination of filters"}
             disabled={!enabledSelects[4]}
             onChange={onChangeHandler}
             style={{'width':'80%'}}
+            value={searchParams.has('repository')? searchParams.get('repository') as string: ''}
             >
             <option value="">-- Lake --</option>
             {
@@ -350,25 +237,7 @@ export default function FilterPanel(props:Props) {
             }
           </select>
         </div>
-
-        {/* <div style={{'paddingTop': '10px','textAlign': 'center'}}>
-          <select 
-            name="province" 
-            id='province-select'
-            title={enabledSelects[5] ? "filter samples by physiographic province" : "no physiographic provinces with this combination of filters"}
-            disabled={!enabledSelects[5]}
-            onChange={onChangeHandler} 
-            style={{'width':'80%'}}
-          >
-            <option value="">-- Physiographic Province --</option>
-            {
-              results[5].data?.map(name => <option value={name} key={name}>{name}</option>)
-            }          
-          </select>
-        </div> */}
-
-        
-          <div style={{'paddingTop': '10px','paddingLeft': '35px'}}>
+        <div style={{'paddingTop': '10px','paddingLeft': '35px'}}>
           <label htmlFor="igsn-text" style={{'paddingRight':'5px', 'fontSize': 'small'}}>IGSN</label>
           <input
             id="igsn-text"
@@ -382,26 +251,30 @@ export default function FilterPanel(props:Props) {
             autoComplete='off'
             onKeyDown={event => checkForEnterKey(event) }
             onBlur={onBlurHandler}
+            onChange={onChangeHandler}
+            value={searchParams.has('igsn')? searchParams.get('igsn') as string: ''}
           />
-          </div>
-          <div style={{'paddingTop': '10px', 'paddingLeft': '35px'}}>
-            <label htmlFor="start_date_begins_with-text" style={{'paddingRight':'5px', 'fontSize': 'small'}}>Date</label>
-            <input
-              id="start_date_begins_with-text"
-              title='filter samples by date string'
-              aria-label="start date"
-              placeholder='YYYYMMDD'
-              type="search"
-              name="start_date_begins_with"
-              maxLength={8}
-              minLength={4}
-              size={13}
-              autoComplete='off'
-              onKeyDown={event => checkForEnterKey(event) }
-              onBlur={onBlurHandler}
-            />
-          </div>
+        </div>
+        <div style={{'paddingTop': '10px', 'paddingLeft': '35px'}}>
+          <label htmlFor="start_date_begins_with-text" style={{'paddingRight':'5px', 'fontSize': 'small'}}>Date</label>
+          <input
+            id="start_date_begins_with-text"
+            title='filter samples by date string'
+            aria-label="start date"
+            placeholder='YYYYMMDD'
+            type="search"
+            name="start_date_begins_with"
+            maxLength={8}
+            minLength={4}
+            size={13}
+            autoComplete='off'
+            onKeyDown={event => checkForEnterKey(event) }
+            onBlur={onBlurHandler}
+            onChange={onChangeHandler}
+            value={searchParams.has('igsn')? searchParams.get('igsn') as string: ''}
 
+          />
+        </div>
         <div style={{'paddingLeft': '10px', 'paddingRight': '10px', 'marginTop': '10px'}}>
           <fieldset style={{'display': 'flex', 'alignItems': 'center', 'justifyContent': 'space-around'}}>
             <legend style={{'fontSize': 'small'}}>Water Depth (m)</legend>
@@ -410,13 +283,15 @@ export default function FilterPanel(props:Props) {
               aria-label="min depth"
               title='filter samples taken from water >= this depth'
               placeholder="min"
-              type="search"
+              type="number"
               name="min_depth"
-              maxLength={6}
-              minLength={6}
-              size={10}
+              // maxLength={6}
+              // minLength={6}
+              // size={10}
               onKeyDown={event => checkForEnterKey(event) }
               onBlur={onBlurHandler}
+              onChange={onChangeHandler}
+              value={searchParams.has('min_depth')? searchParams.get('min_depth') as string: ''}
             />
             <input
               id="max_depth-text"
@@ -430,6 +305,8 @@ export default function FilterPanel(props:Props) {
               size={10}
               onKeyDown={event => checkForEnterKey(event) }
               onBlur={onBlurHandler}
+              onChange={onChangeHandler}
+              value={searchParams.has('max_depth')? searchParams.get('max_depth') as string: ''}
             />
         </fieldset>
         </div>
@@ -444,6 +321,7 @@ export default function FilterPanel(props:Props) {
               id='lithologic_composition-select' 
               onChange={onChangeHandler} 
               style={{'width':'80%'}}
+              value={searchParams.has('lithologic_composition')? searchParams.get('lithologic_composition') as string: ''}
             >
               <option value="">-- Lithologic Composition --</option>
               {
@@ -457,6 +335,7 @@ export default function FilterPanel(props:Props) {
               disabled={!enabledSelects[10]}
               onChange={onChangeHandler} 
               style={{'width':'80%'}}
+              value={searchParams.has('texture')? searchParams.get('texture') as string: ''}
             >
               <option value="">-- Texture --</option>
               {
@@ -470,6 +349,7 @@ export default function FilterPanel(props:Props) {
               id='mineralogy-select' 
               onChange={onChangeHandler} 
               style={{'width':'80%'}}
+              value={searchParams.has('mineralogy')? searchParams.get('mineralogy') as string: ''}
             >
               <option value="">-- Rock Mineralogy --</option>
               {
@@ -482,7 +362,8 @@ export default function FilterPanel(props:Props) {
               title={enabledSelects[6] ? "filter samples by rock weathering" : "no weathering values with this combination of filters"}
               disabled={!enabledSelects[6]}
               onChange={onChangeHandler} 
-              style={{'width':'80%'}} 
+              style={{'width':'80%'}}
+              value={searchParams.has('weathering')? searchParams.get('weathering') as string: ''}
             >
               <option value="">-- Rock Weathering --</option>
               {
@@ -496,6 +377,7 @@ export default function FilterPanel(props:Props) {
               id='metamorphism-select' 
               onChange={onChangeHandler} 
               style={{'width':'80%'}}
+              value={searchParams.has('metamorphism')? searchParams.get('metamorphism') as string: ''}
             >
               <option value="">-- Rock Metamorphism --</option>
               {
@@ -508,7 +390,8 @@ export default function FilterPanel(props:Props) {
               title={enabledSelects[13] ? "filter samples by geologic age" : "no geologic age values with this combination of filters"}
               disabled={!enabledSelects[13]}
               onChange={onChangeHandler}
-              style={{'width':'80%'}} 
+              style={{'width':'80%'}}
+              value={searchParams.has('age')? searchParams.get('age') as string: ''}
             >
               <option value="">-- Geologic Age --</option>
               {
@@ -521,7 +404,8 @@ export default function FilterPanel(props:Props) {
               title={enabledSelects[11] ? "filter samples by rock lithology" : "no rock lithology values with this combination of filters"}
               disabled={!enabledSelects[11]}
               onChange={onChangeHandler} 
-              style={{'width':'80%'}} 
+              style={{'width':'80%'}}
+              value={searchParams.has('rock_lithology')? searchParams.get('rock_lithology') as string: ''}
             >
               <option value="">-- Rock Lithology --</option>
               {
@@ -534,7 +418,8 @@ export default function FilterPanel(props:Props) {
               title={enabledSelects[12] ? "filter samples by rock glass remarks" : "no rock glass remarks with this combination of filters"}
               disabled={!enabledSelects[12]}
               onChange={onChangeHandler} 
-              style={{'width':'80%'}} 
+              style={{'width':'80%'}}
+              value={searchParams.has('remark')? searchParams.get('remark') as string: ''}
             >
               <option value="">-- Rock Glass Remarks & Mn/Fe Oxide --</option>
               {
