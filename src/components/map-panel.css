@@ -25,6 +25,16 @@
 .esri-coordinate-conversion__display {
   font-size: 14px;
 }
+
+.esri-scale-bar__bar-container {
+  /* background-color: whitesmoke; */
+}
+
+#scaleBarContainer {
+  padding: 3px;
+  background-color: lightblue;
+  opacity: 90%;
+}
 /*
 .esri-feature-content a {
   text-decoration: underline;

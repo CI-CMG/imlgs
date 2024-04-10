@@ -164,7 +164,9 @@ export default function MapPanel({zoomToSelected}: {zoomToSelected:boolean}) {
       const searchWidget = new Search({view: view})
       const homeWidget = new Home({view: view})
       const ccWidget = new CoordinateConversion({view: view})
-      const scaleBar = new ScaleBar({view: view})
+      const scaleBarContainer = document.createElement("div")
+      scaleBarContainer.setAttribute('id', 'scaleBarContainer')
+      const scaleBar = new ScaleBar({view: view, container: scaleBarContainer})
       scaleBar.style = 'ruler'
       
       view.when(function(){
