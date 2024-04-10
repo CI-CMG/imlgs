@@ -21,6 +21,10 @@
 .esri-popup__content a:link {
   color: #323232;
 }
+
+.esri-coordinate-conversion__display {
+  font-size: 14px;
+}
 /*
 .esri-feature-content a {
   text-decoration: underline;
