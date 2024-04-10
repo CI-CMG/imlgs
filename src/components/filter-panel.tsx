@@ -271,7 +271,7 @@ export default function FilterPanel(props:Props) {
             onKeyDown={event => checkForEnterKey(event) }
             onBlur={onBlurHandler}
             onChange={onChangeHandler}
-            value={searchParams.has('igsn')? searchParams.get('igsn') as string: ''}
+            value={searchParams.has('start_date_begins_with')? searchParams.get('start_date_begins_with') as string: ''}
           />
         </div>
         <div style={{'paddingLeft': '10px', 'paddingRight': '10px', 'marginTop': '10px'}}>
