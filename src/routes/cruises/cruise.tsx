@@ -63,7 +63,7 @@ export default function Cruise () {
           Show samples from this cruise on the &nbsp;
           <Link to={{pathname:'/samples', search: `cruise_id=${cruiseDetail.id}`}}>map</Link>
           &nbsp; or in a &nbsp; 
-          <Link to={{pathname:'/samples/table', search: `cruise_id=${cruiseDetail.id}`}}>table</Link>
+          <Link to={{pathname:'/samples/table', search: `cruise_id=${cruiseDetail.id}&order=facility_code:asc&order=platform:asc&order=cruise:asc&order=sample:asc`}}>table</Link>
           </div>
         </div>
       : ''

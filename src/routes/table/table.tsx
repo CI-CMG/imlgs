@@ -30,17 +30,27 @@ export default function SamplesTable() {
   const samples = loaderData.items
   const totalItems = loaderData.total_items
   const totalPages = loaderData.total_pages
-
+  
   useEffect(() => {
     // 'order' may have multiple values and order of terms matters. 
     // use the first sort param to set select option
-    // TODO why is string type assertion necessary for TS?
+    // TS does not recognize the type guard in the ternary conditional
     const sortParam = (searchParams.get('order') ? searchParams.get('order')?.split(':')[0] as string : 'facility_code')
     if (! validSortItems.includes(sortParam)) { return }
     const selectElement = document.getElementById('sortItemSelect') as HTMLInputElement
     selectElement.value = sortParam
   }, [searchParams])
 
+  useEffect(() => {
+    if (searchParams.get('order')) { return }
+    console.log('no sort order specified, setting to facility_code, platform, cruise, sample')
+    const newSearchParams = new URLSearchParams(searchParams)
+    // TODO why does TS require semicolon to terminate the following statement?
+    newSearchParams.set('order', 'facility_code:asc');
+    ['platform', 'cruise', 'sample'].forEach( i => newSearchParams.append('order', `${i}:asc`))
+    setSearchParams(newSearchParams)
+  }, [searchParams])
+  
   function incrementPage() {
     setPageNumber((pageNumber) => pageNumber + 1)
   }
@@ -56,6 +66,21 @@ export default function SamplesTable() {
     window.open(queryURL)
   }
 
+  function firstPage() {
+    if (currentPage === 1) { return }
+    const newSearchParams = new URLSearchParams(searchParams)
+    newSearchParams.set('page', '1')
+    // triggers page reload
+    setSearchParams(newSearchParams)
+  }
+
+  function lastPage() {
+    if (currentPage === totalPages) { return }
+    const newSearchParams = new URLSearchParams(searchParams)
+    newSearchParams.set('page', totalPages.toString())
+    // triggers page reload
+    setSearchParams(newSearchParams)
+  }
 
   function previousPage() {
     if (currentPage === 1) { return }
@@ -80,9 +105,7 @@ export default function SamplesTable() {
     newSearchParams.set('order', `${event.target.value}:${sortOrder}`)
     // facility_code (default) has multiple sort items
     if (event.target.value === 'facility_code') {
-      newSearchParams.append('order', 'platform')
-      newSearchParams.append('order', 'cruise')
-      newSearchParams.append('order', 'sample')
+      ['platform', 'cruise', 'sample'].forEach( i => newSearchParams.append('order', `${i}:${sortOrder}`))
     }
     setSearchParams(newSearchParams)
   }
@@ -95,13 +118,21 @@ export default function SamplesTable() {
           <button type="button" className={`${baseClass}--button`} style={{marginLeft: '15px', marginRight:'50px'}} 
             onClick={exportCSV} title='export table contents to CSV file'
           >Export Data</button>
+          <button type="button" className={`${baseClass}--button`} style={{marginRight:'5px'}} onClick={firstPage} 
+            disabled={currentPage === 1} title='go to the first page of data'>
+            &lt;&lt;
+          </button>
           <button type="button" className={`${baseClass}--button`} style={{marginRight:'5px'}} onClick={previousPage} 
             disabled={currentPage === 1} title='go to the previous page of data'>
             &lt;
           </button>
-          <button type="button" className={`${baseClass}--button`} style={{}} onClick={nextPage} 
+          <button type="button" className={`${baseClass}--button`} style={{marginRight:'5px'}} onClick={nextPage} 
             disabled={currentPage === totalPages} title='go to the next page of data'>
             &gt;
+          </button>
+          <button type="button" className={`${baseClass}--button`} style={{}} onClick={lastPage} 
+            disabled={currentPage === totalPages} title='go to the last page of data'>
+            &gt;&gt;
           </button>
           <span style={{marginLeft: '15px'}}>page {currentPage} of {totalPages} ({totalItems} total records)</span>
           <select id="sortItemSelect" style={{fontSize: 'large', marginLeft: '100px'}} onChange={sortHandler}>
