@@ -1,4 +1,11 @@
-import './filter-panel.css'
+import './filter-panel2.css'
+import FormControl from '@mui/material/FormControl'
+import { InputLabel } from '@mui/material'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Switch from '@mui/material/Switch'
+import TextField from '@mui/material/TextField'
+import MenuItem from '@mui/material/MenuItem'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 import { Form } from "react-router-dom"
 import { 
   fetchDevices, 
@@ -18,8 +25,8 @@ import { getRepositories } from '../routes/repositories/data'
 import { CruiseName, getFirstPageOfCruises } from '../routes/cruises/data'
 import { useQueries } from "@tanstack/react-query"
 import SamplesCount from './samples-count';
-
 const routerBasename = import.meta.env.VITE_routerBasename
+
 
 export interface Props {
   filters: URLSearchParams,
@@ -30,11 +37,13 @@ export interface Props {
 
 
 export default function FilterPanel(props:Props) {
+  console.log('rendering FilterPanel2...', props.filters.toString())
   const {zoomToSelected, zoomToggleHandler, setFilters, filters} = props
   const baseClass = 'FilterPanel'
 
-  // create a copy of filter parameters passed into component. This copy is
-  // updated by the onChange handlers and passed back to the parent
+
+  // create a copy of filter parameters passed into component. This copy is updated
+  // by the onChange handlers and passed back to the parent
   let searchParams = new URLSearchParams(filters)
   
   // execute queries used to populate Select components
@@ -56,6 +65,7 @@ export default function FilterPanel(props:Props) {
       { queryKey: ['geologic_ages', filters.toString()], queryFn: () => fetchGeologicAges(filters) }       // 13
     ]
   })
+  // console.log({results})
 
   // track which selects have >0 options (i.e. query results) and should be enabled
   const enabledSelects = results.map(result => {
@@ -63,7 +73,8 @@ export default function FilterPanel(props:Props) {
   })
 
 
-  // doesn't actually directly submit Form but calls method on parent
+  // doesn't actually submit Form but populates FormData instance and calls 
+  // method in parent which submits form instead
   function submitForm() {
     setFilters(searchParams)
   }
@@ -86,9 +97,9 @@ export default function FilterPanel(props:Props) {
     submitForm()
   }
 
-
   // used for select input elements
   function onChangeHandler(event: React.ChangeEvent<HTMLSelectElement|HTMLInputElement>) {
+    // console.log(`inside onChangeHandler: ${event.target.name} changed to ${event.target.value}...`)
     if (event.target.value) {
       searchParams.set(event.target.name, event.target.value)
     } else {
@@ -104,7 +115,6 @@ export default function FilterPanel(props:Props) {
   }
 
 
-  // cruise select is different in that it can be disabled for too many or too few options
   function formatCruiseSelect(data: CruiseName[]) {
     if (data && data.length > 0 && data.length < 500) {
       return (
@@ -149,7 +159,6 @@ export default function FilterPanel(props:Props) {
 
   function tableButtonHandler() {
     const tableSearchParams = new URLSearchParams(filters)
-    // default sort parameters
     tableSearchParams.set('order', 'facility_code:asc')
     tableSearchParams.append('order', 'platform:asc')
     tableSearchParams.append('order', 'cruise:asc')
@@ -272,6 +281,7 @@ export default function FilterPanel(props:Props) {
             onBlur={onBlurHandler}
             onChange={onChangeHandler}
             value={searchParams.has('igsn')? searchParams.get('igsn') as string: ''}
+
           />
         </div>
         <div style={{'paddingLeft': '10px', 'paddingRight': '10px', 'marginTop': '10px'}}>
@@ -309,8 +319,8 @@ export default function FilterPanel(props:Props) {
             />
         </fieldset>
         </div>
-        {/* <button id="helpBtn">?</button> */}
-        <div  style={{'textAlign': 'center', 'paddingLeft': '10px', 'paddingRight': '10px', 'marginTop': '10px'}}>
+
+        <div style={{'paddingLeft': '10px', 'paddingRight': '10px', 'marginTop': '10px'}}>
           <fieldset>
             <legend>Sample Attributes</legend>
             <select
@@ -319,7 +329,7 @@ export default function FilterPanel(props:Props) {
               disabled={!enabledSelects[9]}
               id='lithologic_composition-select' 
               onChange={onChangeHandler} 
-              style={{'width':'90%'}}
+              style={{'width':'80%'}}
               value={searchParams.has('lithologic_composition')? searchParams.get('lithologic_composition') as string: ''}
             >
               <option value="">-- Lithologic Composition --</option>
@@ -333,7 +343,7 @@ export default function FilterPanel(props:Props) {
               id='texture-select'
               disabled={!enabledSelects[10]}
               onChange={onChangeHandler} 
-              style={{'width':'90%'}}
+              style={{'width':'80%'}}
               value={searchParams.has('texture')? searchParams.get('texture') as string: ''}
             >
               <option value="">-- Texture --</option>
@@ -347,7 +357,7 @@ export default function FilterPanel(props:Props) {
               disabled={!enabledSelects[8]}
               id='mineralogy-select' 
               onChange={onChangeHandler} 
-              style={{'width':'90%'}}
+              style={{'width':'80%'}}
               value={searchParams.has('mineralogy')? searchParams.get('mineralogy') as string: ''}
             >
               <option value="">-- Rock Mineralogy --</option>
@@ -361,7 +371,7 @@ export default function FilterPanel(props:Props) {
               title={enabledSelects[6] ? "filter samples by rock weathering" : "no weathering values with this combination of filters"}
               disabled={!enabledSelects[6]}
               onChange={onChangeHandler} 
-              style={{'width':'90%'}}
+              style={{'width':'80%'}}
               value={searchParams.has('weathering')? searchParams.get('weathering') as string: ''}
             >
               <option value="">-- Rock Weathering --</option>
@@ -375,7 +385,7 @@ export default function FilterPanel(props:Props) {
               disabled={!enabledSelects[7]}
               id='metamorphism-select' 
               onChange={onChangeHandler} 
-              style={{'width':'90%'}}
+              style={{'width':'80%'}}
               value={searchParams.has('metamorphism')? searchParams.get('metamorphism') as string: ''}
             >
               <option value="">-- Rock Metamorphism --</option>
@@ -389,7 +399,7 @@ export default function FilterPanel(props:Props) {
               title={enabledSelects[13] ? "filter samples by geologic age" : "no geologic age values with this combination of filters"}
               disabled={!enabledSelects[13]}
               onChange={onChangeHandler}
-              style={{'width':'90%'}}
+              style={{'width':'80%'}}
               value={searchParams.has('age')? searchParams.get('age') as string: ''}
             >
               <option value="">-- Geologic Age --</option>
@@ -403,7 +413,7 @@ export default function FilterPanel(props:Props) {
               title={enabledSelects[11] ? "filter samples by rock lithology" : "no rock lithology values with this combination of filters"}
               disabled={!enabledSelects[11]}
               onChange={onChangeHandler} 
-              style={{'width':'90%'}}
+              style={{'width':'80%'}}
               value={searchParams.has('rock_lithology')? searchParams.get('rock_lithology') as string: ''}
             >
               <option value="">-- Rock Lithology --</option>
@@ -417,7 +427,7 @@ export default function FilterPanel(props:Props) {
               title={enabledSelects[12] ? "filter samples by rock glass remarks" : "no rock glass remarks with this combination of filters"}
               disabled={!enabledSelects[12]}
               onChange={onChangeHandler} 
-              style={{'width':'90%'}}
+              style={{'width':'80%'}}
               value={searchParams.has('remark')? searchParams.get('remark') as string: ''}
             >
               <option value="">-- Rock Glass Remarks & Mn/Fe Oxide --</option>
