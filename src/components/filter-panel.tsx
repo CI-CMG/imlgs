@@ -384,7 +384,7 @@ export default function FilterPanel(props:Props) {
               }          
             </select>
             <select 
-              name="geologic_age" 
+              name="age" 
               id='geologic_age-select'
               title={enabledSelects[13] ? "filter samples by geologic age" : "no geologic age values with this combination of filters"}
               disabled={!enabledSelects[13]}
