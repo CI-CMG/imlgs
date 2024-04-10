@@ -10,6 +10,7 @@ import {
   useSubmit,
   useNavigate
 } from "react-router-dom"
+import { searchParamsToFilters } from '../../utilities'
 import FilterPanel from '../../components/filter-panel'
 import MapPanel from '../../components/map-panel'
 import Header from '../../components/header'
@@ -45,9 +46,10 @@ export default function Samples() {
 
   const submit = useSubmit()
 
-  // const url = new URL(window.location.href)
+  const url = new URL(window.location.href)
   // console.log('searchParams: ', url.searchParams.toString())
-  
+  const filters = searchParamsToFilters(url.searchParams)
+
   // let q = url.searchParams.get("q")
 
   // useEffect(() => {
@@ -64,9 +66,9 @@ export default function Samples() {
   //     "q"
   //   )
 
-  function setFilters(formData: FormData) {
+  function setFilters(searchParams: URLSearchParams) {
     // console.log('inside submitForm with ', formData)
-    submit(formData)
+    submit(searchParams)
   }
 
 
@@ -77,6 +79,7 @@ export default function Samples() {
       <div className={`${baseClass}--sidebar`}>
 
         <FilterPanel 
+          filters={filters}
           zoomToSelected={zoomToSelected} 
           zoomToggleHandler={boolean => setZoomToSelected(boolean)}
           setFilters={setFilters}
