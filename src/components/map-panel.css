@@ -7,4 +7,32 @@
 
 .esri-popup__content a {
   text-decoration: underline;
+  font-weight: bolder;
+  font-size: 16px;
+  font-family: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.5em;
 }
+
+.esri-popup__content a:hover {
+  text-decoration: none;
+  font-weight: bolder;
+}
+
+.esri-popup__content a:link {
+  color: #323232
+}
+/*
+.esri-feature-content a {
+  text-decoration: underline;
+  font-weight: bolder;
+  color: #323232;
+}
+.esri-feature-content a:hover {
+  text-decoration: none;
+  font-weight: bolder;
+  color: red;
+}
+*/
+/* .esri-feature-content a {
+  color: var(--noaa-background-color)
+} */

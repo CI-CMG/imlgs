@@ -231,7 +231,7 @@ function executeIdentify(event:__esri.ViewClickEvent) {
             <br><b>Year:</b> {YEAR}
             <br><b>Water Depth:</b> {WATER_DEPTH}m
             <br><b>Device:</b> {DEVICE}
-            <br><a href="${mapviewerUrl}/{IMLGS}">more detail</a>`
+            <br><a href="${mapviewerUrl}/{IMLGS}"><b>More Detail...</b></a>`
         })
         feature.popupTemplate = popupTemplate
         return feature
