@@ -61,6 +61,8 @@ export default function FilterPanel(props:Props) {
   const enabledSelects = results.map(result => {
     return result.data ? result.data.length > 0 : false
   })
+  // special handling for cruise since it can be disabled for too few or too many options
+  enabledSelects[3] = results[3].data && results[3].data.length > 0 && results[3].data.length < 500 ? true : false
 
 
   // doesn't actually directly submit Form but calls method on parent
@@ -101,49 +103,6 @@ export default function FilterPanel(props:Props) {
   function resetButtonHandler(event: React.MouseEvent<HTMLButtonElement>) {
     searchParams = new URLSearchParams()
     submitForm()
-  }
-
-
-  // cruise select is different in that it can be disabled for too many or too few options
-  function formatCruiseSelect(data: CruiseName[]) {
-    if (data && data.length > 0 && data.length < 500) {
-      return (
-      <select
-        name="cruise_id" 
-        id='cruise-select'
-        title='filter samples by cruise name'
-        onChange={onChangeHandler} 
-        style={{'width':'80%'}}
-        defaultValue={searchParams.has('cruise')? searchParams.get('cruise') as string: ''}
-      >
-        <option value="">-- Cruise --</option>
-        {
-          data?.map((cruise) => <option value={cruise.id} key={cruise.id}>{cruise.cruise}</option>)
-        }
-      </select>)
-    } else if (data?.length === 0) {
-      return (
-        <select
-          name="cruise_id" 
-          id='cruise-select'
-          disabled
-          style={{'width':'80%'}} 
-          title="No cruises with this combination of filters">
-        <option value="">-- Cruise --</option>
-      </select>
-      )
-    } else if (data?.length >= 500) {
-      return (
-        <select
-          name="cruise" 
-          id='cruise-select'
-          disabled
-          style={{'width':'80%'}} 
-          title="Too many cruises to display. Please select an additional filter(s) first">
-        <option value="">-- Cruise --</option>
-      </select>
-      )
-    }
   }
 
 
@@ -218,7 +177,20 @@ export default function FilterPanel(props:Props) {
         </div>
         
         <div className='selectContainer'>
-        { results[3].data ?  formatCruiseSelect(results[3].data) : '' }
+          <select
+            name="cruise_id" 
+            id='cruise-select'
+            title={enabledSelects[3] ? "filter samples by cruise Id" : "either too few or too many cruises with this combination of filters"}
+            disabled={!enabledSelects[3]}
+            onChange={onChangeHandler} 
+            style={{'width':'80%'}}
+            value={searchParams.has('cruise_id')? searchParams.get('cruise_id') as string: ''}
+          >
+            <option value="">-- Cruise --</option>
+              {
+                results[3].data?.map(cruise => <option value={cruise.id} key={cruise.id}>{cruise.cruise}</option>)
+              }
+          </select>
         </div>
         
         <div className='selectContainer'>
