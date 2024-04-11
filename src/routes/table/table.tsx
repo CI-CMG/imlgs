@@ -12,7 +12,7 @@ const validSortItems = [
   'imlgs',
   'device',
   'water_depth',
-  'start_date',
+  // 'start_date_begins_with',
   'igsn'
 ]
 
@@ -143,7 +143,7 @@ export default function SamplesTable() {
             <option value='imlgs'>IMLGS</option>
             <option value='device'>Device</option>
             <option value='water_depth'>Water Depth (m)</option>
-            <option value='start_date'>Collection Date</option>
+            {/* <option value='start_date_begins_with'>Collection Date</option> */}
             <option value='igsn'>IGSN</option>
             <option value='sample'>Sample ID</option>
             <option value='lat'>Latitude</option>
