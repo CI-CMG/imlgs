@@ -24,7 +24,6 @@ export function searchParamsToFilters(searchParams: URLSearchParams): URLSearchP
     'remark',
     'page',
     'imlgs',
-    'order',
     'bbox'
   ]
   // consistency in order of parameters important since it determines the output from the URLSearchParameters#toString 
@@ -34,6 +33,13 @@ export function searchParamsToFilters(searchParams: URLSearchParams): URLSearchP
     const value = (searchParams.has(name) && searchParams.get(name)) ? searchParams.get(name) : ''
     if (value) { filterParams.set(name, value)}
   })
+  // handle 'order' parameter differently since it is the only one allowed to have multiple values
+  if (searchParams.has('order')) {
+    const sortBy = searchParams.getAll('order')
+    sortBy.forEach(value => {
+      filterParams.append('order', value)
+    })
+  }
   return filterParams
 }
 
