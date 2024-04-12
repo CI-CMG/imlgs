@@ -36,7 +36,7 @@ export default function FilterPanel(props:Props) {
   // create a copy of filter parameters passed into component. This copy is
   // updated by the onChange handlers and passed back to the parent
   let searchParams = new URLSearchParams(filters)
-  
+
   // execute queries used to populate Select components
   const results = useQueries({
     queries: [ 
@@ -82,12 +82,27 @@ export default function FilterPanel(props:Props) {
   // used for text input element
   function onBlurHandler(event:React.FocusEvent<HTMLInputElement>):void {
     event.target.blur()
+    /*
+    // WIP
+    // ignore any invalid inputs. primarily for text entry widgets to avoid a lot of unnecessary API requests
+    if (!event.target.validity.valid) {
+      return
+    }
+    if (event.target.value) {
+      searchParams.set(event.target.name, event.target.value)
+    } else {
+      searchParams.delete(event.target.name)
+    }
+    */
     // no need to submit form if input didn't change
     if (!event.target.value && !searchParams.get(event.target.name)) { return }
     if (event.target.value === searchParams.get(event.target.name)) { return }
     submitForm()
   }
 
+  function textInputOnChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
+    console.log(`inside textInputOnChangeHandler. ${event.target.name} validity is ${event.target.validity.valid}`)
+  }
 
   // used for select input elements
   function onChangeHandler(event: React.ChangeEvent<HTMLSelectElement|HTMLInputElement>) {
@@ -239,6 +254,7 @@ export default function FilterPanel(props:Props) {
             maxLength={8}
             minLength={4}
             size={13}
+            pattern="\d{1,6}"
             autoComplete='off'
             onKeyDown={event => checkForEnterKey(event) }
             onBlur={onBlurHandler}
@@ -254,11 +270,12 @@ export default function FilterPanel(props:Props) {
               aria-label="min depth"
               title='filter samples taken from water >= this depth'
               placeholder="min"
-              type="number"
               name="min_depth"
-              // maxLength={6}
-              // minLength={6}
-              // size={10}
+              type="search"
+              maxLength={6}
+              minLength={1}
+              size={10}
+              pattern="\d{1,6}"
               onKeyDown={event => checkForEnterKey(event) }
               onBlur={onBlurHandler}
               onChange={onChangeHandler}
@@ -272,8 +289,9 @@ export default function FilterPanel(props:Props) {
               type="search"
               name="max_depth"
               maxLength={6}
-              minLength={6}
+              minLength={1}
               size={10}
+              pattern="\d{1,6}"
               onKeyDown={event => checkForEnterKey(event) }
               onBlur={onBlurHandler}
               onChange={onChangeHandler}

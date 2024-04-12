@@ -21,9 +21,13 @@
 #helpBtn {
   position: absolute;
   /* display: inline-flex; */
-  left: 287px;
-  top: 446px;
+  left: 297px;
+  top: 486px;
   /* background-color: red; */
+}
+
+input:invalid {
+  background-color: lightcoral;
 }
 
 #resetButton, #tableButton {
