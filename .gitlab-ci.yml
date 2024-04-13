@@ -64,10 +64,10 @@ build-job:
     # - npm run build
     - npx vite build -m test --base /maps/imlgs/
     - echo "packaging..."
-    - tar czf vite-demo.tar.gz ./dist/*
+    - tar czf imlgs.tar.gz ./dist/*
   artifacts:
     paths:
-      - vite-demo.tar.gz
+      - imlgs.tar.gz
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH    
 
@@ -79,17 +79,17 @@ include:
   # The utilities for uploading to Artifactory.
   - component: git.ncei.noaa.gov/pipeline-components/artifactory/upload_artifact_dev_repo@main
     inputs:
-      job_name: artifactory-upload-vite-demo
+      job_name: artifactory-upload-imlgs
       artifact_path: '.'
-      artifact_name: 'vite-demo.tar.gz'
-artifactory-upload-vite-demo:
+      artifact_name: 'imlgs.tar.gz'
+artifactory-upload-imlgs:
   needs:
     - build-job
 
 #-----------------------------------------------------------------------------
 # Deployments
 #-----------------------------------------------------------------------------
-# deploy-vite-demo-to-test:
+# deploy-imlgs-to-test:
 #     variables:
 #       BUILD_REF: ${CI_COMMIT_SHA}
 #       PROJECT_NAME: ${CI_PROJECT_NAME}
@@ -97,7 +97,7 @@ artifactory-upload-vite-demo:
 #       TIER: "test"
 #     stage: deploy
 #     needs:
-#       - artifactory-upload-vite-demo
+#       - artifactory-upload-imlgs
 #     trigger:
 #       project: deployers/deployer
 #       strategy: depend
