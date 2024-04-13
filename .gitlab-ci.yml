@@ -1,79 +1,108 @@
 # are alma9 and centos7 the only options?
 image: artifacts.ncei.noaa.gov/ncei/base:alma9
 variables:
+  # WARNING: not the latest version of LTS/Hydrogen but latest available from NCEI
   NODE_VERSION: "v18.15.0"
 
-stages:          # List of stages for jobs, and their order of execution
+stages:
   - .pre
-  # - test
+  - test
   - build
-  # - deploy
-
+  #- security      # Required for security scan jobs
+  - artifactory   # Required for deployments. The artifacts must be saved somewhere first.
+  # - deploy        # Required for deployments.
 
 setup-job:
   stage: .pre
-  cache:
-  - key:
-      files:
-        - package-lock.json
-      prefix: npm
-    paths:
-      - node_modules/
-  - key: $NODE_VERSION
-    paths:
-      - node-$NODE_VERSION-linux-x64/
-    policy: push
   script:
     # WARNING: not the latest version of LTS/Hydrogen
     - curl -o node-$NODE_VERSION-linux-x64.tar.gz https://artifacts.ncei.noaa.gov:443/artifactory/node-dist/$NODE_VERSION/node-$NODE_VERSION-linux-x64.tar.gz
     # not permitted?
     # - curl -o node-$NODE_VERSION-linux-x64.tar.gz https://node.js.org/download/release/$NODE_VERSION/node-$NODE_VERSION-linux-x64.tar.gz
-    - tar -xzf node-$NODE_VERSION-linux-x64.tar.gz 
+    - tar -xzf node-$NODE_VERSION-linux-x64.tar.gz
     - export PATH=$PATH:$PWD/node-$NODE_VERSION-linux-x64/bin
     # set up npm registry and CA certs
     - npm config set registry https://artifacts.ncei.noaa.gov/artifactory/api/npm/npm.upstream/
     - export NODE_EXTRA_CA_CERTS=/etc/pki/tls/certs/ca-bundle.crt
     - npm -d install
-  
-
-build-job:       # This job runs in the build stage, which runs first.
-  stage: build
-  cache:
-  - key:
-      files:
-        - package-lock.json
-      prefix: npm
-    paths:
-      - node_modules/
-  - key: $NODE_VERSION
-    paths:
-      - node-$NODE_VERSION-linux-x64/
-    policy: pull
-  script:
-    # TODO why is the node install not pulled from cache?
-    # WARNING: not the latest version of LTS/Hydrogen
-    - curl -o node-$NODE_VERSION-linux-x64.tar.gz https://artifacts.ncei.noaa.gov:443/artifactory/node-dist/$NODE_VERSION/node-$NODE_VERSION-linux-x64.tar.gz
-    - tar -xzf node-$NODE_VERSION-linux-x64.tar.gz 
-    - export PATH=$PATH:$PWD/node-$NODE_VERSION-linux-x64/bin
-    - npm config set registry https://artifacts.ncei.noaa.gov/artifactory/api/npm/npm.upstream/
-    - export NODE_EXTRA_CA_CERTS=/etc/pki/tls/certs/ca-bundle.crt
-    - export PATH=$PATH:$PWD/node-$NODE_VERSION-linux-x64/bin
-    - echo "installed node/npm version `node --version`/`npm --version`"    
-    #- echo "Linting code..."
-    #- npm run lint
-    #- echo "Running unit tests..."
-    #- npm run test
-    #- echo "Running code coverage..."
-    #- npm run coverage
-    - echo "Running build..."
-    #- npm run build
-    - npx vite build -m test --base /maps/imlgs/
+  # pass along to the next stage
   artifacts:
     paths:
-      - dist
+      - node_modules
+      - node-$NODE_VERSION-linux-x64
+    expire_in: 2 week
+ 
+## TODO setup vitest
+test-job:
+  stage: test
+  script:
+    # node and node_modules passed from previous stage but must set environment in every job
+    - export PATH=$PATH:$PWD/node-$NODE_VERSION-linux-x64/bin
+    - export NODE_EXTRA_CA_CERTS=/etc/pki/tls/certs/ca-bundle.crt
+    - export PATH=$PATH:$PWD/node-$NODE_VERSION-linux-x64/bin
+    - echo "Linting code..."
+    - npm run lint
+    - echo "Running unit tests..."
+    # - npm run test
+    - echo "Running code coverage..."
+    # - npm run coverage
+  artifacts:
+    paths:
+      - node_modules
+      - node-$NODE_VERSION-linux-x64
+    expire_in: 2 week
+
+build-job:
+  stage: build
+  tags:
+    - build
+  script:
+    - export PATH=$PATH:$PWD/node-$NODE_VERSION-linux-x64/bin
+    - export NODE_EXTRA_CA_CERTS=/etc/pki/tls/certs/ca-bundle.crt
+    - export PATH=$PATH:$PWD/node-$NODE_VERSION-linux-x64/bin
+    - echo "Running build..."
+    # - npm run build
+    - npx vite build -m test --base /maps/imlgs/
+    - echo "packaging..."
+    - tar czf vite-demo.tar.gz ./dist/*
+  artifacts:
+    paths:
+      - vite-demo.tar.gz
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH    
 
+
+#-----------------------------------------------------------------------------
+# Push artifact to artifactory dev repository
+#-----------------------------------------------------------------------------
+include:
+  # The utilities for uploading to Artifactory.
+  - component: git.ncei.noaa.gov/pipeline-components/artifactory/upload_artifact_dev_repo@main
+    inputs:
+      job_name: artifactory-upload-vite-demo
+      artifact_path: '.'
+      artifact_name: 'vite-demo.tar.gz'
+artifactory-upload-vite-demo:
+  needs:
+    - build-job
+
+#-----------------------------------------------------------------------------
+# Deployments
+#-----------------------------------------------------------------------------
+# deploy-vite-demo-to-test:
+#     variables:
+#       BUILD_REF: ${CI_COMMIT_SHA}
+#       PROJECT_NAME: ${CI_PROJECT_NAME}
+#       PROJECT_PATH_SLUG: ${CI_PROJECT_PATH_SLUG}
+#       TIER: "test"
+#     stage: deploy
+#     needs:
+#       - artifactory-upload-vite-demo
+#     trigger:
+#       project: deployers/deployer
+#       strategy: depend
+
+  #  when: manual
 # deploy-job:      # This job runs in the deploy stage.
 #   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
 #   environment: production
@@ -86,5 +115,3 @@ build-job:       # This job runs in the build stage, which runs first.
 #   stage: test
 # include:
 #   - template: Security/SAST.gitlab-ci.yml
-
-
