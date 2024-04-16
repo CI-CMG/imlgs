@@ -12,6 +12,8 @@
 .SamplesTable--navbar {
   padding-top: 5px;
   padding-bottom: 5px;
+  width:90%;
+  margin: 0 auto;
 }
 
 .SamplesTable--datatable, table, th, td {

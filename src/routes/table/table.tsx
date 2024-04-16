@@ -1,5 +1,5 @@
 import './table.css'
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useLoaderData, useSearchParams, Link } from "react-router-dom"
 import { loader as samplesLoader } from './data'
 import { searchParamsToFilters } from '../../utilities'
@@ -17,13 +17,9 @@ const validSortItems = [
 ]
 
 export default function SamplesTable() {
-  // console.log('re-rendering SamplesTable...')
   const baseClass = 'SamplesTable'
-  // const queryClient = useQueryClient()
-  // console.log(queryClient.getDefaultOptions())
   const [searchParams, setSearchParams] = useSearchParams()
-  const [pageNumber, setPageNumber] = useState(1)
-
+  
   const loaderData = useLoaderData() as Awaited<ReturnType<ReturnType<typeof samplesLoader>>>
 
   const currentPage = loaderData.page
@@ -39,6 +35,11 @@ export default function SamplesTable() {
     if (! validSortItems.includes(sortParam)) { return }
     const selectElement = document.getElementById('sortItemSelect') as HTMLInputElement
     selectElement.value = sortParam
+
+    const pageInput = document.getElementById('goToPageInput') as HTMLInputElement
+    if (pageInput) {
+      pageInput.value = searchParams.has('page') ? searchParams.get('page') as string: '1'
+    }
   }, [searchParams])
 
   useEffect(() => {
@@ -50,14 +51,25 @@ export default function SamplesTable() {
     ['platform', 'cruise', 'sample'].forEach( i => newSearchParams.append('order', `${i}:asc`))
     setSearchParams(newSearchParams)
   }, [searchParams])
-  
-  function incrementPage() {
-    setPageNumber((pageNumber) => pageNumber + 1)
+
+
+  function checkForEnterKey(event:React.KeyboardEvent<HTMLInputElement>):void {
+    if (event.key === 'Enter') {
+      const target = event.target as HTMLInputElement
+      target.blur()
+    }
   }
 
-  function decrementPage() {
-    setPageNumber((pageNumber) => pageNumber - 1)
+  function onBlurHandler(event:React.FocusEvent<HTMLInputElement>):void {
+    event.target.blur()
+    // no need to submit form if input didn't change
+    if (!event.target.value && !searchParams.get(event.target.name)) { return }
+    if (event.target.value === searchParams.get(event.target.name)) { return }
+    const newSearchParams = new URLSearchParams(searchParams)
+    newSearchParams.set('page', event.target.value)
+    setSearchParams(newSearchParams)
   }
+
 
   function exportCSV() {
     // strip out any search params not allowable for filtering
@@ -115,26 +127,37 @@ export default function SamplesTable() {
     <div className='SamplesTable--container'>
       <nav className='SamplesTable--navbar'>
         <div>
-          <button type="button" className={`${baseClass}--button`} style={{marginLeft: '15px', marginRight:'50px'}} 
-            onClick={exportCSV} title='export table contents to CSV file'
-          >Export Data</button>
-          <button type="button" className={`${baseClass}--button`} style={{marginRight:'5px'}} onClick={firstPage} 
-            disabled={currentPage === 1} title='go to the first page of data'>
-            &lt;&lt;
-          </button>
-          <button type="button" className={`${baseClass}--button`} style={{marginRight:'5px'}} onClick={previousPage} 
-            disabled={currentPage === 1} title='go to the previous page of data'>
-            &lt;
-          </button>
-          <button type="button" className={`${baseClass}--button`} style={{marginRight:'5px'}} onClick={nextPage} 
-            disabled={currentPage === totalPages} title='go to the next page of data'>
-            &gt;
-          </button>
-          <button type="button" className={`${baseClass}--button`} style={{}} onClick={lastPage} 
-            disabled={currentPage === totalPages} title='go to the last page of data'>
-            &gt;&gt;
-          </button>
-          <span style={{marginLeft: '15px'}}>page {currentPage} of {totalPages} ({totalItems} total records)</span>
+            <button type="button" className={`${baseClass}--button`} style={{marginLeft: '15px', marginRight:'50px'}} 
+              onClick={exportCSV} title='export table contents to CSV file'
+            >Export Data</button>
+            <button type="button" className={`${baseClass}--button`} style={{marginRight:'5px'}} onClick={firstPage} 
+              disabled={currentPage === 1} title='go to the first page of data'>
+              &lt;&lt;
+            </button>
+            <button type="button" className={`${baseClass}--button`} style={{marginRight:'5px'}} onClick={previousPage} 
+              disabled={currentPage === 1} title='go to the previous page of data'>
+              &lt;
+            </button>
+            <button type="button" className={`${baseClass}--button`} style={{marginRight:'5px'}} onClick={nextPage} 
+              disabled={currentPage === totalPages} title='go to the next page of data'>
+              &gt;
+            </button>
+            <button type="button" className={`${baseClass}--button`} style={{marginRight:'35px'}} onClick={lastPage} 
+              disabled={currentPage === totalPages} title='go to the last page of data'>
+              &gt;&gt;
+            </button>
+            <span style={{fontSize:"18px"}}>page</span>
+            <input 
+              type="text" 
+              name="page"
+              id="goToPageInput"
+              size={3} 
+              style={{marginRight:'10px', marginLeft:'10px', fontSize:"18px", textAlign:"center"}} 
+              defaultValue={ searchParams.has('page') ? searchParams.get('page') as string : 1 }
+              onBlur={onBlurHandler}
+              onKeyDown={event => checkForEnterKey(event) }
+            />
+            <span style={{fontSize:"18px"}}> of {totalPages} ({totalItems} total records)</span>
           <select id="sortItemSelect" style={{fontSize: 'large', marginLeft: '100px'}} onChange={sortHandler}>
             {/* <option>-- Sort By --</option> */}
             <option value='facility_code'>Repository</option>
@@ -148,7 +171,7 @@ export default function SamplesTable() {
             <option value='sample'>Sample ID</option>
             <option value='lat'>Latitude</option>
             <option value='lon'>Longitude</option>
-          </select>
+          </select> 
         </div>
       </nav>
 
@@ -200,9 +223,7 @@ export default function SamplesTable() {
             </table>
             : ''
         }
-      </div>
-      
-        {/* <button type='button' onClick={incrementPage}>increment page</button> */}
+      </div>      
   </div>
   )
 }
