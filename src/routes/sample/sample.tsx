@@ -40,7 +40,7 @@ function formatInterval(interval: Interval) {
   if (interval.lith1 !== undefined) { tableRows.push(buildIntervalRow('Primary Lithologic Composition', interval.lith1)) }
   if (interval.text1 !== undefined) { tableRows.push(buildIntervalRow('Primary Texture', interval.text1)) }
   if (interval.lith2 !== undefined) { tableRows.push(buildIntervalRow('Secondary Lithologic Composition', interval.lith2)) }
-  if (interval.text2 !== undefined) { tableRows.push(buildIntervalRow('Primary Lithologic Composition', interval.text2)) }
+  if (interval.text2 !== undefined) { tableRows.push(buildIntervalRow('Secondary Texture', interval.text2)) }
   if (interval.comp1 !== undefined) { tableRows.push(buildIntervalRow('Other Component 1', interval.comp1)) }
   if (interval.comp2 !== undefined) { tableRows.push(buildIntervalRow('Other Component 2', interval.comp2)) }
   if (interval.comp3 !== undefined) { tableRows.push(buildIntervalRow('Other Component 3', interval.comp3)) }
