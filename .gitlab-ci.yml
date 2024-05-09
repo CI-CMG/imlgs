@@ -1,8 +1,7 @@
 # are alma9 and centos7 the only options?
 image: artifacts.ncei.noaa.gov/ncei/base:alma9
 variables:
-  # WARNING: not the latest version of LTS/Hydrogen but latest available from NCEI
-  NODE_VERSION: "v18.15.0"
+  NODE_VERSION: "v18.20.2"
 
 stages:
   - .pre
@@ -10,15 +9,12 @@ stages:
   - build
   #- security      # Required for security scan jobs
   - artifactory   # Required for deployments. The artifacts must be saved somewhere first.
-  # - deploy        # Required for deployments.
+  - deploy        # Required for deployments.
 
 setup-job:
   stage: .pre
   script:
-    # WARNING: not the latest version of LTS/Hydrogen
     - curl -o node-$NODE_VERSION-linux-x64.tar.gz https://artifacts.ncei.noaa.gov:443/artifactory/node-dist/$NODE_VERSION/node-$NODE_VERSION-linux-x64.tar.gz
-    # not permitted?
-    # - curl -o node-$NODE_VERSION-linux-x64.tar.gz https://node.js.org/download/release/$NODE_VERSION/node-$NODE_VERSION-linux-x64.tar.gz
     - tar -xzf node-$NODE_VERSION-linux-x64.tar.gz
     - export PATH=$PATH:$PWD/node-$NODE_VERSION-linux-x64/bin
     # set up npm registry and CA certs
@@ -89,26 +85,32 @@ artifactory-upload-imlgs:
 #-----------------------------------------------------------------------------
 # Deployments
 #-----------------------------------------------------------------------------
-# deploy-imlgs-to-test:
-#     variables:
-#       BUILD_REF: ${CI_COMMIT_SHA}
-#       PROJECT_NAME: ${CI_PROJECT_NAME}
-#       PROJECT_PATH_SLUG: ${CI_PROJECT_PATH_SLUG}
-#       TIER: "test"
-#     stage: deploy
-#     needs:
-#       - artifactory-upload-imlgs
-#     trigger:
-#       project: deployers/deployer
-#       strategy: depend
-
+deploy-imlgs-to-test:
+    variables:
+      BUILD_REF: ${CI_COMMIT_SHA}
+      PROJECT_NAME: ${CI_PROJECT_NAME}
+      PROJECT_PATH_SLUG: ${CI_PROJECT_PATH_SLUG}
+      TIER: "test"
+    stage: deploy
+    needs:
+      - artifactory-upload-imlgs
+    trigger:
+      project: deployers/deployer
+      strategy: depend
   #  when: manual
-# deploy-job:      # This job runs in the deploy stage.
-#   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
-#   environment: production
-#   script:
-#     - echo "Deploying application..."
-#     - echo "Application successfully deployed."
+
+deploy-imlgs-to-prod:
+  variables:
+    BUILD_REF: ${CI_COMMIT_SHA}
+    PROJECT_NAME: ${CI_PROJECT_NAME}
+    TIER: "prod"
+  stage: deploy
+  needs:
+    - artifactory-upload-imlgs
+  trigger: 
+    project: deployers/deployer
+    strategy: depend
+  when: manual
 
 # TODO security scanner not available in NCEI archive  
 # sast:
