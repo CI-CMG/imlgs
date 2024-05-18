@@ -60,7 +60,9 @@ build-job:
     # - npm run build
     - npx vite build -m test --base /maps/imlgs/
     - echo "packaging..."
-    - tar czf imlgs.tar.gz ./dist/*
+    - cd dist
+    - tar czf ../imlgs.tar.gz *
+    - cd ..
   artifacts:
     paths:
       - imlgs.tar.gz
