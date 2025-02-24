@@ -30,7 +30,7 @@ export default function Header() {
       <div className='Header--container'>
       <div className='Header--left'>
         <a href="https://www.ncei.noaa.gov/" title="National Centers for Environmental Information, National Oceanic and Atmospheric Administration">
-          <img className="Header--nceiLogo" src="https://maps.ngdc.noaa.gov/images/imlgs/map-banner.png" alt="National Centers for Environmental Information, National Oceanic and Atmospheric Administration"/>
+          <img className="Header--nceiLogo" src="https://gis.ngdc.noaa.gov/images/imlgs/map-banner.png" alt="National Centers for Environmental Information, National Oceanic and Atmospheric Administration"/>
         </a>
         <div id="breadcrumbs">
           <NavLink to={constructNavLink('samples')} style={({isActive}) => isActive ? activeStyle : inactiveStyle}>Samples</NavLink> | {" "}
@@ -43,7 +43,7 @@ export default function Header() {
       </div>
       <div className='Header--right'>
         <a href="https://www.nsf.gov/div/index.jsp?div=OCE" title="external link to the National Science Foundation Ocean Sciences Division" target="_top">
-          <img className="Header--nsfLogo" src="https://maps.ngdc.noaa.gov/images/imlgs/NSFLogo.png" alt="US National Science Foundation Division of Ocean Sciences"/>
+          <img className="Header--nsfLogo" src="https://gis.ngdc.noaa.gov/images/imlgs/NSFLogo.png" alt="US National Science Foundation Division of Ocean Sciences"/>
         </a>
         <div style={{float: 'right'}}>
           <BasicMenu/>
