@@ -1,6 +1,8 @@
 import { useSearchParams } from "react-router-dom"
 import { useState, useEffect, useRef } from 'react'
 import ArcGISMap from "@arcgis/core/Map"
+import Basemap from "@arcgis/core/Basemap"
+import PortalItem from "@arcgis/core/portal/PortalItem"
 import MapView from "@arcgis/core/views/MapView"
 import MapImageLayer from "@arcgis/core/layers/MapImageLayer"
 import Graphic from "@arcgis/core/Graphic"
@@ -144,7 +146,10 @@ export default function MapPanel({zoomToSelected}: {zoomToSelected:boolean}) {
   // one-time map setup
   useEffect(() => {
     const map = new ArcGISMap({
-        basemap: "oceans"
+        // basemap: "oceans"
+        basemap: new Basemap(
+          { portalItem: new PortalItem ({ id: '33d6280d276d4af89fb66a6ffa7f2072'}) }
+        )    
     })
 
     if (!mapDiv.current) {
