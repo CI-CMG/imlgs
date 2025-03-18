@@ -156,9 +156,14 @@ export default function SamplesTable() {
               defaultValue={ searchParams.has('page') ? searchParams.get('page') as string : 1 }
               onBlur={onBlurHandler}
               onKeyDown={event => checkForEnterKey(event) }
+              title="specify page number to display"
+              aria-label='specify page number to display'
             />
             <span style={{fontSize:"18px"}}> of {totalPages} ({totalItems} total records)</span>
-          <select id="sortItemSelect" style={{fontSize: 'large', marginLeft: '100px'}} onChange={sortHandler}>
+          <select id="sortItemSelect" style={{fontSize: 'large', marginLeft: '100px'}} onChange={sortHandler}
+              title="choose attribute on which to sort table"
+              aria-label='choose attribute on which to sort table'          
+          >
             {/* <option>-- Sort By --</option> */}
             <option value='facility_code'>Repository</option>
             <option value='platform'>Ship/Platform</option>
@@ -178,7 +183,9 @@ export default function SamplesTable() {
       <div className={baseClass} style={{ padding: "1rem 0" }}>
         {(samples && samples.length === 0) ? <h4>no data</h4>: ''}
         {samples.length ? 
-          <table className={`${baseClass}--datatable`}>
+          <>
+          <table className={`${baseClass}--datatable`} aria-describedby='table-summary'>
+            <caption>IMLGS Samples</caption>
           <thead>
             <tr>
                 <th>Repository<br/>Link</th>
@@ -221,6 +228,9 @@ export default function SamplesTable() {
             }
             </tbody>
             </table>
+            <div id='table-summary' className="sr-only">This table contains a list of IMLGS samples with selected attributes including 
+              Repository, Ship/Platform, Sample ID, Device, Location, Depth, and Date</div>
+            </>
             : ''
         }
       </div>      

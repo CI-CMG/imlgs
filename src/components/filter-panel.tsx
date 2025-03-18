@@ -248,6 +248,7 @@ export default function FilterPanel(props:Props) {
             id="start_date_begins_with-text"
             title='filter samples by date string'
             aria-label="start date"
+            aria-describedby="startDateFormat"
             placeholder='YYYYMMDD'
             type="search"
             name="start_date_begins_with"
@@ -261,13 +262,15 @@ export default function FilterPanel(props:Props) {
             onChange={onChangeHandler}
             value={searchParams.has('start_date_begins_with')? searchParams.get('start_date_begins_with') as string: ''}
           />
+          <span id="startDateFormat" className="sr-only">Enter date in YYYYMMDD format</span>
+
         </div>
         <div style={{'paddingLeft': '10px', 'paddingRight': '10px', 'marginTop': '10px'}}>
           <fieldset style={{'display': 'flex', 'alignItems': 'center', 'justifyContent': 'space-around'}}>
             <legend style={{'fontSize': 'small'}}>Water Depth (m)</legend>
             <input
               id="min_depth-text"
-              aria-label="min depth"
+              aria-label="min depth in meters"
               title='filter samples taken from water >= this depth'
               placeholder="min"
               name="min_depth"
@@ -283,7 +286,7 @@ export default function FilterPanel(props:Props) {
             />
             <input
               id="max_depth-text"
-              aria-label="max depth"
+              aria-label="max depth in meters"
               title='filter samples taken from water <= this depth'
               placeholder="max"
               type="search"
@@ -428,8 +431,14 @@ export default function FilterPanel(props:Props) {
         </div>
 
         <div className='center-content' style={{'marginTop': '25px'}}>
-          <button id='resetButton' type='button'  title="reset the filters to default values" onClick={resetButtonHandler}>Reset</button>
-          <button id='tableButton' type='button' title="open a tabular view of the data" onClick={tableButtonHandler}>Table View</button>
+          <button id='resetButton' type='button'  onClick={resetButtonHandler}
+            title="reset the filters to default values"
+            aria-label="reset the filters to default values"
+          >Reset</button>
+          <button id='tableButton' type='button' onClick={tableButtonHandler}
+            title="open a tabular view of the IMLGS data shown on the map"
+            aria-label="open a tabular view of the IMLGS data shown on the map"
+          >Table View</button>
         </div>
 
     </div>

@@ -315,7 +315,7 @@ function updateAreaOfInterest(coords:Array<number>|undefined) {
 
 
 return (
-    <div className={baseClass} ref={mapDiv}>
+    <div className={baseClass} ref={mapDiv} aria-hidden="true">
       <div ref={extentToolbarContainer}>
         {layerView ? <ExtentToolbar mapView={layerView} setSelectedExtent={updateAreaOfInterest}/> : ''}
       </div>

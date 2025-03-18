@@ -15,9 +15,11 @@ export default function CruiseList({filters}: Props) {
     { cruises ?
       cruises.map(cruise => (
         <Link
-          style={{ display: "block", margin: "1rem 0", color: "#282c34", textDecoration: "none" }}
+          style={{ display: "block", margin: "1rem 0", textDecoration: "none" }}
           to={`/cruises/${cruise.id}?${filters.toString()}`}
           key={cruise.id}
+          title={`details for cruise ${cruise.id}`} 
+          aria-label={`details for cruise ${cruise.id}`}
         >
           {cruise.cruise}
         </Link>

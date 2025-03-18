@@ -18,9 +18,11 @@ export default function Repositories() {
         {repositories ? 
             repositories.map((repository) => (
             <Link
-              style={{ display: "block", margin: "1rem 0", color: "#282c34", textDecoration: "none" }}
+              style={{ display: "block", margin: "1rem 0", textDecoration: "none" }}
               to={`/repositories/${repository.id}`}
               key={repository.id}
+              title={`details for cruise ${repository.id}`} 
+              aria-label={`details for cruise ${repository.id}`}
             >
               {repository.facility}
             </Link>
@@ -39,7 +41,7 @@ export default function Repositories() {
 export function Index() {
   return (
     <p style={{'paddingLeft': '1rem'}}>
-      Please select a Repository to get its details
+      Please select a Repository from the left to get its details
     </p>
   );
 }
