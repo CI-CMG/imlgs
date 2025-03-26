@@ -19,7 +19,7 @@ export default function Cruises() {
   //   initialData
   // })
     
-    const { data: cruisesCount } = useQuery(['cruises', 'count', filters.toString()], () => getCruisesCount(filters))
+    const { data: cruisesCount } = useQuery({queryKey: ['cruises', 'count', filters.toString()], queryFn: () => getCruisesCount(filters)})
 
   return (
     <>

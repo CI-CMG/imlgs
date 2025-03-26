@@ -17,7 +17,10 @@ import IdentifyParameters from "@arcgis/core/rest/support/IdentifyParameters"
 import Search from "@arcgis/core/widgets/Search"
 import Home from "@arcgis/core/widgets/Home"
 import ScaleBar from "@arcgis/core/widgets/ScaleBar"
+// import "@arcgis/map-components/components/arcgis-scale-bar"
+
 import CoordinateConversion from "@arcgis/core/widgets/CoordinateConversion"
+
 // import IdentifyTask from "@arcgis/core/tasks/IdentifyTask"
 // import IdentifyParameters from "@arcgis/core/tasks/support/IdentifyParameters"
 // import {webMercatorToGeographic} from "@arcgis/core/geometry/support/webMercatorUtils"

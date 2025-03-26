@@ -185,7 +185,7 @@ export default function SamplesTable() {
         {samples.length ? 
           <>
           <table className={`${baseClass}--datatable`} aria-describedby='table-summary'>
-            <caption>IMLGS Samples</caption>
+            <caption style={{fontWeight: 'bold', fontSize: 'larger', paddingBottom:'10px'}}>IMLGS Samples</caption>
           <thead>
             <tr>
                 <th>Repository<br/>Link</th>
@@ -228,7 +228,7 @@ export default function SamplesTable() {
             }
             </tbody>
             </table>
-            <div id='table-summary' className="sr-only">This table contains a list of IMLGS samples with selected attributes including 
+            <div id='table-summary' className='sr-only'>This table contains a list of IMLGS samples with selected attributes including 
               Repository, Ship/Platform, Sample ID, Device, Location, Depth, and Date</div>
             </>
             : ''

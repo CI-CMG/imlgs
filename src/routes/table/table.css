@@ -29,3 +29,12 @@
 }
 tr:nth-child(even) { background: #CCC; }
 tr:nth-child(odd) { background: #FFF; }
+
+.sr-only {
+  position:absolute;
+  left:-10000px;
+  top:auto;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+  }

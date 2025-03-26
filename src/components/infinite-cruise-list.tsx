@@ -1,16 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import React from 'react'
 import { useInView } from 'react-intersection-observer'
 import { Link } from "react-router-dom"
 import { CruiseName } from '../routes/cruises/data'
-import { searchParamsToFilters } from "../utilities"
-import { fetchCruiseNames } from "../queries"
-import {
-  useInfiniteQuery,
-  QueryClient,
-  QueryClientProvider,
-  useQuery
-} from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 const apiBaseUrl = import.meta.env.VITE_apiBaseUrl
 
 interface Props {
@@ -19,49 +12,42 @@ interface Props {
 
 export default function InfiniteCruiseList({filters}:Props) {
   const myFilters = new URLSearchParams(filters)
-  myFilters.set('items_per_page', '500')
-  // console.log('inside InfiniteCruiseList with ',filters.toString())
-  // const results = useQuery({ 
-  //   queryKey: ['cruises', filters.toString()],
-  //   queryFn: () => fetchCruiseNames(filters) 
-  // }) 
-  // console.log({results})
+  myFilters.set('items_per_page', '50')
+  console.log('inside InfiniteCruiseList with ',filters.toString())
 
-  const { ref, inView } = useInView();
-  // const [totalPages, setTotalPages] = useState();
-  // const [page, setPage] = useState();
+  const { ref, inView } = useInView()
 
-  const {
-    status,
-    data,
-    error,
-    isFetching,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-  } = useInfiniteQuery(
-    ['infinite cruises', myFilters.toString()],
-    async ({ pageParam = 1 }) => {
-     
-      myFilters.set('page', pageParam)
-      const res = await fetch(
-        `${apiBaseUrl}/cruises/name?${myFilters.toString()}`
-      );
-      const payload = await res.json()
-      return payload
-    },
-    {
-      getNextPageParam: (lastPage,) => {
-        if (lastPage.page > lastPage.total_pages) {
-          return
-        }
-        return lastPage.page + 1
-      },
-    }
-  )
-
-  // TODO temporary work around for TypeScript warning
-  const myError = error as Error
+  // based on example at https://tanstack.com/query/latest/docs/framework/react/examples/load-more-infinite-scroll
+const {
+  status,
+  data,
+  error,
+  isFetching,
+  isFetchingNextPage,
+  isFetchingPreviousPage,
+  fetchNextPage,
+  fetchPreviousPage,
+  hasNextPage,
+  hasPreviousPage,
+} = useInfiniteQuery({
+  queryKey: ['infinite cruises', myFilters.toString()],
+  queryFn: async ({
+    pageParam,
+  }): Promise<{
+    items: Array<CruiseName>
+    page: number
+    total_pages: number
+    total_items: number
+    items_per_page: number
+  }> => {
+    myFilters.set('page', pageParam.toString())
+    const response = await fetch(`${apiBaseUrl}/cruises/name?${myFilters.toString()}`)
+    return await response.json()
+  },
+  initialPageParam: 1,
+  getPreviousPageParam: (firstPage) => firstPage.page === 1 ? 1 : firstPage.page - 1,
+  getNextPageParam: (lastPage) => lastPage.page === lastPage.total_pages ? lastPage.page : lastPage.page + 1
+})
 
   useEffect(() => {
     if (inView) {
@@ -70,16 +56,16 @@ export default function InfiniteCruiseList({filters}:Props) {
   }, [inView, fetchNextPage]);
 
   return (
-    <div>
-    {status === 'loading' ? (
+    <div id="scrollingListDiv">
+    {isFetching ? (
       <p>Loading...</p>
     ) : status === 'error' ? (
-      <span>Error: {myError.message}</span>
+      <span>Error: {error.message}</span>
     ) : (
       <>
-        {data.pages.map((page) => (
+        { data && data.pages.map((page) => (
           <React.Fragment key={page.page}>
-            {page.items.map((cruise:CruiseName) => (
+            {page.items.map((cruise) => (
               <Link
               style={{ display: "block", margin: "1rem 0",  textDecoration: "none" }}
               to={`/cruises/${cruise.id}?${filters.toString()}`}
