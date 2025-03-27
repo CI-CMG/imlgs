@@ -8,7 +8,10 @@ interface Props {
 } 
 
 export default function CruiseList({filters}: Props) {
-  const queryResult = useQuery(['cruises', filters.toString()], () => getFirstPageOfCruises(filters))
+  const queryResult = useQuery({
+    queryKey: ['cruises', filters.toString()], 
+    queryFn: () => getFirstPageOfCruises(filters)
+  })
   const cruises = queryResult?.data
   return (
     <>  
